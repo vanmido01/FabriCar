@@ -1,0 +1,355 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Reporte de ventas | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+        <div>
+            <h2>Reporte de ventas</h2>
+
+            <p>
+                Consulta detallada de ventas por periodo,
+                cliente, estado y forma de pago.
+            </p>
+        </div>
+
+        <div class="acciones-encabezado">
+
+            <a
+                href="{% url 'reportes:reporte_ventas_pdf' %}?q={{ busqueda|urlencode }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&estado={{ filtro_estado }}&forma_pago={{ filtro_pago }}"
+                class="boton-enlace"
+            >
+                Descargar PDF
+            </a>
+
+            <a
+                href="{% url 'reportes:panel_reportes' %}"
+                class="boton-secundario"
+            >
+                Volver a reportes
+            </a>
+
+        </div>
+
+    </div>
+
+    <form
+        method="get"
+        class="formulario-filtros formulario-filtros-reporte-ventas"
+    >
+
+        <div class="grupo-filtro">
+
+            <label for="busqueda">
+                Buscar
+            </label>
+
+            <input
+                type="search"
+                id="busqueda"
+                name="q"
+                value="{{ busqueda }}"
+                class="campo-formulario"
+                placeholder="Cliente, documento o comprobante"
+            >
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="fecha_inicio">
+                Fecha inicial
+            </label>
+
+            <input
+                type="date"
+                id="fecha_inicio"
+                name="fecha_inicio"
+                value="{{ fecha_inicio }}"
+                class="campo-formulario"
+            >
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="fecha_fin">
+                Fecha final
+            </label>
+
+            <input
+                type="date"
+                id="fecha_fin"
+                name="fecha_fin"
+                value="{{ fecha_fin }}"
+                class="campo-formulario"
+            >
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="estado">
+                Estado
+            </label>
+
+            <select
+                id="estado"
+                name="estado"
+                class="campo-formulario"
+            >
+                <option value="">
+                    Todos los estados
+                </option>
+
+                {% for valor, nombre in estados_venta %}
+
+                    <option
+                        value="{{ valor }}"
+                        {% if filtro_estado == valor %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ nombre }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="forma_pago">
+                Forma de pago
+            </label>
+
+            <select
+                id="forma_pago"
+                name="forma_pago"
+                class="campo-formulario"
+            >
+                <option value="">
+                    Todas las formas
+                </option>
+
+                {% for valor, nombre in formas_pago %}
+
+                    <option
+                        value="{{ valor }}"
+                        {% if filtro_pago == valor %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ nombre }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="acciones-filtros">
+
+            <button
+                type="submit"
+                class="boton-enlace"
+            >
+                Consultar
+            </button>
+
+            <a
+                href="{% url 'reportes:reporte_ventas' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+
+        </div>
+
+    </form>
+
+    <div class="resumen-reporte">
+
+        <div class="dato-resumen-reporte">
+
+            <span>Ventas encontradas</span>
+
+            <strong>
+                {{ cantidad_resultados }}
+            </strong>
+
+        </div>
+
+        <div class="dato-resumen-reporte">
+
+            <span>Total de resultados</span>
+
+            <strong>
+                Bs {{ total_filtrado|floatformat:2 }}
+            </strong>
+
+        </div>
+
+    </div>
+
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>N.º</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Documento</th>
+                    <th>Comprobante</th>
+                    <th>Número</th>
+                    <th>Forma de pago</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for venta in ventas %}
+
+                    <tr>
+
+                        <td>
+                            {{ venta.id }}
+                        </td>
+
+                        <td>
+                            {{ venta.fecha_venta|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {{ venta.cliente.nombre }}
+                        </td>
+
+                        <td>
+                            {{ venta.cliente.documento|default:"No registrado" }}
+                        </td>
+
+                        <td>
+                            {{ venta.get_tipo_comprobante_display }}
+                        </td>
+
+                        <td>
+                            {{ venta.numero_comprobante|default:"Sin número" }}
+                        </td>
+
+                        <td>
+                            {{ venta.get_forma_pago_display }}
+                        </td>
+
+                        <td>
+
+                            {% if venta.estado == "BORRADOR" %}
+
+                                <span class="etiqueta-borrador">
+                                    Borrador
+                                </span>
+
+                            {% elif venta.estado == "CONFIRMADA" %}
+
+                                <span class="etiqueta-confirmada">
+                                    Confirmada
+                                </span>
+
+                            {% else %}
+
+                                <span class="etiqueta-anulada">
+                                    Anulada
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            Bs {{ venta.total|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            <a
+                                href="{% url 'ventas:detalle_venta' venta.id %}"
+                                class="boton-accion"
+                            >
+                                Ver detalle
+                            </a>
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="10"
+                            class="tabla-vacia"
+                        >
+                            No se encontraron ventas con los
+                            criterios seleccionados.
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% if pagina_ventas.has_other_pages %}
+
+        <nav class="paginacion">
+
+            {% if pagina_ventas.has_previous %}
+
+                <a
+                    href="?pagina={{ pagina_ventas.previous_page_number }}&q={{ busqueda|urlencode }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&estado={{ filtro_estado }}&forma_pago={{ filtro_pago }}"
+                    class="enlace-paginacion"
+                >
+                    Anterior
+                </a>
+
+            {% endif %}
+
+            <span class="informacion-paginacion">
+                Página {{ pagina_ventas.number }}
+                de {{ pagina_ventas.paginator.num_pages }}
+            </span>
+
+            {% if pagina_ventas.has_next %}
+
+                <a
+                    href="?pagina={{ pagina_ventas.next_page_number }}&q={{ busqueda|urlencode }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&estado={{ filtro_estado }}&forma_pago={{ filtro_pago }}"
+                    class="enlace-paginacion"
+                >
+                    Siguiente
+                </a>
+
+            {% endif %}
+
+        </nav>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

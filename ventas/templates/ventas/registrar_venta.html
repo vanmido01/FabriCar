@@ -1,0 +1,435 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Registrar venta | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+
+        <div>
+            <h2>Registrar venta</h2>
+
+            <p>
+                Registre los datos del cliente y los productos
+                incluidos en la operación comercial.
+            </p>
+        </div>
+
+    </div>
+
+    {% if formulario.non_field_errors %}
+        <div class="mensaje-error">
+            {% for error in formulario.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if detalles_formset.non_form_errors %}
+        <div class="mensaje-error">
+            {% for error in detalles_formset.non_form_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        class="formulario-producto"
+        novalidate
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Información de la venta</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label for="{{ formulario.cliente.id_for_label }}">
+                        Cliente
+                    </label>
+
+                    {{ formulario.cliente }}
+
+                    {% for error in formulario.cliente.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.fecha_venta.id_for_label }}">
+                        Fecha de venta
+                    </label>
+
+                    {{ formulario.fecha_venta }}
+
+                    {% for error in formulario.fecha_venta.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.tipo_comprobante.id_for_label }}">
+                        Tipo de comprobante
+                    </label>
+
+                    {{ formulario.tipo_comprobante }}
+
+                    {% for error in formulario.tipo_comprobante.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.numero_comprobante.id_for_label }}">
+                        Número de comprobante
+                    </label>
+
+                    {{ formulario.numero_comprobante }}
+
+                    {% for error in formulario.numero_comprobante.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.forma_pago.id_for_label }}">
+                        Forma de pago
+                    </label>
+
+                    {{ formulario.forma_pago }}
+
+                    {% for error in formulario.forma_pago.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="campo-completo">
+
+                <label for="{{ formulario.observaciones.id_for_label }}">
+                    Observaciones
+                </label>
+
+                {{ formulario.observaciones }}
+
+                {% for error in formulario.observaciones.errors %}
+                    <p class="error-campo">{{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+        </fieldset>
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Productos de la venta</legend>
+
+            {{ detalles_formset.management_form }}
+
+            <div class="contenedor-tabla">
+
+                <table class="tabla-datos">
+
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio unitario</th>
+                            <th>Subtotal</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="contenedor-detalles">
+
+                        {% for detalle in detalles_formset %}
+
+                            <tr class="fila-detalle">
+
+                                <td>
+                                    {% for campo_oculto in detalle.hidden_fields %}
+                                        {{ campo_oculto }}
+                                    {% endfor %}
+
+                                    {{ detalle.producto }}
+
+                                    {% for error in detalle.producto.errors %}
+                                        <p class="error-campo">{{ error }}</p>
+                                    {% endfor %}
+                                </td>
+
+                                <td>
+                                    {{ detalle.cantidad }}
+
+                                    {% for error in detalle.cantidad.errors %}
+                                        <p class="error-campo">{{ error }}</p>
+                                    {% endfor %}
+                                </td>
+
+                                <td>
+                                    {{ detalle.precio_unitario }}
+
+                                    {% for error in detalle.precio_unitario.errors %}
+                                        <p class="error-campo">{{ error }}</p>
+                                    {% endfor %}
+                                </td>
+
+                                <td class="subtotal-detalle">
+                                    Bs 0.00
+                                </td>
+
+                                <td>
+                                    <div hidden>
+                                        {{ detalle.DELETE }}
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        class="boton-eliminar eliminar-detalle"
+                                    >
+                                        Quitar
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="acciones-formulario">
+
+                <button
+                    type="button"
+                    id="agregar-detalle"
+                    class="boton-secundario"
+                >
+                    Agregar producto
+                </button>
+
+                <strong>
+                    Total estimado:
+                    <span id="total-venta">Bs 0.00</span>
+                </strong>
+
+            </div>
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+                href="{% url 'ventas:listar_ventas' %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="boton-principal"
+                onclick="return confirm('¿Está seguro de registrar esta venta en estado borrador?');"
+            >
+                Guardar venta
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+<template id="plantilla-detalle">
+
+    <tr class="fila-detalle">
+
+        <td>
+            {% for campo_oculto in detalles_formset.empty_form.hidden_fields %}
+                {{ campo_oculto }}
+            {% endfor %}
+
+            {{ detalles_formset.empty_form.producto }}
+        </td>
+
+        <td>
+            {{ detalles_formset.empty_form.cantidad }}
+        </td>
+
+        <td>
+            {{ detalles_formset.empty_form.precio_unitario }}
+        </td>
+
+        <td class="subtotal-detalle">
+            Bs 0.00
+        </td>
+
+        <td>
+            <div hidden>
+                {{ detalles_formset.empty_form.DELETE }}
+            </div>
+
+            <button
+                type="button"
+                class="boton-eliminar eliminar-detalle"
+            >
+                Quitar
+            </button>
+        </td>
+
+    </tr>
+
+</template>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const contenedor = document.getElementById(
+            "contenedor-detalles"
+        );
+
+        const botonAgregar = document.getElementById(
+            "agregar-detalle"
+        );
+
+        const totalFormularios = document.getElementById(
+            "id_detalles-TOTAL_FORMS"
+        );
+
+        const plantilla = document.getElementById(
+            "plantilla-detalle"
+        );
+
+        const totalVenta = document.getElementById(
+            "total-venta"
+        );
+
+        function calcularTotales() {
+
+            let totalGeneral = 0;
+
+            const filas = contenedor.querySelectorAll(
+                ".fila-detalle"
+            );
+
+            filas.forEach(function (fila) {
+
+                const campoEliminar = fila.querySelector(
+                    'input[name$="-DELETE"]'
+                );
+
+                if (
+                    campoEliminar
+                    && campoEliminar.checked
+                ) {
+                    return;
+                }
+
+                const campoCantidad = fila.querySelector(
+                    'input[name$="-cantidad"]'
+                );
+
+                const campoPrecio = fila.querySelector(
+                    'input[name$="-precio_unitario"]'
+                );
+
+                const subtotalElemento = fila.querySelector(
+                    ".subtotal-detalle"
+                );
+
+                const cantidad = parseFloat(
+                    campoCantidad?.value || 0
+                );
+
+                const precio = parseFloat(
+                    campoPrecio?.value || 0
+                );
+
+                const subtotal = cantidad * precio;
+
+                subtotalElemento.textContent =
+                    `Bs ${subtotal.toFixed(2)}`;
+
+                totalGeneral += subtotal;
+            });
+
+            totalVenta.textContent =
+                `Bs ${totalGeneral.toFixed(2)}`;
+        }
+
+        botonAgregar.addEventListener(
+            "click",
+            function () {
+
+                const numeroFormulario = parseInt(
+                    totalFormularios.value
+                );
+
+                const contenido = plantilla.innerHTML.replace(
+                    /__prefix__/g,
+                    numeroFormulario
+                );
+
+                contenedor.insertAdjacentHTML(
+                    "beforeend",
+                    contenido
+                );
+
+                totalFormularios.value =
+                    numeroFormulario + 1;
+
+                calcularTotales();
+            }
+        );
+
+        contenedor.addEventListener(
+            "click",
+            function (evento) {
+
+                if (
+                    !evento.target.classList.contains(
+                        "eliminar-detalle"
+                    )
+                ) {
+                    return;
+                }
+
+                const fila = evento.target.closest(
+                    ".fila-detalle"
+                );
+
+                const campoEliminar = fila.querySelector(
+                    'input[name$="-DELETE"]'
+                );
+
+                if (campoEliminar) {
+                    campoEliminar.checked = true;
+                }
+
+                fila.style.display = "none";
+
+                calcularTotales();
+            }
+        );
+
+        contenedor.addEventListener(
+            "input",
+            calcularTotales
+        );
+
+        calcularTotales();
+    });
+</script>
+
+{% endblock %}

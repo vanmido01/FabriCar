@@ -1,0 +1,180 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+    {% if modo_edicion %}
+        Modificar proveedor | FABRI-CAR
+    {% else %}
+        Registrar proveedor | FABRI-CAR
+    {% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+
+        <div>
+    {% if modo_edicion %}
+
+    <h2>Modificar proveedor</h2>
+
+    <p>
+        Actualice la información del proveedor
+        {{ proveedor.razon_social }}.
+    </p>
+
+{% else %}
+
+    <h2>Registrar proveedor</h2>
+
+    <p>
+        Complete la información del proveedor vinculado
+        con la adquisición de productos.
+    </p>
+
+{% endif %}
+        </div>
+
+    </div>
+
+    {% if formulario.non_field_errors %}
+        <div class="mensaje-error">
+            {% for error in formulario.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        class="formulario-producto"
+        novalidate
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Información del proveedor</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label for="{{ formulario.razon_social.id_for_label }}">
+                        Nombre o razón social
+                    </label>
+
+                    {{ formulario.razon_social }}
+
+                    {% for error in formulario.razon_social.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.nit.id_for_label }}">
+                        NIT
+                    </label>
+
+                    {{ formulario.nit }}
+
+                    {% for error in formulario.nit.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.persona_contacto.id_for_label }}">
+                        Persona de contacto
+                    </label>
+
+                    {{ formulario.persona_contacto }}
+
+                    {% for error in formulario.persona_contacto.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.telefono.id_for_label }}">
+                        Teléfono
+                    </label>
+
+                    {{ formulario.telefono }}
+
+                    {% for error in formulario.telefono.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.correo.id_for_label }}">
+                        Correo electrónico
+                    </label>
+
+                    {{ formulario.correo }}
+
+                    {% for error in formulario.correo.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="campo-completo">
+
+                <label for="{{ formulario.direccion.id_for_label }}">
+                    Dirección
+                </label>
+
+                {{ formulario.direccion }}
+
+                {% for error in formulario.direccion.errors %}
+                    <p class="error-campo">{{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+            <div class="grupo-checkbox">
+
+                {{ formulario.estado }}
+
+                <label for="{{ formulario.estado.id_for_label }}">
+                    Proveedor activo
+                </label>
+
+            </div>
+
+            {% for error in formulario.estado.errors %}
+                <p class="error-campo">{{ error }}</p>
+            {% endfor %}
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+                href="{% url 'proveedores:listar_proveedores' %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
+
+<button
+    type="submit"
+    class="boton-principal"
+>
+    {% if modo_edicion %}
+        Guardar cambios
+    {% else %}
+        Guardar proveedor
+    {% endif %}
+</button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

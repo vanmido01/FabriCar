@@ -1,0 +1,79 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Iniciar sesión | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="contenedor-acceso">
+
+    <div class="tarjeta-acceso">
+
+        <div class="encabezado-acceso">
+            <h2>Iniciar sesión</h2>
+
+            <p>
+                Ingrese sus credenciales para acceder
+                al sistema web FABRI-CAR.
+            </p>
+        </div>
+
+        {% if form.errors %}
+            <div class="mensaje-error">
+                El nombre de usuario o la contraseña son incorrectos.
+            </div>
+        {% endif %}
+
+        <form method="post" class="formulario-acceso">
+
+            {% csrf_token %}
+
+            <div class="grupo-campo">
+                <label for="id_username">
+                    Nombre de usuario
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    id="id_username"
+                    required
+                    autofocus
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="grupo-campo">
+                <label for="id_password">
+                    Contraseña
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    id="id_password"
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            {% if next %}
+                <input
+                    type="hidden"
+                    name="next"
+                    value="{{ next }}"
+                >
+            {% endif %}
+
+            <button type="submit" class="boton-principal">
+                Ingresar
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

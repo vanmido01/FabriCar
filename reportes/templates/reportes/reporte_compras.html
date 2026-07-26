@@ -1,0 +1,320 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Reporte de compras | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+        <div>
+            <h2>Reporte de compras</h2>
+
+            <p>
+                Consulta detallada de compras por periodo,
+                proveedor, comprobante y estado.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'reportes:panel_reportes' %}"
+            class="boton-secundario"
+        >
+            Volver a reportes
+        </a>
+
+    </div>
+
+    <form
+        method="get"
+        class="formulario-filtros formulario-filtros-reporte-compras"
+    >
+
+        <div class="grupo-filtro">
+
+            <label for="busqueda">
+                Buscar
+            </label>
+
+            <input
+                type="search"
+                id="busqueda"
+                name="q"
+                value="{{ busqueda }}"
+                class="campo-formulario"
+                placeholder="Proveedor o número de comprobante"
+            >
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="fecha_inicio">
+                Fecha inicial
+            </label>
+
+            <input
+                type="date"
+                id="fecha_inicio"
+                name="fecha_inicio"
+                value="{{ fecha_inicio }}"
+                class="campo-formulario"
+            >
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="fecha_fin">
+                Fecha final
+            </label>
+
+            <input
+                type="date"
+                id="fecha_fin"
+                name="fecha_fin"
+                value="{{ fecha_fin }}"
+                class="campo-formulario"
+            >
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="estado">
+                Estado
+            </label>
+
+            <select
+                id="estado"
+                name="estado"
+                class="campo-formulario"
+            >
+                <option value="">
+                    Todos los estados
+                </option>
+
+                {% for valor, nombre in estados_compra %}
+
+                    <option
+                        value="{{ valor }}"
+                        {% if filtro_estado == valor %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ nombre }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="acciones-filtros">
+
+            <button
+                type="submit"
+                class="boton-enlace"
+            >
+                Consultar
+            </button>
+
+            <a
+                href="{% url 'reportes:reporte_compras' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+            <a
+                href="{% url 'reportes:reporte_compras_pdf' %}?q={{ busqueda|urlencode }}&fecha_inicio={{ fecha_inicio|urlencode }}&fecha_fin={{ fecha_fin|urlencode }}&estado={{ filtro_estado|urlencode }}"
+                class="boton-accion"
+            >
+                Descargar PDF
+            </a>
+        </div>
+
+    </form>
+
+    <div class="resumen-reporte">
+
+        <div class="dato-resumen-reporte">
+
+            <span>Compras encontradas</span>
+
+            <strong>
+                {{ cantidad_resultados }}
+            </strong>
+
+        </div>
+
+        <div class="dato-resumen-reporte">
+
+            <span>Total de resultados</span>
+
+            <strong>
+                Bs {{ total_filtrado|floatformat:2 }}
+            </strong>
+
+        </div>
+
+    </div>
+
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>N.º</th>
+                    <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Comprobante</th>
+                    <th>Número</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Registrado por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for compra in compras %}
+
+                    <tr>
+
+                        <td>
+                            {{ compra.id }}
+                        </td>
+
+                        <td>
+                            {{ compra.fecha_compra|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {{ compra.proveedor.nombre }}
+                        </td>
+
+                        <td>
+                            {{ compra.get_tipo_comprobante_display }}
+                        </td>
+
+                        <td>
+                            {{ compra.numero_comprobante|default:"Sin número" }}
+                        </td>
+
+                        <td>
+
+                            {% if compra.estado == "BORRADOR" %}
+
+                                <span class="etiqueta-borrador">
+                                    Borrador
+                                </span>
+
+                            {% elif compra.estado == "CONFIRMADA" %}
+
+                                <span class="etiqueta-confirmada">
+                                    Confirmada
+                                </span>
+
+                            {% else %}
+
+                                <span class="etiqueta-anulada">
+                                    Anulada
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            Bs {{ compra.total|floatformat:2 }}
+                        </td>
+
+                        <td>
+
+                            {% if compra.usuario_registro %}
+                                {{ compra.usuario_registro.username }}
+                            {% else %}
+                                No registrado
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{% url 'compras:detalle_compra' compra.id %}"
+                                class="boton-accion"
+                            >
+                                Ver detalle
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="tabla-vacia"
+                        >
+                            No se encontraron compras con los
+                            criterios seleccionados.
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% if pagina_compras.has_other_pages %}
+
+        <nav class="paginacion">
+
+            {% if pagina_compras.has_previous %}
+
+                <a
+                    href="?pagina={{ pagina_compras.previous_page_number }}&q={{ busqueda|urlencode }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&estado={{ filtro_estado }}"
+                    class="enlace-paginacion"
+                >
+                    Anterior
+                </a>
+
+            {% endif %}
+
+            <span class="informacion-paginacion">
+                Página {{ pagina_compras.number }}
+                de {{ pagina_compras.paginator.num_pages }}
+            </span>
+
+            {% if pagina_compras.has_next %}
+
+                <a
+                    href="?pagina={{ pagina_compras.next_page_number }}&q={{ busqueda|urlencode }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&estado={{ filtro_estado }}"
+                    class="enlace-paginacion"
+                >
+                    Siguiente
+                </a>
+
+            {% endif %}
+
+        </nav>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

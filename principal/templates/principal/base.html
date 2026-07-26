@@ -1,0 +1,83 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}FABRI-CAR{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'principal/css/estilos.css' %}"
+    >
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <div class="encabezado-contenido">
+            <h1>FABRI-CAR</h1>
+
+            <nav class="barra-navegacion">
+    <a href="{% url 'inicio' %}">Inicio</a>
+
+    {% if user.is_authenticated %}
+
+        {% if user.is_staff %}
+            <a href="{% url 'admin:index' %}">
+                Administración
+            </a>
+        {% endif %}
+
+        <span class="usuario-actual">
+            {{ user.username }}
+        </span>
+
+        <form
+            method="post"
+            action="{% url 'cerrar_sesion' %}"
+            class="formulario-salir"
+        >
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="boton-salir"
+            >
+                Cerrar sesión
+            </button>
+        </form>
+
+    {% else %}
+
+        <a href="{% url 'iniciar_sesion' %}">
+            Iniciar sesión
+        </a>
+
+    {% endif %}
+</nav>
+        </div>
+    </header>
+
+    <main class="contenido-principal">
+        {% block contenido %}
+        {% endblock %}
+    </main>
+
+    <footer class="pie-pagina">
+        <p>
+            Sistema web para la gestión y clasificación automática
+            de productos de FABRI-CAR.
+        </p>
+    </footer>
+
+</body>
+</html>

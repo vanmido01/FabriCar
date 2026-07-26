@@ -1,0 +1,30 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Panel del empleado | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <h2>Panel del empleado</h2>
+
+    <p>
+        Esta página está destinada a los usuarios
+        con el rol Empleado.
+    </p>
+
+    <p>
+        Desde este espacio se incorporarán las funciones
+        autorizadas para consultar productos, registrar clientes,
+        realizar ventas y revisar el stock disponible.
+    </p>
+
+    <a href="{% url 'inicio' %}" class="boton-enlace">
+        Volver al inicio
+    </a>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Registrar ajuste de inventario | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+
+        <div>
+            <h2>Registrar ajuste de inventario</h2>
+
+            <p>
+                Registre una entrada o salida manual para corregir
+                el stock disponible de un producto.
+            </p>
+        </div>
+
+    </div>
+
+    {% if formulario.non_field_errors %}
+        <div class="mensaje-error">
+            {% for error in formulario.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        class="formulario-producto"
+        novalidate
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Información del ajuste</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label for="{{ formulario.producto.id_for_label }}">
+                        Producto
+                    </label>
+
+                    {{ formulario.producto }}
+
+                    {% for error in formulario.producto.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.tipo_ajuste.id_for_label }}">
+                        Tipo de ajuste
+                    </label>
+
+                    {{ formulario.tipo_ajuste }}
+
+                    {% for error in formulario.tipo_ajuste.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.cantidad.id_for_label }}">
+                        Cantidad
+                    </label>
+
+                    {{ formulario.cantidad }}
+
+                    {% for error in formulario.cantidad.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.motivo.id_for_label }}">
+                        Motivo
+                    </label>
+
+                    {{ formulario.motivo }}
+
+                    {% for error in formulario.motivo.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="campo-completo">
+
+                <label for="{{ formulario.observaciones.id_for_label }}">
+                    Observaciones
+                </label>
+
+                {{ formulario.observaciones }}
+
+                {% for error in formulario.observaciones.errors %}
+                    <p class="error-campo">{{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+                href="{% url 'inventario:listar_movimientos' %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="boton-principal"
+                onclick="return confirm('¿Está seguro de registrar este ajuste de inventario?');"
+            >
+                Guardar ajuste
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

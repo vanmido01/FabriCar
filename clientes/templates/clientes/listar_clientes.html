@@ -1,0 +1,364 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Clientes | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+    <div>
+        <h2>Clientes registrados</h2>
+
+        <p>
+            Consulta de clientes particulares, talleres
+            e instituciones registrados en el sistema.
+        </p>
+    </div>
+
+    {% if puede_gestionar_clientes %}
+        <a
+            href="{% url 'clientes:registrar_cliente' %}"
+            class="boton-enlace"
+        >
+            Registrar cliente
+        </a>
+    {% endif %}
+
+</div>
+{% if busqueda or filtro_tipo or filtro_estado %}
+
+    <p class="resultado-busqueda">
+
+        {% if busqueda %}
+            Búsqueda:
+            <strong>{{ busqueda }}</strong>
+        {% endif %}
+
+        {% if filtro_tipo %}
+            {% if busqueda %} | {% endif %}
+
+            Tipo:
+            <strong>
+                {% if filtro_tipo == "PARTICULAR" %}
+                    Particular
+                {% elif filtro_tipo == "TALLER" %}
+                    Taller mecánico
+                {% elif filtro_tipo == "INSTITUCION" %}
+                    Institución
+                {% endif %}
+            </strong>
+        {% endif %}
+
+        {% if filtro_estado %}
+            {% if busqueda or filtro_tipo %} | {% endif %}
+
+            Estado:
+            <strong>{{ filtro_estado|title }}</strong>
+        {% endif %}
+
+    </p>
+
+{% endif %}
+    <div class="contenedor-tabla">
+<form
+    method="get"
+    action="{% url 'clientes:listar_clientes' %}"
+    class="formulario-busqueda"
+>
+    <div class="grupo-busqueda">
+
+        <label for="id_busqueda" class="etiqueta-busqueda">
+            Buscar cliente
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            id="id_busqueda"
+            value="{{ busqueda }}"
+            class="campo-busqueda"
+            placeholder="Nombre, documento, teléfono o correo"
+        >
+
+    </div>
+
+    <div class="grupo-filtro">
+
+        <label for="id_tipo" class="etiqueta-busqueda">
+            Tipo de cliente
+        </label>
+
+        <select
+            name="tipo"
+            id="id_tipo"
+            class="campo-filtro"
+        >
+            <option
+                value=""
+                {% if not filtro_tipo %}selected{% endif %}
+            >
+                Todos
+            </option>
+
+            <option
+                value="PARTICULAR"
+                {% if filtro_tipo == "PARTICULAR" %}selected{% endif %}
+            >
+                Particular
+            </option>
+
+            <option
+                value="TALLER"
+                {% if filtro_tipo == "TALLER" %}selected{% endif %}
+            >
+                Taller mecánico
+            </option>
+
+            <option
+                value="INSTITUCION"
+                {% if filtro_tipo == "INSTITUCION" %}selected{% endif %}
+            >
+                Institución
+            </option>
+        </select>
+
+    </div>
+
+    <div class="grupo-filtro">
+
+        <label for="id_estado" class="etiqueta-busqueda">
+            Estado
+        </label>
+
+        <select
+            name="estado"
+            id="id_estado"
+            class="campo-filtro"
+        >
+            <option
+                value=""
+                {% if not filtro_estado %}selected{% endif %}
+            >
+                Todos
+            </option>
+
+            <option
+                value="activo"
+                {% if filtro_estado == "activo" %}selected{% endif %}
+            >
+                Activos
+            </option>
+
+            <option
+                value="inactivo"
+                {% if filtro_estado == "inactivo" %}selected{% endif %}
+            >
+                Inactivos
+            </option>
+        </select>
+
+    </div>
+
+    <div class="acciones-busqueda">
+
+        <button
+            type="submit"
+            class="boton-principal"
+        >
+            Buscar
+        </button>
+
+        {% if busqueda or filtro_tipo or filtro_estado %}
+            <a
+                href="{% url 'clientes:listar_clientes' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+        {% endif %}
+
+    </div>
+</form>
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Nombre o razón social</th>
+                    <th>Documento o NIT</th>
+                    <th>Teléfono</th>
+                    <th>Correo electrónico</th>
+                    <th>Estado</th>
+                    {% if puede_gestionar_clientes %}
+                        <th>Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for cliente in clientes %}
+
+                    <tr>
+
+                        <td>
+                            {{ cliente.get_tipo_cliente_display }}
+                        </td>
+
+                        <td>
+                            {{ cliente.nombre }}
+                        </td>
+
+                        <td>
+                            {{ cliente.documento }}
+                        </td>
+
+                        <td>
+                            {{ cliente.telefono|default:"No especificado" }}
+                        </td>
+
+                        <td>
+                            {{ cliente.correo|default:"No especificado" }}
+                        </td>
+
+                        <td>
+                            {% if cliente.estado %}
+                                <span class="etiqueta-activo">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="etiqueta-inactivo">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </td>
+                            {% if puede_gestionar_clientes %}
+    <td>
+        <div class="acciones-tabla">
+
+            <a
+                href="{% url 'clientes:modificar_cliente' cliente.id %}"
+                class="boton-tabla"
+            >
+                Modificar
+            </a>
+
+            <form
+                method="post"
+                action="{% url 'clientes:cambiar_estado_cliente' cliente.id %}"
+                class="formulario-estado-producto"
+            >
+                {% csrf_token %}
+
+                {% if cliente.estado %}
+                    <button
+                        type="submit"
+                        class="boton-desactivar"
+                        onclick="return confirm('¿Está seguro de desactivar este cliente?');"
+                    >
+                        Desactivar
+                    </button>
+                {% else %}
+                    <button
+                        type="submit"
+                        class="boton-activar"
+                        onclick="return confirm('¿Está seguro de activar este cliente?');"
+                    >
+                        Activar
+                    </button>
+                {% endif %}
+
+            </form>
+
+        </div>
+    </td>
+{% endif %}
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td 
+                        colspan="{% if puede_gestionar_clientes %}7{% else %}6{% endif %}"
+                        class="tabla-vacia">
+                            No existen clientes registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+{% if pagina_clientes.has_other_pages %}
+
+    <nav
+        class="paginacion"
+        aria-label="Paginación de clientes"
+    >
+
+        <div class="informacion-paginacion">
+            Página {{ pagina_clientes.number }}
+            de {{ pagina_clientes.paginator.num_pages }}
+        </div>
+
+        <div class="controles-paginacion">
+
+            {% if pagina_clientes.has_previous %}
+                <a
+                    href="?page={{ pagina_clientes.previous_page_number }}&q={{ busqueda|urlencode }}&tipo={{ filtro_tipo }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Anterior
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% for numero in pagina_clientes.paginator.page_range %}
+
+                {% if numero == pagina_clientes.number %}
+                    <span class="numero-pagina activo">
+                        {{ numero }}
+                    </span>
+
+                {% elif numero >= pagina_clientes.number|add:"-2" and numero <= pagina_clientes.number|add:"2" %}
+                    <a
+                        href="?page={{ numero }}&q={{ busqueda|urlencode }}&tipo={{ filtro_tipo }}&estado={{ filtro_estado }}"
+                        class="numero-pagina"
+                    >
+                        {{ numero }}
+                    </a>
+                {% endif %}
+
+            {% endfor %}
+
+            {% if pagina_clientes.has_next %}
+                <a
+                    href="?page={{ pagina_clientes.next_page_number }}&q={{ busqueda|urlencode }}&tipo={{ filtro_tipo }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Siguiente
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Siguiente
+                </span>
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+{% endif %}
+</section>
+
+{% endblock %}

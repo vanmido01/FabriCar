@@ -1,0 +1,191 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Reportes | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+        <div>
+            <h2>Panel de reportes</h2>
+
+            <p>
+                Resumen general de las operaciones comerciales,
+                inventario y cuentas por cobrar.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="panel-indicadores">
+
+        <article class="tarjeta-indicador">
+
+            <div class="encabezado-indicador">
+                <span>Ventas confirmadas</span>
+                <span class="icono-indicador">V</span>
+            </div>
+
+            <strong class="valor-indicador">
+                Bs {{ total_ventas|floatformat:2 }}
+            </strong>
+
+            <p>
+                {{ cantidad_ventas }}
+                operación{{ cantidad_ventas|pluralize:"es" }}
+                confirmada{{ cantidad_ventas|pluralize:"s" }}
+            </p>
+
+            <a
+                href="{% url 'ventas:listar_ventas' %}?estado=CONFIRMADA"
+                class="enlace-indicador"
+            >
+                Ver ventas
+            </a>
+
+        </article>
+
+        <article class="tarjeta-indicador">
+
+            <div class="encabezado-indicador">
+                <span>Compras confirmadas</span>
+                <span class="icono-indicador">C</span>
+            </div>
+
+            <strong class="valor-indicador">
+                Bs {{ total_compras|floatformat:2 }}
+            </strong>
+
+            <p>
+                {{ cantidad_compras }}
+                operación{{ cantidad_compras|pluralize:"es" }}
+                confirmada{{ cantidad_compras|pluralize:"s" }}
+            </p>
+
+            <a
+                href="{% url 'compras:listar_compras' %}?estado=CONFIRMADA"
+                class="enlace-indicador"
+            >
+                Ver compras
+            </a>
+
+        </article>
+
+        <article class="tarjeta-indicador">
+
+            <div class="encabezado-indicador">
+                <span>Cuentas por cobrar</span>
+                <span class="icono-indicador">Cr</span>
+            </div>
+
+            <strong class="valor-indicador">
+                Bs {{ saldo_creditos|floatformat:2 }}
+            </strong>
+
+            <p>
+                {{ cantidad_creditos }}
+                crédito{{ cantidad_creditos|pluralize:"s" }}
+                con saldo pendiente
+            </p>
+
+            <a
+                href="{% url 'creditos:listar_creditos' %}"
+                class="enlace-indicador"
+            >
+                Ver créditos
+            </a>
+
+        </article>
+
+        <article class="tarjeta-indicador">
+
+            <div class="encabezado-indicador">
+                <span>Productos con bajo stock</span>
+                <span class="icono-indicador">I</span>
+            </div>
+
+            <strong class="valor-indicador">
+                {{ cantidad_bajo_stock }}
+            </strong>
+
+            <p>
+                Producto{{ cantidad_bajo_stock|pluralize:"s" }}
+                en nivel mínimo o inferior
+            </p>
+
+            <a
+                href="{% url 'productos:listar_productos' %}"
+                class="enlace-indicador"
+            >
+                Ver productos
+            </a>
+
+        </article>
+
+    </div>
+
+    <fieldset class="seccion-formulario">
+
+        <legend>Reportes disponibles</legend>
+
+        <div class="opciones-reportes">
+
+            <a
+                href="{% url 'reportes:reporte_ventas' %}"
+                class="opcion-reporte"
+            >
+                <strong>Reporte de ventas</strong>
+
+                <span>
+                    Consulta las ventas registradas, sus estados,
+                    clientes, comprobantes y formas de pago.
+                </span>
+            </a>
+
+            <a
+                href="{% url 'reportes:reporte_compras' %}"
+                class="opcion-reporte"
+            >
+                <strong>Reporte de compras</strong>
+
+                <span>
+                    Revisa las compras realizadas a proveedores
+                    y los ingresos generados en inventario.
+                </span>
+            </a>
+
+            <a
+                href="{% url 'reportes:reporte_bajo_stock' %}"
+                class="opcion-reporte"
+            >
+                <strong>Reporte de bajo stock</strong>
+
+                <span>
+                    Consulta los productos que se encuentran
+                    en su nivel mínimo de existencias o por debajo.
+                </span>
+            </a>
+
+            <a
+                href="{% url 'reportes:reporte_creditos' %}"
+                class="opcion-reporte"
+            >
+                <strong>Reporte de créditos</strong>
+
+                <span>
+                    Controla saldos pendientes, pagos parciales,
+                    vencimientos y estados de las cuentas por cobrar.
+                </span>
+            </a>
+
+        </div>
+
+    </fieldset>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,344 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Movimientos de inventario | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+    <div>
+        <h2>Movimientos de inventario</h2>
+
+        <p>
+            Historial de ingresos, salidas y ajustes
+            realizados sobre el stock de productos.
+        </p>
+    </div>
+
+    {% if puede_registrar_ajuste %}
+        <a
+            href="{% url 'inventario:registrar_ajuste' %}"
+            class="boton-enlace"
+        >
+            Registrar ajuste
+        </a>
+    {% endif %}
+
+</div>
+<form
+    method="get"
+    action="{% url 'inventario:listar_movimientos' %}"
+    class="formulario-busqueda"
+>
+    <div class="grupo-busqueda">
+
+        <label for="id_busqueda" class="etiqueta-busqueda">
+            Buscar movimiento
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            id="id_busqueda"
+            value="{{ busqueda }}"
+            class="campo-busqueda"
+            placeholder="Código, producto, motivo, comprobante o usuario"
+        >
+
+    </div>
+
+    <div class="grupo-filtro">
+
+        <label for="id_tipo" class="etiqueta-busqueda">
+            Tipo de movimiento
+        </label>
+
+        <select
+            name="tipo"
+            id="id_tipo"
+            class="campo-filtro"
+        >
+            <option
+                value=""
+                {% if not filtro_tipo %}selected{% endif %}
+            >
+                Todos
+            </option>
+
+            <option
+                value="ENTRADA_COMPRA"
+                {% if filtro_tipo == "ENTRADA_COMPRA" %}selected{% endif %}
+            >
+                Entrada por compra
+            </option>
+
+            <option
+                value="SALIDA_VENTA"
+                {% if filtro_tipo == "SALIDA_VENTA" %}selected{% endif %}
+            >
+                Salida por venta
+            </option>
+
+            <option
+                value="AJUSTE_ENTRADA"
+                {% if filtro_tipo == "AJUSTE_ENTRADA" %}selected{% endif %}
+            >
+                Ajuste de entrada
+            </option>
+
+            <option
+                value="AJUSTE_SALIDA"
+                {% if filtro_tipo == "AJUSTE_SALIDA" %}selected{% endif %}
+            >
+                Ajuste de salida
+            </option>
+        </select>
+
+    </div>
+
+    <div class="acciones-busqueda">
+
+        <button
+            type="submit"
+            class="boton-principal"
+        >
+            Buscar
+        </button>
+
+        {% if busqueda or filtro_tipo %}
+            <a
+                href="{% url 'inventario:listar_movimientos' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+        {% endif %}
+
+    </div>
+</form>
+
+{% if busqueda or filtro_tipo %}
+
+    <p class="resultado-busqueda">
+
+        {% if busqueda %}
+            Búsqueda:
+            <strong>{{ busqueda }}</strong>
+        {% endif %}
+
+        {% if busqueda and filtro_tipo %}
+            |
+        {% endif %}
+
+        {% if filtro_tipo %}
+            Tipo:
+            <strong>
+                {% if filtro_tipo == "ENTRADA_COMPRA" %}
+                    Entrada por compra
+                {% elif filtro_tipo == "SALIDA_VENTA" %}
+                    Salida por venta
+                {% elif filtro_tipo == "AJUSTE_ENTRADA" %}
+                    Ajuste de entrada
+                {% elif filtro_tipo == "AJUSTE_SALIDA" %}
+                    Ajuste de salida
+                {% endif %}
+            </strong>
+        {% endif %}
+
+    </p>
+
+{% endif %}
+
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Producto</th>
+                    <th>Tipo</th>
+                    <th>Cantidad</th>
+                    <th>Stock anterior</th>
+                    <th>Stock posterior</th>
+                    <th>Referencia</th>
+                    <th>Motivo</th>
+                    <th>Usuario</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for movimiento in movimientos %}
+
+                    <tr>
+
+                        <td>
+                            {{ movimiento.fecha_movimiento|date:"d/m/Y H:i" }}
+                        </td>
+
+                        <td>
+                            <strong>{{ movimiento.producto.codigo }}</strong>
+                            <br>
+                            {{ movimiento.producto.nombre }}
+                        </td>
+
+                        <td>
+                            {% if movimiento.tipo_movimiento == "ENTRADA_COMPRA" %}
+                                <span class="etiqueta-entrada">
+                                    Entrada por compra
+                                </span>
+
+                            {% elif movimiento.tipo_movimiento == "SALIDA_VENTA" %}
+                                <span class="etiqueta-salida">
+                                    Salida por venta
+                                </span>
+
+                            {% elif movimiento.tipo_movimiento == "AJUSTE_ENTRADA" %}
+                                <span class="etiqueta-ajuste-entrada">
+                                    Ajuste de entrada
+                                </span>
+
+                            {% else %}
+                                <span class="etiqueta-ajuste-salida">
+                                    Ajuste de salida
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ movimiento.cantidad }}
+                        </td>
+
+                        <td>
+                            {{ movimiento.stock_anterior }}
+                        </td>
+
+                        <td>
+                            {{ movimiento.stock_posterior }}
+                        </td>
+
+                <td>
+                    {% if movimiento.compra %}
+                        <a
+                            href="{% url 'compras:detalle_compra' movimiento.compra.id %}"
+                            class="enlace-referencia"
+                        >
+                            Compra N.º {{ movimiento.compra.id }}
+                        </a>
+
+                    {% elif movimiento.venta %}
+                        <a
+                            href="{% url 'ventas:detalle_venta' movimiento.venta.id %}"
+                            class="enlace-referencia"
+                        >
+                            Venta N.º {{ movimiento.venta.id }}
+                        </a>
+
+                    {% else %}
+                        Sin referencia
+                    {% endif %}
+                </td>
+
+                        <td>
+                            {{ movimiento.motivo }}
+                        </td>
+
+                        <td>
+                            {% if movimiento.usuario %}
+                                {{ movimiento.usuario.username }}
+                            {% else %}
+                                No registrado
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="9" class="tabla-vacia">
+                            No existen movimientos de inventario registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+{% if pagina_movimientos.has_other_pages %}
+
+    <nav
+        class="paginacion"
+        aria-label="Paginación de movimientos de inventario"
+    >
+
+        <div class="informacion-paginacion">
+            Página {{ pagina_movimientos.number }}
+            de {{ pagina_movimientos.paginator.num_pages }}
+        </div>
+
+        <div class="controles-paginacion">
+
+            {% if pagina_movimientos.has_previous %}
+                <a
+                    href="?page={{ pagina_movimientos.previous_page_number }}&q={{ busqueda|urlencode }}&tipo={{ filtro_tipo }}"
+                    class="boton-paginacion"
+                >
+                    Anterior
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% for numero in pagina_movimientos.paginator.page_range %}
+
+                {% if numero == pagina_movimientos.number %}
+
+                    <span class="numero-pagina activo">
+                        {{ numero }}
+                    </span>
+
+                {% elif numero >= pagina_movimientos.number|add:"-2" and numero <= pagina_movimientos.number|add:"2" %}
+
+                    <a
+                        href="?page={{ numero }}&q={{ busqueda|urlencode }}&tipo={{ filtro_tipo }}"
+                        class="numero-pagina"
+                    >
+                        {{ numero }}
+                    </a>
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if pagina_movimientos.has_next %}
+                <a
+                    href="?page={{ pagina_movimientos.next_page_number }}&q={{ busqueda|urlencode }}&tipo={{ filtro_tipo }}"
+                    class="boton-paginacion"
+                >
+                    Siguiente
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Siguiente
+                </span>
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+{% endif %}
+</section>
+
+{% endblock %}

@@ -1,0 +1,258 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Compatibilidades | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+    <div>
+        <h2>Compatibilidades registradas</h2>
+
+        <p>
+            Consulta de productos y vehículos relacionados
+            mediante compatibilidad.
+        </p>
+    </div>
+
+    {% if puede_gestionar_compatibilidades %}
+        <a
+            href="{% url 'vehiculos:registrar_compatibilidad' %}"
+            class="boton-enlace"
+        >
+            Registrar compatibilidad
+        </a>
+    {% endif %}
+
+</div>
+
+    </div>
+<form
+    method="get"
+    action="{% url 'vehiculos:listar_compatibilidades' %}"
+    class="formulario-busqueda"
+>
+    <div class="grupo-busqueda">
+
+        <label for="id_busqueda" class="etiqueta-busqueda">
+            Buscar compatibilidad
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            id="id_busqueda"
+            value="{{ busqueda }}"
+            class="campo-busqueda"
+            placeholder="Código, producto, marca, modelo o motor"
+        >
+
+    </div>
+
+    <div class="acciones-busqueda">
+
+        <button
+            type="submit"
+            class="boton-principal"
+        >
+            Buscar
+        </button>
+
+        {% if busqueda %}
+            <a
+                href="{% url 'vehiculos:listar_compatibilidades' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+        {% endif %}
+
+    </div>
+</form>
+
+{% if busqueda %}
+    <p class="resultado-busqueda">
+        Resultados encontrados para:
+        <strong>{{ busqueda }}</strong>
+    </p>
+{% endif %}
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Código</th>
+                    <th>Marca del vehículo</th>
+                    <th>Modelo</th>
+                    <th>Años</th>
+                    <th>Motor</th>
+                    <th>Observaciones</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for compatibilidad in compatibilidades %}
+
+                    <tr>
+
+                        <td>
+                            {{ compatibilidad.producto.nombre }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.producto.codigo }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.vehiculo.marca }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.vehiculo.modelo }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.vehiculo.anio_desde }}
+                            -
+                            {{ compatibilidad.vehiculo.anio_hasta }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.vehiculo.motor|default:"No especificado" }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.observaciones|default:"Sin observaciones" }}
+                        </td>
+
+<td>
+    <div class="acciones-tabla">
+
+        <a
+            href="{% url 'productos:detalle_producto' compatibilidad.producto.id %}"
+            class="boton-tabla-secundario"
+        >
+            Ver producto
+        </a>
+
+        {% if puede_gestionar_compatibilidades %}
+
+            <a
+                href="{% url 'vehiculos:modificar_compatibilidad' compatibilidad.id %}"
+                class="boton-tabla"
+            >
+                Modificar
+            </a>
+
+            <form
+                method="post"
+                action="{% url 'vehiculos:eliminar_compatibilidad' compatibilidad.id %}"
+                class="formulario-eliminar"
+            >
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="boton-eliminar"
+                    onclick="return confirm('¿Está seguro de eliminar esta compatibilidad? Esta acción no se puede deshacer.');"
+                >
+                    Eliminar
+                </button>
+            </form>
+
+        {% endif %}
+
+    </div>
+</td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="8" class="tabla-vacia">
+                            No existen compatibilidades registradas.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+{% if pagina_compatibilidades.has_other_pages %}
+
+    <nav
+        class="paginacion"
+        aria-label="Paginación de compatibilidades"
+    >
+
+        <div class="informacion-paginacion">
+            Página {{ pagina_compatibilidades.number }}
+            de {{ pagina_compatibilidades.paginator.num_pages }}
+        </div>
+
+        <div class="controles-paginacion">
+
+            {% if pagina_compatibilidades.has_previous %}
+                <a
+                    href="?page={{ pagina_compatibilidades.previous_page_number }}&q={{ busqueda|urlencode }}"
+                    class="boton-paginacion"
+                >
+                    Anterior
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% for numero in pagina_compatibilidades.paginator.page_range %}
+
+                {% if numero == pagina_compatibilidades.number %}
+                    <span class="numero-pagina activo">
+                        {{ numero }}
+                    </span>
+
+                {% elif numero >= pagina_compatibilidades.number|add:"-2" and numero <= pagina_compatibilidades.number|add:"2" %}
+                    <a
+                        href="?page={{ numero }}&q={{ busqueda|urlencode }}"
+                        class="numero-pagina"
+                    >
+                        {{ numero }}
+                    </a>
+                {% endif %}
+
+            {% endfor %}
+
+            {% if pagina_compatibilidades.has_next %}
+                <a
+                    href="?page={{ pagina_compatibilidades.next_page_number }}&q={{ busqueda|urlencode }}"
+                    class="boton-paginacion"
+                >
+                    Siguiente
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Siguiente
+                </span>
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+{% endif %}
+</section>
+
+{% endblock %}

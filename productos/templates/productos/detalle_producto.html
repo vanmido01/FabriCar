@@ -1,0 +1,245 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Detalle del producto | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-detalle">
+        <div>
+            <h2>Detalle del producto</h2>
+
+            <p>
+                Información completa del repuesto registrado.
+            </p>
+        </div>
+
+        <div class="acciones-detalle">
+
+            <a
+                href="{% url 'productos:listar_productos' %}"
+                class="boton-secundario"
+            >
+                Volver a productos
+            </a>
+
+            {% if puede_gestionar_productos %}
+                <a
+                    href="{% url 'productos:modificar_producto' producto.id %}"
+                    class="boton-principal"
+                >
+                    Modificar
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div class="tarjeta-detalle-producto">
+
+        <div class="contenedor-imagen-detalle">
+
+            {% if producto.imagen %}
+                <img
+                    src="{{ producto.imagen.url }}"
+                    alt="{{ producto.nombre }}"
+                    class="imagen-producto-detalle"
+                >
+            {% else %}
+                <div class="imagen-no-disponible">
+                    Sin imagen disponible
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="informacion-producto">
+
+            <div class="titulo-producto-detalle">
+                <span class="codigo-producto">
+                    {{ producto.codigo }}
+                </span>
+
+                <h3>{{ producto.nombre }}</h3>
+
+                {% if producto.estado %}
+                    <span class="etiqueta-activo">
+                        Activo
+                    </span>
+                {% else %}
+                    <span class="etiqueta-inactivo">
+                        Inactivo
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="cuadricula-detalle">
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Tipo de repuesto</span>
+                    <span>{{ producto.get_tipo_display }}</span>
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Condición</span>
+                    <span>{{ producto.get_condicion_display }}</span>
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Marca</span>
+                    <span>{{ producto.marca|default:"No especificada" }}</span>
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Procedencia</span>
+                    <span>
+                        {{ producto.procedencia|default:"No especificada" }}
+                    </span>
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Precio de compra</span>
+                    <span>Bs {{ producto.precio_compra }}</span>
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Precio de venta</span>
+                    <span>Bs {{ producto.precio_venta }}</span>
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Stock actual</span>
+
+                    {% if producto.stock_actual <= producto.stock_minimo %}
+                        <span class="etiqueta-stock-bajo">
+                            {{ producto.stock_actual }}
+                        </span>
+                    {% else %}
+                        <span class="etiqueta-stock-normal">
+                            {{ producto.stock_actual }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Stock mínimo</span>
+                    <span>{{ producto.stock_minimo }}</span>
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Fecha de registro</span>
+                    <span>
+                        {{ producto.fecha_registro|date:"d/m/Y H:i" }}
+                    </span>
+                </div>
+
+                <div class="dato-detalle">
+                    <span class="titulo-dato">Última modificación</span>
+                    <span>
+                        {{ producto.fecha_modificacion|date:"d/m/Y H:i" }}
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="descripcion-detalle">
+                <span class="titulo-dato">Descripción</span>
+
+                <p>
+                    {{ producto.descripcion|default:"Sin descripción registrada." }}
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+<div class="seccion-compatibilidades">
+
+    <div class="encabezado-compatibilidades">
+        <div>
+            <h3>Vehículos compatibles</h3>
+
+            <p>
+                Vehículos relacionados con este producto.
+            </p>
+        </div>
+    </div>
+
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Años</th>
+                    <th>Motor</th>
+                    <th>Estado</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for compatibilidad in compatibilidades %}
+
+                    <tr>
+                        <td>
+                            {{ compatibilidad.vehiculo.marca }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.vehiculo.modelo }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.vehiculo.anio_desde }}
+                            -
+                            {{ compatibilidad.vehiculo.anio_hasta }}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.vehiculo.motor|default:"No especificado" }}
+                        </td>
+
+                        <td>
+                            {% if compatibilidad.vehiculo.estado %}
+                                <span class="etiqueta-activo">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="etiqueta-inactivo">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ compatibilidad.observaciones|default:"Sin observaciones" }}
+                        </td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6" class="tabla-vacia">
+                            Este producto no tiene vehículos compatibles registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+</section>
+
+{% endblock %}

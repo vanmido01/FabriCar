@@ -1,0 +1,335 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+    {% if modo_edicion %}
+        Modificar compra | FABRI-CAR
+    {% else %}
+        Registrar compra | FABRI-CAR
+    {% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+
+        <div>
+        {% if modo_edicion %}
+
+            <h2>Modificar compra N.º {{ compra.id }}</h2>
+
+            <p>
+                Actualice los datos y productos de la compra
+                mientras permanezca en estado borrador.
+            </p>
+
+        {% else %}
+
+            <h2>Registrar compra</h2>
+
+            <p>
+                Registre los datos de la compra y los productos
+                adquiridos al proveedor.
+            </p>
+
+        {% endif %}
+        </div>
+
+    </div>
+
+    {% if formulario.non_field_errors %}
+        <div class="mensaje-error">
+            {% for error in formulario.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if formulario_detalles.non_form_errors %}
+        <div class="mensaje-error">
+            {% for error in formulario_detalles.non_form_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        class="formulario-producto"
+        novalidate
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Información general de la compra</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label for="{{ formulario.proveedor.id_for_label }}">
+                        Proveedor
+                    </label>
+
+                    {{ formulario.proveedor }}
+
+                    {% for error in formulario.proveedor.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.fecha_compra.id_for_label }}">
+                        Fecha de compra
+                    </label>
+
+                    {{ formulario.fecha_compra }}
+
+                    {% for error in formulario.fecha_compra.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.tipo_comprobante.id_for_label }}">
+                        Tipo de comprobante
+                    </label>
+
+                    {{ formulario.tipo_comprobante }}
+
+                    {% for error in formulario.tipo_comprobante.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.numero_comprobante.id_for_label }}">
+                        Número de comprobante
+                    </label>
+
+                    {{ formulario.numero_comprobante }}
+
+                    {% for error in formulario.numero_comprobante.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="campo-completo">
+
+                <label for="{{ formulario.observaciones.id_for_label }}">
+                    Observaciones
+                </label>
+
+                {{ formulario.observaciones }}
+
+                {% for error in formulario.observaciones.errors %}
+                    <p class="error-campo">{{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+        </fieldset>
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Productos adquiridos</legend>
+
+            {{ formulario_detalles.management_form }}
+
+            <div id="contenedor-detalles">
+
+                {% for detalle in formulario_detalles %}
+
+                    <div class="fila-detalle-compra">
+
+                        {% for campo_oculto in detalle.hidden_fields %}
+                            {{ campo_oculto }}
+                        {% endfor %}
+
+                        <div>
+                            <label for="{{ detalle.producto.id_for_label }}">
+                                Producto
+                            </label>
+
+                            {{ detalle.producto }}
+
+                            {% for error in detalle.producto.errors %}
+                                <p class="error-campo">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <div>
+                            <label for="{{ detalle.cantidad.id_for_label }}">
+                                Cantidad
+                            </label>
+
+                            {{ detalle.cantidad }}
+
+                            {% for error in detalle.cantidad.errors %}
+                                <p class="error-campo">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <div>
+                            <label for="{{ detalle.costo_unitario.id_for_label }}">
+                                Costo unitario
+                            </label>
+
+                            {{ detalle.costo_unitario }}
+
+                            {% for error in detalle.costo_unitario.errors %}
+                                <p class="error-campo">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <div class="contenedor-eliminar-detalle">
+
+                            {% if detalle.instance.pk %}
+                                {{ detalle.DELETE }}
+
+                                <label for="{{ detalle.DELETE.id_for_label }}">
+                                    Eliminar
+                                </label>
+                            {% else %}
+                                <button
+                                    type="button"
+                                    class="boton-eliminar quitar-detalle"
+                                >
+                                    Quitar
+                                </button>
+                            {% endif %}
+
+                        </div>
+
+                        {% for error in detalle.non_field_errors %}
+                            <p class="error-campo error-detalle">
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <button
+                type="button"
+                id="agregar-detalle"
+                class="boton-secundario"
+            >
+                Agregar otro producto
+            </button>
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+                href="{% url 'compras:listar_compras' %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
+            <button
+                type="submit"
+                class="boton-principal"
+            >
+                {% if modo_edicion %}
+                    Guardar cambios
+                {% else %}
+                    Guardar compra
+                {% endif %}
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+<template id="plantilla-detalle">
+
+    <div class="fila-detalle-compra">
+
+        {% for campo_oculto in formulario_detalles.empty_form.hidden_fields %}
+            {{ campo_oculto }}
+        {% endfor %}
+
+        <div>
+            <label for="{{ formulario_detalles.empty_form.producto.id_for_label }}">
+                Producto
+            </label>
+
+            {{ formulario_detalles.empty_form.producto }}
+        </div>
+
+        <div>
+            <label for="{{ formulario_detalles.empty_form.cantidad.id_for_label }}">
+                Cantidad
+            </label>
+
+            {{ formulario_detalles.empty_form.cantidad }}
+        </div>
+
+        <div>
+            <label for="{{ formulario_detalles.empty_form.costo_unitario.id_for_label }}">
+                Costo unitario
+            </label>
+
+            {{ formulario_detalles.empty_form.costo_unitario }}
+        </div>
+
+        <div class="contenedor-eliminar-detalle">
+            <button
+                type="button"
+                class="boton-eliminar quitar-detalle"
+            >
+                Quitar
+            </button>
+        </div>
+
+    </div>
+
+</template>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const contenedor = document.getElementById("contenedor-detalles");
+        const botonAgregar = document.getElementById("agregar-detalle");
+        const totalFormularios = document.getElementById(
+            "id_detalles-TOTAL_FORMS"
+        );
+        const plantilla = document.getElementById("plantilla-detalle");
+
+        botonAgregar.addEventListener("click", function () {
+            const numeroFormulario = parseInt(
+                totalFormularios.value,
+                10
+            );
+
+            const contenido = plantilla.innerHTML.replaceAll(
+                "__prefix__",
+                numeroFormulario
+            );
+
+            contenedor.insertAdjacentHTML(
+                "beforeend",
+                contenido
+            );
+
+            totalFormularios.value = numeroFormulario + 1;
+        });
+
+        contenedor.addEventListener("click", function (evento) {
+            if (evento.target.classList.contains("quitar-detalle")) {
+                evento.target.closest(".fila-detalle-compra").remove();
+            }
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Panel del cliente | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <h2>Panel del cliente</h2>
+
+    <p>
+        Esta página está destinada a los usuarios
+        con el rol Cliente.
+    </p>
+
+    <p>
+        Desde este espacio se incorporarán el catálogo
+        de productos y el registro de pedidos o solicitudes.
+    </p>
+
+    <a href="{% url 'inicio' %}" class="boton-enlace">
+        Volver al inicio
+    </a>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Panel administrativo | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <h2>Panel administrativo</h2>
+
+    <p>
+        Esta página está disponible únicamente para usuarios
+        con el rol Administrador.
+    </p>
+
+    <p>
+        Desde este espacio se incorporarán progresivamente
+        las funciones de configuración, usuarios, productos,
+        compras, ventas, inventario, reportes y clasificación.
+    </p>
+
+    <a href="{% url 'inicio' %}" class="boton-enlace">
+        Volver al inicio
+    </a>
+
+</section>
+
+{% endblock %}

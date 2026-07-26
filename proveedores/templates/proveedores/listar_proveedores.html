@@ -1,0 +1,310 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Proveedores | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+    <div>
+        <h2>Proveedores registrados</h2>
+
+        <p>
+            Consulta de proveedores vinculados con la adquisición
+            de productos del recinto comercial.
+        </p>
+    </div>
+
+    {% if puede_gestionar_proveedores %}
+        <a
+            href="{% url 'proveedores:registrar_proveedor' %}"
+            class="boton-enlace"
+        >
+            Registrar proveedor
+        </a>
+    {% endif %}
+
+</div>
+<form
+    method="get"
+    action="{% url 'proveedores:listar_proveedores' %}"
+    class="formulario-busqueda"
+>
+    <div class="grupo-busqueda">
+
+        <label for="id_busqueda" class="etiqueta-busqueda">
+            Buscar proveedor
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            id="id_busqueda"
+            value="{{ busqueda }}"
+            class="campo-busqueda"
+            placeholder="Razón social, NIT, contacto, teléfono o correo"
+        >
+
+    </div>
+
+    <div class="grupo-filtro">
+
+        <label for="id_estado" class="etiqueta-busqueda">
+            Estado
+        </label>
+
+        <select
+            name="estado"
+            id="id_estado"
+            class="campo-filtro"
+        >
+            <option
+                value=""
+                {% if not filtro_estado %}selected{% endif %}
+            >
+                Todos
+            </option>
+
+            <option
+                value="activo"
+                {% if filtro_estado == "activo" %}selected{% endif %}
+            >
+                Activos
+            </option>
+
+            <option
+                value="inactivo"
+                {% if filtro_estado == "inactivo" %}selected{% endif %}
+            >
+                Inactivos
+            </option>
+        </select>
+
+    </div>
+
+    <div class="acciones-busqueda">
+
+        <button
+            type="submit"
+            class="boton-principal"
+        >
+            Buscar
+        </button>
+
+        {% if busqueda or filtro_estado %}
+            <a
+                href="{% url 'proveedores:listar_proveedores' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+        {% endif %}
+
+    </div>
+</form>
+
+{% if busqueda or filtro_estado %}
+    <p class="resultado-busqueda">
+
+        {% if busqueda %}
+            Búsqueda:
+            <strong>{{ busqueda }}</strong>
+        {% endif %}
+
+        {% if busqueda and filtro_estado %}
+            |
+        {% endif %}
+
+        {% if filtro_estado %}
+            Estado:
+            <strong>{{ filtro_estado|title }}</strong>
+        {% endif %}
+
+    </p>
+{% endif %}
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Razón social</th>
+                    <th>NIT</th>
+                    <th>Persona de contacto</th>
+                    <th>Teléfono</th>
+                    <th>Correo electrónico</th>
+                    <th>Estado</th>
+
+                    {% if puede_gestionar_proveedores %}
+                    <th>Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for proveedor in proveedores %}
+
+                    <tr>
+
+                        <td>
+                            {{ proveedor.razon_social }}
+                        </td>
+
+                        <td>
+                            {{ proveedor.nit }}
+                        </td>
+
+                        <td>
+                            {{ proveedor.persona_contacto|default:"No especificada" }}
+                        </td>
+
+                        <td>
+                            {{ proveedor.telefono|default:"No especificado" }}
+                        </td>
+
+                        <td>
+                            {{ proveedor.correo|default:"No especificado" }}
+                        </td>
+
+                        <td>
+                            {% if proveedor.estado %}
+                                <span class="etiqueta-activo">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="etiqueta-inactivo">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </td>
+                        {% if puede_gestionar_proveedores %}
+    <td>
+        <div class="acciones-tabla">
+
+            <a
+                href="{% url 'proveedores:modificar_proveedor' proveedor.id %}"
+                class="boton-tabla"
+            >
+                Modificar
+            </a>
+
+            <form
+                method="post"
+                action="{% url 'proveedores:cambiar_estado_proveedor' proveedor.id %}"
+                class="formulario-estado-producto"
+            >
+                {% csrf_token %}
+
+                {% if proveedor.estado %}
+                    <button
+                        type="submit"
+                        class="boton-desactivar"
+                        onclick="return confirm('¿Está seguro de desactivar este proveedor?');"
+                    >
+                        Desactivar
+                    </button>
+                {% else %}
+                    <button
+                        type="submit"
+                        class="boton-activar"
+                        onclick="return confirm('¿Está seguro de activar este proveedor?');"
+                    >
+                        Activar
+                    </button>
+                {% endif %}
+
+            </form>
+
+        </div>
+    </td>
+{% endif %}
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td
+            colspan="{% if puede_gestionar_proveedores %}7{% else %}6{% endif %}"
+            class="tabla-vacia">
+                            No existen proveedores registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+{% if pagina_proveedores.has_other_pages %}
+
+    <nav
+        class="paginacion"
+        aria-label="Paginación de proveedores"
+    >
+
+        <div class="informacion-paginacion">
+            Página {{ pagina_proveedores.number }}
+            de {{ pagina_proveedores.paginator.num_pages }}
+        </div>
+
+        <div class="controles-paginacion">
+
+            {% if pagina_proveedores.has_previous %}
+                <a
+                    href="?page={{ pagina_proveedores.previous_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Anterior
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% for numero in pagina_proveedores.paginator.page_range %}
+
+                {% if numero == pagina_proveedores.number %}
+                    <span class="numero-pagina activo">
+                        {{ numero }}
+                    </span>
+
+                {% elif numero >= pagina_proveedores.number|add:"-2" and numero <= pagina_proveedores.number|add:"2" %}
+                    <a
+                        href="?page={{ numero }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                        class="numero-pagina"
+                    >
+                        {{ numero }}
+                    </a>
+                {% endif %}
+
+            {% endfor %}
+
+            {% if pagina_proveedores.has_next %}
+                <a
+                    href="?page={{ pagina_proveedores.next_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Siguiente
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Siguiente
+                </span>
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+{% endif %}
+</section>
+
+{% endblock %}

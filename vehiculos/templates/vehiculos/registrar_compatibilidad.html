@@ -1,0 +1,129 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+    {% if modo_edicion %}
+        Modificar compatibilidad | FABRI-CAR
+    {% else %}
+        Registrar compatibilidad | FABRI-CAR
+    {% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+
+        <div>
+        {% if modo_edicion %}
+
+    <h2>Modificar compatibilidad</h2>
+
+    <p>
+        Actualice la relación entre el producto y el vehículo.
+    </p>
+
+{% else %}
+
+    <h2>Registrar compatibilidad</h2>
+
+    <p>
+        Relacione un producto con el vehículo en el que
+        puede ser utilizado.
+    </p>
+
+{% endif %}
+        </div>
+
+    </div>
+
+    {% if formulario.non_field_errors %}
+        <div class="mensaje-error">
+            {% for error in formulario.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        class="formulario-producto"
+        novalidate
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Información de compatibilidad</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label for="{{ formulario.producto.id_for_label }}">
+                        Producto
+                    </label>
+
+                    {{ formulario.producto }}
+
+                    {% for error in formulario.producto.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.vehiculo.id_for_label }}">
+                        Vehículo
+                    </label>
+
+                    {{ formulario.vehiculo }}
+
+                    {% for error in formulario.vehiculo.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="campo-completo">
+
+                <label for="{{ formulario.observaciones.id_for_label }}">
+                    Observaciones
+                </label>
+
+                {{ formulario.observaciones }}
+
+                {% for error in formulario.observaciones.errors %}
+                    <p class="error-campo">{{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+                href="{% url 'vehiculos:listar_compatibilidades' %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
+
+            <button
+            type="submit"
+            class="boton-principal"
+        >
+            {% if modo_edicion %}
+                Guardar cambios
+            {% else %}
+                Guardar compatibilidad
+            {% endif %}
+        </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

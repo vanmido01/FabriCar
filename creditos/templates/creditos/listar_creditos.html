@@ -1,0 +1,314 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Créditos | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+        <div>
+            <h2>Créditos y cuentas por cobrar</h2>
+
+            <p>
+                Consulta de ventas a crédito, saldos pendientes
+                y fechas de vencimiento.
+            </p>
+        </div>
+
+    </div>
+
+    <form
+        method="get"
+        class="formulario-filtros"
+    >
+
+        <div class="grupo-filtro">
+
+            <label for="busqueda">
+                Buscar
+            </label>
+
+            <input
+                type="search"
+                id="busqueda"
+                name="q"
+                value="{{ busqueda }}"
+                class="campo-formulario"
+                placeholder="Cliente, documento o comprobante"
+            >
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="estado">
+                Estado
+            </label>
+
+            <select
+                id="estado"
+                name="estado"
+                class="campo-formulario"
+            >
+                <option value="">
+                    Todos los estados
+                </option>
+
+                {% for valor, nombre in estados_credito %}
+                    <option
+                        value="{{ valor }}"
+                        {% if filtro_estado == valor %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+
+        </div>
+
+        <div class="grupo-filtro">
+
+            <label for="vencimiento">
+                Vencimiento
+            </label>
+
+            <select
+                id="vencimiento"
+                name="vencimiento"
+                class="campo-formulario"
+            >
+                <option value="">
+                    Todos
+                </option>
+
+                <option
+                    value="VIGENTE"
+                    {% if filtro_vencimiento == "VIGENTE" %}
+                        selected
+                    {% endif %}
+                >
+                    Vigentes
+                </option>
+
+                <option
+                    value="VENCIDO"
+                    {% if filtro_vencimiento == "VENCIDO" %}
+                        selected
+                    {% endif %}
+                >
+                    Vencidos
+                </option>
+            </select>
+
+        </div>
+
+        <div class="acciones-filtros">
+
+            <button
+                type="submit"
+                class="boton-enlace"
+            >
+                Buscar
+            </button>
+
+            <a
+                href="{% url 'creditos:listar_creditos' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+
+        </div>
+
+    </form>
+
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>N.º</th>
+                    <th>Venta</th>
+                    <th>Cliente</th>
+                    <th>Fecha de inicio</th>
+                    <th>Vencimiento</th>
+                    <th>Monto total</th>
+                    <th>Saldo pendiente</th>
+                    <th>Estado</th>
+                    <th>Situación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for credito in creditos %}
+
+                    <tr>
+
+                        <td>
+                            {{ credito.id }}
+                        </td>
+
+                        <td>
+                            <a
+                                href="{% url 'ventas:detalle_venta' credito.venta.id %}"
+                                class="enlace-referencia"
+                            >
+                                Venta N.º {{ credito.venta.id }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {{ credito.venta.cliente.nombre }}
+                        </td>
+
+                        <td>
+                            {{ credito.fecha_inicio|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {{ credito.fecha_vencimiento|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            Bs {{ credito.monto_total }}
+                        </td>
+
+                        <td>
+                            Bs {{ credito.saldo_pendiente }}
+                        </td>
+
+                        <td>
+
+                            {% if credito.estado == "PENDIENTE" %}
+
+                                <span class="etiqueta-borrador">
+                                    Pendiente
+                                </span>
+
+                            {% elif credito.estado == "PARCIAL" %}
+
+                                <span class="etiqueta-parcial">
+                                    Pago parcial
+                                </span>
+
+                            {% elif credito.estado == "PAGADO" %}
+
+                                <span class="etiqueta-confirmada">
+                                    Pagado
+                                </span>
+
+                            {% else %}
+
+                                <span class="etiqueta-anulada">
+                                    Anulado
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if credito.estado == "PAGADO" %}
+
+                                <span class="etiqueta-confirmada">
+                                    Cancelado
+                                </span>
+
+                            {% elif credito.estado == "ANULADO" %}
+
+                                <span class="etiqueta-anulada">
+                                    Sin vigencia
+                                </span>
+
+                            {% elif credito.esta_vencido %}
+
+                                <span class="etiqueta-anulada">
+                                    Vencido
+                                </span>
+
+                            {% else %}
+
+                                <span class="etiqueta-vigente">
+                                    Vigente
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+                        <td>
+                            <a
+                                href="{% url 'creditos:detalle_credito' credito.id %}"
+                                class="boton-accion"
+                            >
+                                Ver detalle
+                            </a>
+                        </td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td
+                            colspan="10"
+                            class="tabla-vacia"
+                        >
+                            No se encontraron créditos registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% if pagina_creditos.has_other_pages %}
+
+        <nav class="paginacion">
+
+            {% if pagina_creditos.has_previous %}
+
+                <a
+                    href="?pagina={{ pagina_creditos.previous_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}&vencimiento={{ filtro_vencimiento }}"
+                    class="enlace-paginacion"
+                >
+                    Anterior
+                </a>
+
+            {% endif %}
+
+            <span class="informacion-paginacion">
+                Página {{ pagina_creditos.number }}
+                de {{ pagina_creditos.paginator.num_pages }}
+            </span>
+
+            {% if pagina_creditos.has_next %}
+
+                <a
+                    href="?pagina={{ pagina_creditos.next_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}&vencimiento={{ filtro_vencimiento }}"
+                    class="enlace-paginacion"
+                >
+                    Siguiente
+                </a>
+
+            {% endif %}
+
+        </nav>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

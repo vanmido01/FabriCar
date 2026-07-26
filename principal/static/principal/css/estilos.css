@@ -1,0 +1,1662 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f4f6f8;
+    color: #222222;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.5;
+}
+
+.encabezado {
+    background-color: #1f2937;
+    color: #ffffff;
+    padding: 20px 40px;
+}
+
+.encabezado h1 {
+    font-size: 26px;
+}
+
+.contenido-principal {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.presentacion {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 35px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.presentacion h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.presentacion p {
+    margin-bottom: 12px;
+    color: #4b5563;
+}
+
+.encabezado-contenido {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.barra-navegacion {
+    display: flex;
+    gap: 20px;
+}
+
+.barra-navegacion a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.barra-navegacion a:hover {
+    text-decoration: underline;
+}
+
+.pie-pagina {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #e5e7eb;
+    color: #4b5563;
+    text-align: center;
+    font-size: 14px;
+}
+
+@media (max-width: 700px) {
+    .encabezado-contenido {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .barra-navegacion {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+.contenedor-acceso {
+    min-height: 65vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tarjeta-acceso {
+    width: 100%;
+    max-width: 430px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 35px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.10);
+}
+
+.encabezado-acceso {
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.encabezado-acceso h2 {
+    margin-bottom: 8px;
+    font-size: 26px;
+}
+
+.encabezado-acceso p {
+    color: #4b5563;
+}
+
+.formulario-acceso {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.grupo-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.grupo-campo label {
+    font-weight: bold;
+    color: #374151;
+}
+
+.grupo-campo input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.grupo-campo input:focus {
+    border-color: #1f2937;
+    outline: 2px solid rgba(31, 41, 55, 0.15);
+}
+
+.boton-principal {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #1f2937;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.boton-principal:hover {
+    background-color: #374151;
+}
+
+.mensaje-error {
+    margin-bottom: 18px;
+    padding: 12px;
+    border: 1px solid #ef4444;
+    border-radius: 5px;
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.usuario-actual {
+    color: #d1d5db;
+    font-weight: bold;
+}
+
+.formulario-salir {
+    display: inline;
+}
+
+.boton-salir {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.boton-salir:hover {
+    text-decoration: underline;
+}
+
+.etiqueta-rol {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background-color: #e5e7eb;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.boton-enlace {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 18px;
+    border-radius: 5px;
+    background-color: #1f2937;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.boton-enlace:hover {
+    background-color: #374151;
+}
+
+
+.encabezado-formulario {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.encabezado-formulario h2 {
+    margin-bottom: 6px;
+}
+
+.encabezado-formulario p {
+    color: #4b5563;
+}
+
+.formulario-producto {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.seccion-formulario {
+    padding: 22px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background-color: #f9fafb;
+}
+
+.seccion-formulario legend {
+    padding: 0 10px;
+    color: #1f2937;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.cuadricula-formulario {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.campo-completo {
+    margin-top: 18px;
+}
+
+.campo-formulario {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #1f2937;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.campo-formulario:focus {
+    border-color: #1f2937;
+    outline: 2px solid rgba(31, 41, 55, 0.12);
+}
+
+textarea.campo-formulario {
+    resize: vertical;
+}
+
+.campo-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.grupo-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 18px;
+}
+
+.grupo-checkbox label {
+    font-weight: bold;
+    color: #374151;
+    cursor: pointer;
+}
+
+.acciones-formulario {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.boton-secundario {
+    display: inline-block;
+    padding: 11px 18px;
+    border: 1px solid #9ca3af;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #374151;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.boton-secundario:hover {
+    background-color: #f3f4f6;
+}
+
+.mensaje-exito {
+    margin-bottom: 20px;
+    padding: 13px 15px;
+    border: 1px solid #22c55e;
+    border-radius: 5px;
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.error-campo {
+    color: #b91c1c;
+    font-size: 13px;
+}
+
+@media (max-width: 750px) {
+    .cuadricula-formulario {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-formulario {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .acciones-formulario a,
+    .acciones-formulario button {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.encabezado-listado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.encabezado-listado h2 {
+    margin-bottom: 6px;
+}
+
+.encabezado-listado p {
+    color: #4b5563;
+}
+
+.contenedor-tabla {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-datos {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+}
+
+.tabla-datos th,
+.tabla-datos td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.tabla-datos th {
+    background-color: #1f2937;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.tabla-datos tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.imagen-producto-lista {
+    width: 55px;
+    height: 55px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.sin-imagen {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.etiqueta-stock-normal,
+.etiqueta-stock-bajo,
+.etiqueta-activo,
+.etiqueta-inactivo {
+    display: inline-block;
+    min-width: 55px;
+    padding: 5px 9px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.etiqueta-stock-normal {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.etiqueta-stock-bajo {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.etiqueta-activo {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.etiqueta-inactivo {
+    background-color: #e5e7eb;
+    color: #4b5563;
+}
+
+.tabla-vacia {
+    padding: 30px;
+    color: #6b7280;
+    text-align: center !important;
+}
+
+@media (max-width: 750px) {
+    .encabezado-listado {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+.boton-tabla {
+    display: inline-block;
+    padding: 7px 11px;
+    border-radius: 4px;
+    background-color: #1f2937;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.boton-tabla:hover {
+    background-color: #374151;
+}
+
+.formulario-busqueda {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 18px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background-color: #f9fafb;
+}
+
+.grupo-busqueda {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.etiqueta-busqueda {
+    color: #374151;
+    font-weight: bold;
+}
+
+.campo-busqueda {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background-color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.campo-busqueda:focus {
+    border-color: #1f2937;
+    outline: 2px solid rgba(31, 41, 55, 0.12);
+}
+
+.acciones-busqueda {
+    display: flex;
+    gap: 10px;
+}
+
+.resultado-busqueda {
+    margin-bottom: 15px;
+    color: #4b5563;
+}
+
+@media (max-width: 750px) {
+    .formulario-busqueda {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .acciones-busqueda {
+        flex-direction: column;
+    }
+
+    .acciones-busqueda button,
+    .acciones-busqueda a {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.acciones-tabla {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.boton-tabla-secundario {
+    display: inline-block;
+    padding: 7px 11px;
+    border: 1px solid #9ca3af;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #374151;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.boton-tabla-secundario:hover {
+    background-color: #f3f4f6;
+}
+
+.encabezado-detalle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.encabezado-detalle h2 {
+    margin-bottom: 6px;
+}
+
+.encabezado-detalle p {
+    color: #4b5563;
+}
+
+.acciones-detalle {
+    display: flex;
+    gap: 10px;
+}
+
+.tarjeta-detalle-producto {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+    padding: 25px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.contenedor-imagen-detalle {
+    width: 100%;
+}
+
+.imagen-producto-detalle,
+.imagen-no-disponible {
+    width: 100%;
+    height: 300px;
+    border-radius: 7px;
+}
+
+.imagen-producto-detalle {
+    object-fit: cover;
+}
+
+.imagen-no-disponible {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #9ca3af;
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.titulo-producto-detalle {
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.titulo-producto-detalle h3 {
+    margin: 7px 0 12px;
+    font-size: 25px;
+    color: #1f2937;
+}
+
+.codigo-producto {
+    color: #6b7280;
+    font-weight: bold;
+}
+
+.cuadricula-detalle {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.dato-detalle {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.titulo-dato {
+    color: #4b5563;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.descripcion-detalle {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.descripcion-detalle p {
+    margin-top: 8px;
+    color: #374151;
+    line-height: 1.6;
+}
+
+@media (max-width: 850px) {
+    .tarjeta-detalle-producto {
+        grid-template-columns: 1fr;
+    }
+
+    .imagen-producto-detalle,
+    .imagen-no-disponible {
+        height: 260px;
+    }
+}
+
+@media (max-width: 750px) {
+    .encabezado-detalle {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .acciones-detalle {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .acciones-detalle a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .cuadricula-detalle {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-tabla {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+.formulario-estado-producto {
+    margin: 0;
+}
+
+.boton-desactivar,
+.boton-activar {
+    padding: 7px 11px;
+    border: none;
+    border-radius: 4px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.boton-desactivar {
+    background-color: #b91c1c;
+}
+
+.boton-desactivar:hover {
+    background-color: #991b1b;
+}
+
+.boton-activar {
+    background-color: #15803d;
+}
+
+.boton-activar:hover {
+    background-color: #166534;
+}
+
+.grupo-filtro {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 180px;
+}
+
+.campo-filtro {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #1f2937;
+    font-family: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.campo-filtro:focus {
+    border-color: #1f2937;
+    outline: 2px solid rgba(31, 41, 55, 0.12);
+}
+
+@media (max-width: 750px) {
+    .grupo-filtro {
+        width: 100%;
+    }
+}
+
+.paginacion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.informacion-paginacion {
+    color: #4b5563;
+    font-size: 14px;
+}
+
+.controles-paginacion {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.boton-paginacion,
+.numero-pagina {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #374151;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.boton-paginacion:hover,
+.numero-pagina:hover {
+    background-color: #f3f4f6;
+}
+
+.numero-pagina.activo {
+    border-color: #1f2937;
+    background-color: #1f2937;
+    color: #ffffff;
+}
+
+.boton-paginacion.deshabilitado {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+@media (max-width: 750px) {
+    .paginacion {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .informacion-paginacion {
+        text-align: center;
+    }
+
+    .controles-paginacion {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+.seccion-compatibilidades {
+    margin-top: 30px;
+    padding: 25px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.encabezado-compatibilidades {
+    margin-bottom: 20px;
+}
+
+.encabezado-compatibilidades h3 {
+    margin-bottom: 6px;
+    color: #1f2937;
+    font-size: 21px;
+}
+
+.encabezado-compatibilidades p {
+    color: #4b5563;
+}
+
+.formulario-eliminar {
+    margin: 0;
+}
+
+.boton-eliminar {
+    padding: 7px 11px;
+    border: none;
+    border-radius: 4px;
+    background-color: #b91c1c;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.boton-eliminar:hover {
+    background-color: #7f1d1d;
+}
+
+.etiqueta-borrador,
+.etiqueta-confirmada,
+.etiqueta-anulada {
+    display: inline-block;
+    min-width: 85px;
+    padding: 5px 9px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.etiqueta-borrador {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.etiqueta-confirmada {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.etiqueta-anulada {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.fila-detalle-compra {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    align-items: end;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 18px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: #ffffff;
+}
+
+.contenedor-eliminar-detalle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 42px;
+}
+
+.error-detalle {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 850px) {
+    .fila-detalle-compra {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .contenedor-eliminar-detalle {
+        justify-content: flex-end;
+    }
+}
+
+.tarjeta-informacion-compra,
+.seccion-detalles-compra {
+    padding: 25px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.seccion-detalles-compra {
+    margin-top: 30px;
+}
+
+.fila-total-compra td {
+    padding: 15px 12px;
+    border-top: 2px solid #1f2937;
+    background-color: #f3f4f6;
+    color: #1f2937;
+    font-weight: bold;
+}
+
+.fila-total-compra td:first-child {
+    text-align: right;
+}
+
+.etiqueta-entrada,
+.etiqueta-salida,
+.etiqueta-ajuste-entrada,
+.etiqueta-ajuste-salida {
+    display: inline-block;
+    min-width: 125px;
+    padding: 5px 9px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.etiqueta-entrada {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.etiqueta-salida {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.etiqueta-ajuste-entrada {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.etiqueta-ajuste-salida {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.formulario-confirmacion {
+    margin: 0;
+}
+
+.boton-confirmar {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #15803d;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.boton-confirmar:hover {
+    background-color: #166534;
+}
+
+.formulario-anulacion {
+    margin: 0;
+}
+
+.boton-anular {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #b91c1c;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.boton-anular:hover {
+    background-color: #991b1b;
+}
+
+/* Botón para ver detalles en las tablas */
+.boton-accion {
+    display: inline-block;
+    padding: 7px 12px;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #2563eb;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.boton-accion:hover {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+
+.boton-accion {
+    display: inline-block;
+    padding: 7px 12px;
+    border: 1px solid #2563eb;
+    border-radius: 6px;
+    background-color: #2563eb;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.boton-accion:hover {
+    background-color: #1d4ed8;
+    color: #ffffff;
+}
+
+/* Columna de acciones únicamente en la lista de ventas */
+.tabla-ventas th:last-child,
+.tabla-ventas td:last-child {
+    position: sticky;
+    right: 0;
+    min-width: 120px;
+    text-align: center;
+    z-index: 2;
+}
+
+.tabla-ventas tbody td:last-child {
+    background-color: #ffffff;
+}
+
+.tabla-ventas thead th:last-child {
+    background-color: #1f2937;
+    color: #ffffff;
+    z-index: 3;
+}
+
+/* Total del detalle de venta */
+.tabla-datos tfoot th {
+    padding: 15px 16px;
+    border-top: 2px solid #cbd5e1;
+    background-color: #eef2f7;
+    color: #111827;
+    font-weight: 700;
+}
+
+.tabla-datos tfoot th:first-child {
+    text-align: right;
+}
+
+.tabla-datos tfoot th:last-child {
+    position: static;
+    min-width: auto;
+    background-color: #eef2f7;
+    color: #111827;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Botones del encabezado del detalle de venta */
+.acciones-detalle-venta {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.acciones-detalle-venta .boton-enlace,
+.acciones-detalle-venta .boton-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 115px;
+    height: 42px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    margin: 0;
+    line-height: 1;
+    text-decoration: none;
+}
+
+.formulario-accion-inline {
+    display: inline-flex;
+    margin: 0;
+}
+
+
+.boton-confirmar-venta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 130px;
+    height: 42px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: #15803d;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.boton-confirmar-venta:hover {
+    background-color: #166534;
+}
+
+/* Botón para anular una venta */
+.boton-anular-venta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 125px;
+    height: 42px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: #b91c1c;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.boton-anular-venta:hover {
+    background-color: #991b1b;
+}
+
+/* Formulario de búsqueda y filtros */
+.formulario-filtros {
+    display: grid;
+    grid-template-columns:
+        minmax(240px, 1.8fr)
+        minmax(180px, 0.9fr)
+        minmax(180px, 0.9fr)
+        auto;
+    align-items: end;
+    gap: 12px;
+    margin: 26px 0 18px;
+    padding: 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #f8fafc;
+}
+
+.formulario-filtros select {
+    padding-right: 36px;
+}
+
+.grupo-filtro {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.grupo-filtro label {
+    margin: 0;
+    color: #1f2937;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.grupo-filtro .campo-formulario {
+    width: 100%;
+    height: 38px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.acciones-filtros {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.acciones-filtros .boton-enlace,
+.acciones-filtros .boton-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    min-width: 82px;
+    padding: 0 15px;
+    margin: 0;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 900px) {
+    .formulario-filtros {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .grupo-filtro:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .formulario-filtros {
+        grid-template-columns: 1fr;
+    }
+
+    .grupo-filtro:first-child {
+        grid-column: auto;
+    }
+
+    .acciones-filtros {
+        justify-content: flex-start;
+    }
+}
+
+/* Enlaces de compras y ventas relacionadas con inventario */
+.enlace-referencia {
+    color: #1d4ed8;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.enlace-referencia:hover {
+    text-decoration: underline;
+}
+
+/* Panel principal de reportes */
+.panel-indicadores {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin: 26px 0;
+}
+
+.tarjeta-indicador {
+    display: flex;
+    flex-direction: column;
+    min-height: 185px;
+    padding: 20px;
+    border: 1px solid #dbe2ea;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
+}
+
+.encabezado-indicador {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.icono-indicador {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    border-radius: 50%;
+    background-color: #e8eef7;
+    color: #1e3a5f;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.valor-indicador {
+    display: block;
+    margin: 20px 0 8px;
+    color: #172033;
+    font-size: 1.65rem;
+    line-height: 1.2;
+}
+
+.tarjeta-indicador p {
+    flex-grow: 1;
+    margin: 0 0 18px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.enlace-indicador {
+    color: #1d4ed8;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.enlace-indicador:hover {
+    text-decoration: underline;
+}
+
+/* Accesos a reportes */
+.opciones-reportes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.opcion-reporte {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
+    border: 1px solid #d4dce6;
+    border-radius: 7px;
+    background-color: #f8fafc;
+    color: #1f2937;
+    text-decoration: none;
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.opcion-reporte:hover {
+    border-color: #2563eb;
+    background-color: #eff6ff;
+    transform: translateY(-2px);
+}
+
+.opcion-reporte strong {
+    color: #172033;
+    font-size: 1rem;
+}
+
+.opcion-reporte span {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+@media (max-width: 1050px) {
+    .panel-indicadores {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .panel-indicadores,
+    .opciones-reportes {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Filtros del reporte de ventas */
+.formulario-filtros-reporte-ventas {
+    grid-template-columns:
+        minmax(230px, 1.5fr)
+        minmax(145px, 0.8fr)
+        minmax(145px, 0.8fr)
+        minmax(175px, 0.9fr)
+        minmax(175px, 0.9fr)
+        auto;
+}
+
+.formulario-filtros-reporte-ventas select {
+    padding-right: 36px;
+}
+
+/* Resumen del reporte de ventas */
+.resumen-reporte {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 0 0 20px;
+}
+
+.dato-resumen-reporte {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 20px;
+    border: 1px solid #d7dee8;
+    border-radius: 7px;
+    background-color: #f8fafc;
+}
+
+.dato-resumen-reporte span {
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.dato-resumen-reporte strong {
+    color: #172033;
+    font-size: 1.15rem;
+    white-space: nowrap;
+}
+
+/* Adaptación del reporte de ventas */
+@media (max-width: 1150px) {
+    .formulario-filtros-reporte-ventas {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .formulario-filtros-reporte-ventas .grupo-filtro:first-child {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 760px) {
+    .formulario-filtros-reporte-ventas {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formulario-filtros-reporte-ventas .grupo-filtro:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .formulario-filtros-reporte-ventas,
+    .resumen-reporte {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-filtros-reporte-ventas .grupo-filtro:first-child {
+        grid-column: auto;
+    }
+}
+
+/* Filtros del reporte de compras */
+.formulario-filtros-reporte-compras {
+    grid-template-columns:
+        minmax(190px, 1.45fr)
+        minmax(120px, 0.85fr)
+        minmax(120px, 0.85fr)
+        minmax(145px, 1fr)
+        auto;
+    gap: 10px;
+}
+
+.formulario-filtros-reporte-compras .acciones-filtros {
+    gap: 6px;
+    min-width: 0;
+}
+
+.formulario-filtros-reporte-compras .acciones-filtros .boton-enlace,
+.formulario-filtros-reporte-compras .acciones-filtros .boton-secundario {
+    min-width: 0;
+    padding: 0 12px;
+}
+
+.formulario-filtros-reporte-compras select {
+    padding-right: 36px;
+}
+
+/* Adaptación del reporte de compras */
+@media (max-width: 1050px) {
+    .formulario-filtros-reporte-compras {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formulario-filtros-reporte-compras .grupo-filtro:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .formulario-filtros-reporte-compras {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-filtros-reporte-compras .grupo-filtro:first-child {
+        grid-column: auto;
+    }
+}
+
+/* Filtros del reporte de productos con bajo stock */
+.formulario-filtros-bajo-stock {
+    grid-template-columns:
+        minmax(300px, 2fr)
+        minmax(210px, 1fr)
+        auto;
+    gap: 12px;
+}
+
+.formulario-filtros-bajo-stock select {
+    padding-right: 36px;
+}
+
+/* Resumen de productos con bajo stock */
+.resumen-bajo-stock {
+    grid-template-columns: repeat(3, minmax(200px, 1fr));
+}
+
+/* Adaptación para pantallas medianas */
+@media (max-width: 850px) {
+    .formulario-filtros-bajo-stock {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .formulario-filtros-bajo-stock .acciones-filtros {
+        grid-column: 1 / -1;
+    }
+
+    .resumen-bajo-stock {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Adaptación para celulares */
+@media (max-width: 600px) {
+    .formulario-filtros-bajo-stock,
+    .resumen-bajo-stock {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-filtros-bajo-stock .acciones-filtros {
+        grid-column: auto;
+    }
+}
+
+/* Filtros del reporte de créditos */
+.formulario-filtros-reporte-creditos {
+    grid-template-columns:
+        minmax(280px, 2fr)
+        minmax(180px, 1fr)
+        auto;
+    gap: 12px;
+}
+
+/* Resumen del reporte de créditos */
+.resumen-reporte-creditos {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+}
+
+/* Etiquetas de estado de créditos */
+.etiqueta-estado {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.credito-pendiente {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.credito-pagado {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.credito-vencido {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.credito-anulado {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+@media (max-width: 800px) {
+    .formulario-filtros-reporte-creditos {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .formulario-filtros-reporte-creditos .acciones-filtros {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .formulario-filtros-reporte-creditos,
+    .resumen-reporte-creditos {
+        grid-template-columns: 1fr;
+    }
+
+    .formulario-filtros-reporte-creditos .acciones-filtros {
+        grid-column: auto;
+    }
+}
+
+/* Estado pago parcial del reporte de créditos */
+.credito-pago_parcial,
+.credito-pago-parcial,
+.credito-parcial {
+    background-color: #cfe2ff;
+    color: #084298;
+}

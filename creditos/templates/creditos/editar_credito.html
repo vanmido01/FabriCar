@@ -1,0 +1,173 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Editar crédito | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+
+        <div>
+            <h2>Editar crédito N.º {{ credito.id }}</h2>
+
+            <p>
+                Modifique la fecha de vencimiento y las
+                observaciones de la cuenta por cobrar.
+            </p>
+        </div>
+
+    </div>
+
+    <fieldset class="seccion-formulario">
+
+        <legend>Información del crédito</legend>
+
+        <div class="cuadricula-formulario">
+
+            <div>
+                <strong>Cliente</strong>
+
+                <p>
+                    {{ credito.venta.cliente.nombre }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Venta relacionada</strong>
+
+                <p>
+                    <a
+                        href="{% url 'ventas:detalle_venta' credito.venta.id %}"
+                        class="enlace-referencia"
+                    >
+                        Venta N.º {{ credito.venta.id }}
+                    </a>
+                </p>
+            </div>
+
+            <div>
+                <strong>Monto total</strong>
+
+                <p>
+                    Bs {{ credito.monto_total }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Saldo pendiente</strong>
+
+                <p>
+                    <strong>
+                        Bs {{ credito.saldo_pendiente }}
+                    </strong>
+                </p>
+            </div>
+
+            <div>
+                <strong>Fecha de inicio</strong>
+
+                <p>
+                    {{ credito.fecha_inicio|date:"d/m/Y" }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Estado</strong>
+
+                <p>
+                    {{ credito.get_estado_display }}
+                </p>
+            </div>
+
+        </div>
+
+    </fieldset>
+
+    {% if formulario.non_field_errors %}
+
+        <div class="mensaje-error">
+
+            {% for error in formulario.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+    <form
+        method="post"
+        class="formulario-producto"
+        novalidate
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Condiciones del crédito</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label
+                        for="{{ formulario.fecha_vencimiento.id_for_label }}"
+                    >
+                        Fecha de vencimiento
+                    </label>
+
+                    {{ formulario.fecha_vencimiento }}
+
+                    {% for error in formulario.fecha_vencimiento.errors %}
+                        <p class="error-campo">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="campo-completo">
+
+                <label for="{{ formulario.observaciones.id_for_label }}">
+                    Observaciones
+                </label>
+
+                {{ formulario.observaciones }}
+
+                {% for error in formulario.observaciones.errors %}
+                    <p class="error-campo">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+
+            </div>
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+                href="{% url 'creditos:detalle_credito' credito.id %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="boton-principal"
+                onclick="return confirm('¿Está seguro de guardar los cambios del crédito?');"
+            >
+                Guardar cambios
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

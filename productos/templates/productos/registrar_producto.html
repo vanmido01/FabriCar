@@ -1,0 +1,291 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+    {% if modo_edicion %}
+        Modificar producto | FABRI-CAR
+    {% else %}
+        Registrar producto | FABRI-CAR
+    {% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+        <div>
+            {% if modo_edicion %}
+    <h2>Modificar producto</h2>
+
+    <p>
+        Actualice la información del repuesto
+        {{ producto.codigo }}.
+    </p>
+{% else %}
+    <h2>Registrar producto</h2>
+
+    <p>
+        Complete la información del repuesto automotriz.
+    </p>
+{% endif %}
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mensaje-exito">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if formulario.non_field_errors %}
+        <div class="mensaje-error">
+            {% for error in formulario.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        enctype="multipart/form-data"
+        class="formulario-producto"
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Información general</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.codigo.id_for_label }}">
+                        Código
+                    </label>
+
+                    {{ formulario.codigo }}
+
+                    {% for error in formulario.codigo.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.nombre.id_for_label }}">
+                        Nombre
+                    </label>
+
+                    {{ formulario.nombre }}
+
+                    {% for error in formulario.nombre.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.tipo.id_for_label }}">
+                        Tipo de repuesto
+                    </label>
+
+                    {{ formulario.tipo }}
+
+                    {% for error in formulario.tipo.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.condicion.id_for_label }}">
+                        Condición
+                    </label>
+
+                    {{ formulario.condicion }}
+
+                    {% for error in formulario.condicion.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.marca.id_for_label }}">
+                        Marca
+                    </label>
+
+                    {{ formulario.marca }}
+
+                    {% for error in formulario.marca.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.procedencia.id_for_label }}">
+                        Procedencia
+                    </label>
+
+                    {{ formulario.procedencia }}
+
+                    {% for error in formulario.procedencia.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="grupo-campo campo-completo">
+                <label for="{{ formulario.descripcion.id_for_label }}">
+                    Descripción
+                </label>
+
+                {{ formulario.descripcion }}
+
+                {% for error in formulario.descripcion.errors %}
+                    <span class="error-campo">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+        </fieldset>
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Precios e inventario</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.precio_compra.id_for_label }}">
+                        Precio de compra
+                    </label>
+
+                    {{ formulario.precio_compra }}
+
+                    {% for error in formulario.precio_compra.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.precio_venta.id_for_label }}">
+                        Precio de venta
+                    </label>
+
+                    {{ formulario.precio_venta }}
+
+                    {% for error in formulario.precio_venta.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.stock_actual.id_for_label }}">
+                        Stock actual
+                    </label>
+
+                    {{ formulario.stock_actual }}
+
+                    {% for error in formulario.stock_actual.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <div class="grupo-campo">
+                    <label for="{{ formulario.stock_minimo.id_for_label }}">
+                        Stock mínimo
+                    </label>
+
+                    {{ formulario.stock_minimo }}
+
+                    {% for error in formulario.stock_minimo.errors %}
+                        <span class="error-campo">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+        </fieldset>
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Imagen y estado</legend>
+
+            <div class="grupo-campo">
+                <label for="{{ formulario.imagen.id_for_label }}">
+                    Imagen del producto
+                </label>
+
+                {{ formulario.imagen }}
+
+                {% for error in formulario.imagen.errors %}
+                    <span class="error-campo">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+            <div class="grupo-checkbox">
+                {{ formulario.estado }}
+
+                <label for="{{ formulario.estado.id_for_label }}">
+                    Producto activo
+                </label>
+
+                {% for error in formulario.estado.errors %}
+                    <span class="error-campo">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+    href="{% url 'productos:listar_productos' %}"
+    class="boton-secundario"
+>
+    Cancelar
+</a>
+
+            <button
+    type="submit"
+    class="boton-principal"
+>
+    {% if modo_edicion %}
+        Guardar cambios
+    {% else %}
+        Guardar producto
+    {% endif %}
+</button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

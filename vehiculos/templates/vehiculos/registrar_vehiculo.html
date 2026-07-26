@@ -1,0 +1,160 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+    {% if modo_edicion %}
+        Modificar vehículo | FABRI-CAR
+    {% else %}
+        Registrar vehículo | FABRI-CAR
+    {% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+        <div>
+            {% if modo_edicion %}
+
+    <h2>Modificar vehículo</h2>
+
+    <p>
+        Actualice la información del vehículo
+        {{ vehiculo.marca }} {{ vehiculo.modelo }}.
+    </p>
+
+{% else %}
+
+    <h2>Registrar vehículo</h2>
+
+    <p>
+        Complete los datos del vehículo para establecer
+        compatibilidades con los productos.
+    </p>
+
+{% endif %}
+        </div>
+    </div>
+
+    {% if formulario.non_field_errors %}
+        <div class="mensaje-error">
+            {{ formulario.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        class="formulario-producto"
+        novalidate
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Información del vehículo</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label for="{{ formulario.marca.id_for_label }}">
+                        Marca
+                    </label>
+
+                    {{ formulario.marca }}
+
+                    {% for error in formulario.marca.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.modelo.id_for_label }}">
+                        Modelo
+                    </label>
+
+                    {{ formulario.modelo }}
+
+                    {% for error in formulario.modelo.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.anio_desde.id_for_label }}">
+                        Año desde
+                    </label>
+
+                    {{ formulario.anio_desde }}
+
+                    {% for error in formulario.anio_desde.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.anio_hasta.id_for_label }}">
+                        Año hasta
+                    </label>
+
+                    {{ formulario.anio_hasta }}
+
+                    {% for error in formulario.anio_hasta.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.motor.id_for_label }}">
+                        Motor
+                    </label>
+
+                    {{ formulario.motor }}
+
+                    {% for error in formulario.motor.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="grupo-checkbox">
+                {{ formulario.estado }}
+
+                <label for="{{ formulario.estado.id_for_label }}">
+                    Vehículo activo
+                </label>
+            </div>
+
+            {% for error in formulario.estado.errors %}
+                <p class="error-campo">{{ error }}</p>
+            {% endfor %}
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+                href="{% url 'vehiculos:listar_vehiculos' %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
+
+            <button
+    type="submit"
+    class="boton-principal"
+>
+    {% if modo_edicion %}
+        Guardar cambios
+    {% else %}
+        Guardar vehículo
+    {% endif %}
+</button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

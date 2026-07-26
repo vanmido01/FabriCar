@@ -1,0 +1,180 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+    {% if modo_edicion %}
+        Modificar cliente | FABRI-CAR
+    {% else %}
+        Registrar cliente | FABRI-CAR
+    {% endif %}
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-formulario">
+
+        <div>
+        {% if modo_edicion %}
+
+    <h2>Modificar cliente</h2>
+
+    <p>
+        Actualice la información del cliente
+        {{ cliente.nombre }}.
+    </p>
+
+        {% else %}
+
+    <h2>Registrar cliente</h2>
+
+    <p>
+        Complete la información del cliente particular,
+        taller mecánico o institución.
+    </p>
+
+        {% endif %}
+        </div>
+
+    </div>
+
+    {% if formulario.non_field_errors %}
+        <div class="mensaje-error">
+            {% for error in formulario.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form
+        method="post"
+        class="formulario-producto"
+        novalidate
+    >
+        {% csrf_token %}
+
+        <fieldset class="seccion-formulario">
+
+            <legend>Información del cliente</legend>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label for="{{ formulario.tipo_cliente.id_for_label }}">
+                        Tipo de cliente
+                    </label>
+
+                    {{ formulario.tipo_cliente }}
+
+                    {% for error in formulario.tipo_cliente.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.nombre.id_for_label }}">
+                        Nombre o razón social
+                    </label>
+
+                    {{ formulario.nombre }}
+
+                    {% for error in formulario.nombre.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.documento.id_for_label }}">
+                        Documento de identidad o NIT
+                    </label>
+
+                    {{ formulario.documento }}
+
+                    {% for error in formulario.documento.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.telefono.id_for_label }}">
+                        Teléfono
+                    </label>
+
+                    {{ formulario.telefono }}
+
+                    {% for error in formulario.telefono.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ formulario.correo.id_for_label }}">
+                        Correo electrónico
+                    </label>
+
+                    {{ formulario.correo }}
+
+                    {% for error in formulario.correo.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+            <div class="campo-completo">
+
+                <label for="{{ formulario.direccion.id_for_label }}">
+                    Dirección
+                </label>
+
+                {{ formulario.direccion }}
+
+                {% for error in formulario.direccion.errors %}
+                    <p class="error-campo">{{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+            <div class="grupo-checkbox">
+
+                {{ formulario.estado }}
+
+                <label for="{{ formulario.estado.id_for_label }}">
+                    Cliente activo
+                </label>
+
+            </div>
+
+            {% for error in formulario.estado.errors %}
+                <p class="error-campo">{{ error }}</p>
+            {% endfor %}
+
+        </fieldset>
+
+        <div class="acciones-formulario">
+
+            <a
+                href="{% url 'clientes:listar_clientes' %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
+
+            <button
+                type="submit"
+                class="boton-principal"
+            >
+                {% if modo_edicion %}
+                    Guardar cambios
+                {% else %}
+                    Guardar cliente
+                {% endif %}
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Detalle de venta | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+        <div>
+            <h2>Detalle de la venta N.º {{ venta.id }}</h2>
+
+            <p>
+                Información general y productos registrados
+                en la operación comercial.
+            </p>
+        </div>
+
+        <div class="acciones-detalle-venta">
+
+            {% if venta.estado == "BORRADOR" %}
+
+                <a
+                    href="{% url 'ventas:editar_venta' venta.id %}"
+                    class="boton-enlace"
+                >
+                    Editar venta
+                </a>
+
+                <form
+                    method="post"
+                    action="{% url 'ventas:confirmar_venta' venta.id %}"
+                    class="formulario-accion-inline"
+                    onsubmit="return confirm('¿Está seguro de confirmar esta venta? El stock será descontado.');"
+                >
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="boton-confirmar-venta"
+                    >
+                        Confirmar venta
+                    </button>
+                </form>
+
+            {% endif %}
+            {% if credito_relacionado %}
+
+                <a
+                    href="{% url 'creditos:detalle_credito' credito_relacionado.id %}"
+                    class="boton-enlace"
+                >
+                    Ver crédito
+                </a>
+
+            {% endif %}
+            
+            {% if venta.estado != "ANULADA" %}
+
+                <form
+                    method="post"
+                    action="{% url 'ventas:anular_venta' venta.id %}"
+                    class="formulario-accion-inline"
+                    onsubmit="return confirm('¿Está seguro de anular esta venta? Si está confirmada, los productos serán devueltos al inventario.');"
+                >
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="boton-anular-venta"
+                    >
+                        Anular venta
+                    </button>
+                </form>
+
+            {% endif %}
+
+            <a
+                href="{% url 'ventas:listar_ventas' %}"
+                class="boton-secundario"
+            >
+                Volver a ventas
+            </a>
+
+        </div>
+
+    </div>
+
+    <fieldset class="seccion-formulario">
+
+        <legend>Información de la venta</legend>
+
+        <div class="cuadricula-formulario">
+
+            <div>
+                <strong>Cliente</strong>
+                <p>{{ venta.cliente.nombre }}</p>
+            </div>
+
+            <div>
+                <strong>Documento</strong>
+                <p>
+                    {{ venta.cliente.documento|default:"No registrado" }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Fecha de venta</strong>
+                <p>{{ venta.fecha_venta|date:"d/m/Y" }}</p>
+            </div>
+
+            <div>
+                <strong>Tipo de comprobante</strong>
+                <p>{{ venta.get_tipo_comprobante_display }}</p>
+            </div>
+
+            <div>
+                <strong>Número de comprobante</strong>
+                <p>
+                    {{ venta.numero_comprobante|default:"Sin número" }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Forma de pago</strong>
+                <p>{{ venta.get_forma_pago_display }}</p>
+            </div>
+
+            <div>
+                <strong>Estado</strong>
+
+                <p>
+                    {% if venta.estado == "BORRADOR" %}
+                        <span class="etiqueta-borrador">
+                            Borrador
+                        </span>
+
+                    {% elif venta.estado == "CONFIRMADA" %}
+                        <span class="etiqueta-confirmada">
+                            Confirmada
+                        </span>
+
+                    {% else %}
+                        <span class="etiqueta-anulada">
+                            Anulada
+                        </span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <div>
+                <strong>Registrado por</strong>
+                <p>
+                    {% if venta.usuario_registro %}
+                        {{ venta.usuario_registro.username }}
+                    {% else %}
+                        No registrado
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+
+        <div class="campo-completo">
+
+            <strong>Observaciones</strong>
+
+            <p>
+                {{ venta.observaciones|default:"Sin observaciones" }}
+            </p>
+
+        </div>
+
+    </fieldset>
+
+    <fieldset class="seccion-formulario">
+
+        <legend>Productos vendidos</legend>
+
+        <div class="contenedor-tabla">
+
+            <table class="tabla-datos">
+
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for detalle in venta.detalles.all %}
+
+                        <tr>
+                            <td>{{ detalle.producto.codigo }}</td>
+
+                            <td>{{ detalle.producto.nombre }}</td>
+
+                            <td>{{ detalle.cantidad }}</td>
+
+                            <td>
+                                Bs {{ detalle.precio_unitario }}
+                            </td>
+
+                            <td>
+                                Bs {{ detalle.subtotal }}
+                            </td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="tabla-vacia">
+                                La venta no contiene productos.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+                <tfoot>
+                    <tr>
+                        <th colspan="4">
+                            Total de la venta
+                        </th>
+
+                        <th>
+                            Bs {{ venta.total }}
+                        </th>
+                    </tr>
+                </tfoot>
+
+            </table>
+
+        </div>
+
+    </fieldset>
+
+</section>
+
+{% endblock %}

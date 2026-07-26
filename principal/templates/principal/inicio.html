@@ -1,0 +1,32 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Inicio | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <h2>Panel principal</h2>
+
+    <p>
+        Bienvenido al sistema web FABRI-CAR,
+        <strong>{{ user.username }}</strong>.
+    </p>
+
+    <p>
+        Rol asignado:
+        <span class="etiqueta-rol">
+            {{ rol_usuario }}
+        </span>
+    </p>
+
+    <p>
+        Desde este panel se accederá a las funciones
+        autorizadas para cada tipo de usuario.
+    </p>
+
+</section>
+
+{% endblock %}

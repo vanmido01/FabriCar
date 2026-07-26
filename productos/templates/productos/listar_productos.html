@@ -1,0 +1,338 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Productos | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+    <div>
+        <h2>Productos registrados</h2>
+
+        <p>
+            Consulta de repuestos almacenados en el sistema.
+        </p>
+    </div>
+
+    {% if puede_gestionar_productos %}
+        <a
+            href="{% url 'productos:registrar_producto' %}"
+            class="boton-enlace"
+        >
+            Registrar producto
+        </a>
+    {% endif %}
+</div>
+
+<form
+    method="get"
+    action="{% url 'productos:listar_productos' %}"
+    class="formulario-busqueda"
+>
+    <div class="grupo-busqueda">
+
+        <label for="id_busqueda" class="etiqueta-busqueda">
+            Buscar producto
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            id="id_busqueda"
+            value="{{ busqueda }}"
+            class="campo-busqueda"
+            placeholder="Código, nombre o marca"
+        >
+
+    </div>
+
+    <div class="grupo-filtro">
+
+        <label for="id_estado" class="etiqueta-busqueda">
+            Estado
+        </label>
+
+        <select
+            name="estado"
+            id="id_estado"
+            class="campo-filtro"
+        >
+            <option
+                value=""
+                {% if not filtro_estado %}selected{% endif %}
+            >
+                Todos
+            </option>
+
+            <option
+                value="activo"
+                {% if filtro_estado == "activo" %}selected{% endif %}
+            >
+                Activos
+            </option>
+
+            <option
+                value="inactivo"
+                {% if filtro_estado == "inactivo" %}selected{% endif %}
+            >
+                Inactivos
+            </option>
+        </select>
+
+    </div>
+
+    <div class="acciones-busqueda">
+
+        <button type="submit" class="boton-principal">
+            Buscar
+        </button>
+
+        {% if busqueda or filtro_estado %}
+            <a
+                href="{% url 'productos:listar_productos' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+        {% endif %}
+
+    </div>
+</form>
+
+{% if busqueda or filtro_estado %}
+    <p class="resultado-busqueda">
+
+        {% if busqueda %}
+            Búsqueda:
+            <strong>{{ busqueda }}</strong>
+        {% endif %}
+
+        {% if busqueda and filtro_estado %}
+            |
+        {% endif %}
+
+        {% if filtro_estado %}
+            Estado:
+            <strong>{{ filtro_estado|title }}</strong>
+        {% endif %}
+
+    </p>
+{% endif %}
+
+<div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Marca</th>
+                    <th>Precio de venta</th>
+                    <th>Stock</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for producto in productos %}
+
+                    <tr>
+
+                        <td>
+                            {% if producto.imagen %}
+                                <img
+                                    src="{{ producto.imagen.url }}"
+                                    alt="{{ producto.nombre }}"
+                                    class="imagen-producto-lista"
+                                >
+                            {% else %}
+                                <span class="sin-imagen">
+                                    Sin imagen
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ producto.codigo }}
+                        </td>
+
+                        <td>
+                            {{ producto.nombre }}
+                        </td>
+
+                        <td>
+                            {{ producto.get_tipo_display }}
+                        </td>
+
+                        <td>
+                            {{ producto.marca|default:"Sin marca" }}
+                        </td>
+
+                        <td>
+                            Bs {{ producto.precio_venta }}
+                        </td>
+
+                        <td>
+                            {% if producto.stock_actual <= producto.stock_minimo %}
+                                <span class="etiqueta-stock-bajo">
+                                    {{ producto.stock_actual }}
+                                </span>
+                            {% else %}
+                                <span class="etiqueta-stock-normal">
+                                    {{ producto.stock_actual }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if producto.estado %}
+                                <span class="etiqueta-activo">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="etiqueta-inactivo">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </td>
+<td>
+    <div class="acciones-tabla">
+
+        <a
+            href="{% url 'productos:detalle_producto' producto.id %}"
+            class="boton-tabla-secundario"
+        >
+            Ver detalle
+        </a>
+
+        {% if puede_gestionar_productos %}
+
+            <a
+                href="{% url 'productos:modificar_producto' producto.id %}"
+                class="boton-tabla"
+            >
+                Modificar
+            </a>
+
+            <form
+                method="post"
+                action="{% url 'productos:cambiar_estado_producto' producto.id %}"
+                class="formulario-estado-producto"
+            >
+                {% csrf_token %}
+
+                {% if producto.estado %}
+                    <button
+                        type="submit"
+                        class="boton-desactivar"
+                        onclick="return confirm('¿Está seguro de desactivar este producto?');"
+                    >
+                        Desactivar
+                    </button>
+                {% else %}
+                    <button
+                        type="submit"
+                        class="boton-activar"
+                        onclick="return confirm('¿Está seguro de activar este producto?');"
+                    >
+                        Activar
+                    </button>
+                {% endif %}
+            </form>
+
+        {% endif %}
+
+    </div>
+</td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td
+    colspan="9"
+    class="tabla-vacia"
+>
+                            No existen productos registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+    {% if pagina_productos.has_other_pages %}
+
+    <nav class="paginacion" aria-label="Paginación de productos">
+
+        <div class="informacion-paginacion">
+            Página {{ pagina_productos.number }}
+            de {{ pagina_productos.paginator.num_pages }}
+        </div>
+
+        <div class="controles-paginacion">
+
+            {% if pagina_productos.has_previous %}
+                <a
+                    href="?page={{ pagina_productos.previous_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Anterior
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% for numero in pagina_productos.paginator.page_range %}
+
+                {% if numero == pagina_productos.number %}
+                    <span class="numero-pagina activo">
+                        {{ numero }}
+                    </span>
+
+                {% elif numero >= pagina_productos.number|add:"-2" and numero <= pagina_productos.number|add:"2" %}
+                    <a
+                        href="?page={{ numero }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                        class="numero-pagina"
+                    >
+                        {{ numero }}
+                    </a>
+                {% endif %}
+
+            {% endfor %}
+
+            {% if pagina_productos.has_next %}
+                <a
+                    href="?page={{ pagina_productos.next_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Siguiente
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Siguiente
+                </span>
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+{% endif %}
+
+</section>
+
+{% endblock %}

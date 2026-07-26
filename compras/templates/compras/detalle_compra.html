@@ -1,0 +1,244 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Detalle de compra | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-detalle">
+
+        <div>
+            <h2>Detalle de la compra N.º {{ compra.id }}</h2>
+
+            <p>
+                Información general y productos incluidos
+                en la adquisición.
+            </p>
+        </div>
+
+        <div class="acciones-detalle">
+
+            <a
+                href="{% url 'compras:listar_compras' %}"
+                class="boton-secundario"
+            >
+                Volver a compras
+            </a>
+
+            {% if puede_gestionar_compras %}
+
+                {% if compra.estado == "BORRADOR" %}
+
+                    <a
+                        href="{% url 'compras:modificar_compra' compra.id %}"
+                        class="boton-principal"
+                    >
+                        Modificar compra
+                    </a>
+
+                    <form
+                        method="post"
+                        action="{% url 'compras:confirmar_compra' compra.id %}"
+                        class="formulario-confirmacion"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="boton-confirmar"
+                            onclick="return confirm('¿Está seguro de confirmar esta compra? El inventario aumentará y la compra ya no podrá modificarse.');"
+                        >
+                            Confirmar compra
+                        </button>
+                    </form>
+
+                {% endif %}
+
+                {% if compra.estado == "BORRADOR" or compra.estado == "CONFIRMADA" %}
+
+                    <form
+                        method="post"
+                        action="{% url 'compras:anular_compra' compra.id %}"
+                        class="formulario-anulacion"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="boton-anular"
+                            onclick="return confirm('¿Está seguro de anular esta compra? Si está confirmada, las cantidades serán descontadas del inventario.');"
+                        >
+                            Anular compra
+                        </button>
+                    </form>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="tarjeta-informacion-compra">
+
+        <div class="cuadricula-detalle">
+
+            <div class="dato-detalle">
+                <span class="titulo-dato">Proveedor</span>
+                <span>{{ compra.proveedor.razon_social }}</span>
+            </div>
+
+            <div class="dato-detalle">
+                <span class="titulo-dato">NIT del proveedor</span>
+                <span>{{ compra.proveedor.nit }}</span>
+            </div>
+
+            <div class="dato-detalle">
+                <span class="titulo-dato">Fecha de compra</span>
+                <span>{{ compra.fecha_compra|date:"d/m/Y" }}</span>
+            </div>
+
+            <div class="dato-detalle">
+                <span class="titulo-dato">Tipo de comprobante</span>
+                <span>{{ compra.get_tipo_comprobante_display }}</span>
+            </div>
+
+            <div class="dato-detalle">
+                <span class="titulo-dato">Número de comprobante</span>
+                <span>
+                    {{ compra.numero_comprobante|default:"Sin número" }}
+                </span>
+            </div>
+
+            <div class="dato-detalle">
+                <span class="titulo-dato">Estado</span>
+
+                {% if compra.estado == "BORRADOR" %}
+                    <span class="etiqueta-borrador">
+                        Borrador
+                    </span>
+
+                {% elif compra.estado == "CONFIRMADA" %}
+                    <span class="etiqueta-confirmada">
+                        Confirmada
+                    </span>
+
+                {% else %}
+                    <span class="etiqueta-anulada">
+                        Anulada
+                    </span>
+                {% endif %}
+            </div>
+
+            <div class="dato-detalle">
+                <span class="titulo-dato">Registrado por</span>
+
+                <span>
+                    {% if compra.usuario_registro %}
+                        {{ compra.usuario_registro.username }}
+                    {% else %}
+                        No registrado
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="dato-detalle">
+                <span class="titulo-dato">Fecha de registro</span>
+                <span>
+                    {{ compra.fecha_registro|date:"d/m/Y H:i" }}
+                </span>
+            </div>
+
+        </div>
+
+        <div class="descripcion-detalle">
+
+            <span class="titulo-dato">Observaciones</span>
+
+            <p>
+                {{ compra.observaciones|default:"Sin observaciones registradas." }}
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="seccion-detalles-compra">
+
+        <div class="encabezado-compatibilidades">
+
+            <h3>Productos adquiridos</h3>
+
+            <p>
+                Detalle de cantidades, costos unitarios y subtotales.
+            </p>
+
+        </div>
+
+        <div class="contenedor-tabla">
+
+            <table class="tabla-datos">
+
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Costo unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for detalle in detalles %}
+
+                        <tr>
+                            <td>{{ detalle.producto.codigo }}</td>
+
+                            <td>{{ detalle.producto.nombre }}</td>
+
+                            <td>{{ detalle.cantidad }}</td>
+
+                            <td>Bs {{ detalle.costo_unitario }}</td>
+
+                            <td>Bs {{ detalle.subtotal }}</td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5" class="tabla-vacia">
+                                La compra no tiene productos registrados.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+                <tfoot>
+                    <tr class="fila-total-compra">
+                        <td colspan="4">
+                            Total de la compra
+                        </td>
+
+                        <td>
+                            Bs {{ compra.total }}
+                        </td>
+                    </tr>
+                </tfoot>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

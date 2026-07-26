@@ -1,0 +1,308 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Compras | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+        <div class="encabezado-listado">
+
+            <div>
+                <h2>Compras registradas</h2>
+
+                <p>
+                    Consulta de adquisiciones realizadas a los proveedores.
+                </p>
+            </div>
+
+            {% if puede_gestionar_compras %}
+                <a
+                    href="{% url 'compras:registrar_compra' %}"
+                    class="boton-enlace"
+                >
+                    Registrar compra
+                </a>
+            {% endif %}
+
+        </div>
+<form
+    method="get"
+    action="{% url 'compras:listar_compras' %}"
+    class="formulario-busqueda"
+>
+    <div class="grupo-busqueda">
+
+        <label for="id_busqueda" class="etiqueta-busqueda">
+            Buscar compra
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            id="id_busqueda"
+            value="{{ busqueda }}"
+            class="campo-busqueda"
+            placeholder="Proveedor, NIT o número de comprobante"
+        >
+
+    </div>
+
+    <div class="grupo-filtro">
+
+        <label for="id_estado" class="etiqueta-busqueda">
+            Estado
+        </label>
+
+        <select
+            name="estado"
+            id="id_estado"
+            class="campo-filtro"
+        >
+            <option
+                value=""
+                {% if not filtro_estado %}selected{% endif %}
+            >
+                Todos
+            </option>
+
+            <option
+                value="BORRADOR"
+                {% if filtro_estado == "BORRADOR" %}selected{% endif %}
+            >
+                Borrador
+            </option>
+
+            <option
+                value="CONFIRMADA"
+                {% if filtro_estado == "CONFIRMADA" %}selected{% endif %}
+            >
+                Confirmada
+            </option>
+
+            <option
+                value="ANULADA"
+                {% if filtro_estado == "ANULADA" %}selected{% endif %}
+            >
+                Anulada
+            </option>
+        </select>
+
+    </div>
+
+    <div class="acciones-busqueda">
+
+        <button
+            type="submit"
+            class="boton-principal"
+        >
+            Buscar
+        </button>
+
+        {% if busqueda or filtro_estado %}
+            <a
+                href="{% url 'compras:listar_compras' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+        {% endif %}
+
+    </div>
+</form>
+{% if busqueda or filtro_estado %}
+
+    <p class="resultado-busqueda">
+
+        {% if busqueda %}
+            Búsqueda:
+            <strong>{{ busqueda }}</strong>
+        {% endif %}
+
+        {% if busqueda and filtro_estado %}
+            |
+        {% endif %}
+
+        {% if filtro_estado %}
+            Estado:
+            <strong>
+                {% if filtro_estado == "BORRADOR" %}
+                    Borrador
+                {% elif filtro_estado == "CONFIRMADA" %}
+                    Confirmada
+                {% elif filtro_estado == "ANULADA" %}
+                    Anulada
+                {% endif %}
+            </strong>
+        {% endif %}
+
+    </p>
+
+{% endif %}
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>N.º</th>
+                    <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Comprobante</th>
+                    <th>Número</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th>Registrado por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for compra in compras %}
+
+                    <tr>
+
+                        <td>
+                            {{ compra.id }}
+                        </td>
+
+                        <td>
+                            {{ compra.fecha_compra|date:"d/m/Y" }}
+                        </td>
+
+                        <td>
+                            {{ compra.proveedor.razon_social }}
+                        </td>
+
+                        <td>
+                            {{ compra.get_tipo_comprobante_display }}
+                        </td>
+
+                        <td>
+                            {{ compra.numero_comprobante|default:"Sin número" }}
+                        </td>
+
+                        <td>
+                            {% if compra.estado == "BORRADOR" %}
+                                <span class="etiqueta-borrador">
+                                    Borrador
+                                </span>
+
+                            {% elif compra.estado == "CONFIRMADA" %}
+                                <span class="etiqueta-confirmada">
+                                    Confirmada
+                                </span>
+
+                            {% else %}
+                                <span class="etiqueta-anulada">
+                                    Anulada
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            Bs {{ compra.total }}
+                        </td>
+
+                        <td>
+                            {% if compra.usuario_registro %}
+                                {{ compra.usuario_registro.username }}
+                            {% else %}
+                                No registrado
+                            {% endif %}
+                        </td>
+                            <td>
+                                <a
+                                    href="{% url 'compras:detalle_compra' compra.id %}"
+                                    class="boton-tabla-secundario"
+                                >
+                                    Ver detalle
+                                </a>
+                            </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="9" class="tabla-vacia">
+                            No existen compras registradas.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+{% if pagina_compras.has_other_pages %}
+
+    <nav
+        class="paginacion"
+        aria-label="Paginación de compras"
+    >
+
+        <div class="informacion-paginacion">
+            Página {{ pagina_compras.number }}
+            de {{ pagina_compras.paginator.num_pages }}
+        </div>
+
+        <div class="controles-paginacion">
+
+            {% if pagina_compras.has_previous %}
+                <a
+                    href="?page={{ pagina_compras.previous_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Anterior
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% for numero in pagina_compras.paginator.page_range %}
+
+                {% if numero == pagina_compras.number %}
+                    <span class="numero-pagina activo">
+                        {{ numero }}
+                    </span>
+
+                {% elif numero >= pagina_compras.number|add:"-2" and numero <= pagina_compras.number|add:"2" %}
+                    <a
+                        href="?page={{ numero }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                        class="numero-pagina"
+                    >
+                        {{ numero }}
+                    </a>
+                {% endif %}
+
+            {% endfor %}
+
+            {% if pagina_compras.has_next %}
+                <a
+                    href="?page={{ pagina_compras.next_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Siguiente
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Siguiente
+                </span>
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+{% endif %}
+</section>
+
+{% endblock %}

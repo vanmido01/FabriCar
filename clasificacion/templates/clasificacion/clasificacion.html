@@ -1,0 +1,813 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Clasificación automática de repuestos | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+        <h2>Clasificación automática de repuestos</h2>
+
+        <p>
+            El sistema analiza las ventas confirmadas para identificar
+            los repuestos más vendidos y apoyar la reposición de inventario.
+        </p>
+    </div>
+
+    <div class="periodo-analizado">
+        <strong>{{ nombre_periodo }}</strong>
+
+        <span>
+            {{ fecha_inicio_analisis|date:"d/m/Y" }}
+            al
+            {{ fecha_fin_analisis|date:"d/m/Y" }}
+        </span>
+    </div>
+
+    {% if resumen %}
+
+        <div class="panel-indicadores">
+
+            <div class="tarjeta-indicador">
+                <h4>Unidades vendidas</h4>
+
+                <span class="valor-indicador">
+                    {{ resumen.total_unidades }}
+                </span>
+            </div>
+
+            <div class="tarjeta-indicador">
+                <h4>Repuestos diferentes</h4>
+
+                <span class="valor-indicador">
+                    {{ resumen.productos_diferentes }}
+                </span>
+            </div>
+
+            <div class="tarjeta-indicador">
+                <h4>Repuesto más vendido</h4>
+
+                <span class="valor-indicador">
+                    {% if resumen.producto_mas_vendido %}
+                        {{ resumen.producto_mas_vendido.producto.nombre }}
+                    {% else %}
+                        Sin ventas
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="tarjeta-indicador">
+                <h4>Productos para reponer</h4>
+
+                <span class="valor-indicador">
+                    {{ resumen.productos_para_reponer }}
+                </span>
+            </div>
+
+        </div>
+
+    {% endif %}
+
+    <div class="selector-periodo">
+
+        <h3>Período de análisis</h3>
+
+        <div class="botones-periodo">
+
+            <a
+                href="?periodo=semana"
+                class="boton-periodo
+                {% if periodo_seleccionado == 'semana' %}
+                    boton-periodo-activo
+                {% endif %}"
+            >
+                Esta semana
+            </a>
+
+            <a
+                href="?periodo=mes"
+                class="boton-periodo
+                {% if periodo_seleccionado == 'mes' %}
+                    boton-periodo-activo
+                {% endif %}"
+            >
+                Este mes
+            </a>
+
+            <a
+                href="?periodo=anio"
+                class="boton-periodo
+                {% if periodo_seleccionado == 'anio' %}
+                    boton-periodo-activo
+                {% endif %}"
+            >
+                Este año
+            </a>
+
+            <button
+                type="button"
+                class="boton-periodo
+                {% if periodo_seleccionado == 'personalizado' %}
+                    boton-periodo-activo
+                {% endif %}"
+                onclick="document.getElementById(
+                    'consulta-personalizada'
+                ).open = true;"
+            >
+                Personalizado
+            </button>
+
+        </div>
+
+    </div>
+
+    <details
+        id="consulta-personalizada"
+        class="consulta-personalizada"
+        {% if periodo_seleccionado == "personalizado" %}
+            open
+        {% endif %}
+>
+
+        <summary>
+            Elegir fechas personalizadas
+        </summary>
+
+        <form method="post" class="formulario-filtros">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="mensaje-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="grupo-filtro">
+                <label for="{{ form.nombre.id_for_label }}">
+                    Nombre del análisis
+                </label>
+
+                {{ form.nombre }}
+                {{ form.nombre.errors }}
+            </div>
+
+            <div class="grupo-filtro">
+                <label for="{{ form.fecha_inicio.id_for_label }}">
+                    Fecha de inicio
+                </label>
+
+                {{ form.fecha_inicio }}
+                {{ form.fecha_inicio.errors }}
+            </div>
+
+            <div class="grupo-filtro">
+                <label for="{{ form.fecha_fin.id_for_label }}">
+                    Fecha final
+                </label>
+
+                {{ form.fecha_fin }}
+                {{ form.fecha_fin.errors }}
+            </div>
+
+            <div style="display: none;">
+                {{ form.umbral_fast }}
+                {{ form.umbral_slow }}
+            </div>
+
+            <button type="submit" class="boton-principal">
+                Analizar ventas
+            </button>
+        </form>
+
+    </details>
+
+    <div class="panel-filtros-resultados">
+
+        <h3>Filtrar repuestos</h3>
+
+        <form method="get" class="formulario-filtros-resultados">
+
+            <input
+                type="hidden"
+                name="periodo"
+                value="{{ periodo_seleccionado }}"
+            >
+
+            <div class="grupo-filtro">
+                <label for="busqueda">
+                    Repuesto o código
+                </label>
+
+                <input
+                    type="text"
+                    id="busqueda"
+                    name="busqueda"
+                    value="{{ busqueda }}"
+                    placeholder="Ejemplo: pastilla de freno"
+                >
+            </div>
+
+            <div class="grupo-filtro">
+                <label for="marca">
+                    Marca
+                </label>
+
+                <select id="marca" name="marca">
+                    <option value="">
+                        Todas las marcas
+                    </option>
+
+                    {% for marca in marcas_disponibles %}
+                        <option
+                            value="{{ marca }}"
+                            {% if marca_seleccionada == marca %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ marca }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="grupo-filtro">
+                <label for="tipo">
+                    Tipo
+                </label>
+
+                <select id="tipo" name="tipo">
+                    <option value="">
+                        Todos los tipos
+                    </option>
+
+                    {% for valor, nombre in tipos_disponibles %}
+                        <option
+                            value="{{ valor }}"
+                            {% if tipo_seleccionado == valor %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="grupo-filtro">
+                <label for="condicion">
+                    Condición
+                </label>
+
+            <select id="condicion" name="condicion">
+                <option value="">
+                    Todas las condiciones
+                </option>
+
+                {% for valor, nombre in condiciones_disponibles %}
+                    <option
+                        value="{{ valor }}"
+                        {% if condicion_seleccionada == valor %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+            </div>
+
+
+        <div class="grupo-filtro">
+            <label for="categoria">
+                Nivel de salida
+            </label>
+
+            <select id="categoria" name="categoria">
+                <option value="">
+                    Todos los niveles
+                </option>
+
+                <option
+                    value="FAST"
+                    {% if categoria_seleccionada == "FAST" %}
+                        selected
+                    {% endif %}
+                >
+                    Muy vendido
+                </option>
+
+                <option
+                    value="SLOW"
+                    {% if categoria_seleccionada == "SLOW" %}
+                        selected
+                    {% endif %}
+                >
+                    Venta moderada
+                </option>
+
+                <option
+                    value="NON"
+                    {% if categoria_seleccionada == "NON" %}
+                        selected
+                    {% endif %}
+                >
+                    Poco vendido
+                </option>
+            </select>
+        </div>
+
+        <div class="grupo-filtro">
+            <label for="orden">
+                Ordenar resultados
+            </label>
+
+            <select id="orden" name="orden">
+
+                <option
+                    value="mas_vendidos"
+                    {% if orden_seleccionado == "mas_vendidos" %}
+                        selected
+                    {% endif %}
+                >
+                    Más vendidos
+                </option>
+
+                <option
+                    value="menos_vendidos"
+                    {% if orden_seleccionado == "menos_vendidos" %}
+                        selected
+                    {% endif %}
+                >
+                    Menos vendidos
+                </option>
+
+                <option
+                    value="mayor_stock"
+                    {% if orden_seleccionado == "mayor_stock" %}
+                        selected
+                    {% endif %}
+                >
+                    Mayor stock
+                </option>
+
+                <option
+                    value="menor_stock"
+                    {% if orden_seleccionado == "menor_stock" %}
+                        selected
+                    {% endif %}
+                >
+                    Menor stock
+                </option>
+
+                <option
+                    value="nombre"
+                    {% if orden_seleccionado == "nombre" %}
+                        selected
+                    {% endif %}
+                >
+                    Nombre A–Z
+                </option>
+
+                <option
+                    value="marca"
+                    {% if orden_seleccionado == "marca" %}
+                        selected
+                    {% endif %}
+                >
+                    Marca A–Z
+                </option>
+
+            </select>
+        </div>
+
+        <div class="grupo-filtro">
+            <label for="reposicion">
+                Estado de reposición
+            </label>
+
+            <select id="reposicion" name="reposicion">
+                <option value="">
+                    Todos los estados
+                </option>
+
+                <option
+                    value="urgente"
+                    {% if reposicion_seleccionada == "urgente" %}
+                        selected
+                    {% endif %}
+                >
+                    Comprar urgentemente
+                </option>
+
+                <option
+                    value="pronto"
+                    {% if reposicion_seleccionada == "pronto" %}
+                        selected
+                    {% endif %}
+                >
+                    Reponer pronto
+                </option>
+
+                <option
+                    value="suficiente"
+                    {% if reposicion_seleccionada == "suficiente" %}
+                        selected
+                    {% endif %}
+                >
+                    Stock suficiente
+                </option>
+
+                <option
+                    value="no_comprar"
+                    {% if reposicion_seleccionada == "no_comprar" %}
+                        selected
+                    {% endif %}
+                >
+                    No comprar por ahora
+                </option>
+            </select>
+        </div>
+
+            <div class="acciones-filtros">
+
+                <button
+                    type="submit"
+                    class="boton-principal"
+                >
+                    Aplicar filtros
+                </button>
+
+                <a
+                    href="?periodo={{ periodo_seleccionado }}"
+                    class="boton-secundario"
+                >
+                    Limpiar filtros
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="encabezado-ranking">
+        <h3>Repuestos vendidos en el período</h3>
+
+        <p>
+            La lista está ordenada desde el repuesto más vendido
+            hasta el menos vendido.
+        </p>
+    </div>
+
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Posición</th>
+                    <th>Código</th>
+                    <th>Repuesto</th>
+                    <th>Marca</th>
+                    <th>Tipo</th>
+                    <th>Condición</th>
+                    <th>Vendidos</th>
+                    <th>Stock actual</th>
+                    <th>Nivel de salida</th>
+                    <th>Recomendación</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for resultado in resultados %}
+
+                    <tr>
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+                            {{ resultado.producto.codigo }}
+                        </td>
+
+                        <td>
+                            {{ resultado.producto.nombre }}
+                        </td>
+
+                        <td>
+                            {{ resultado.producto.marca|default:"Sin marca" }}
+                        </td>
+
+                        <td>
+                            {{ resultado.producto.get_tipo_display }}
+                        </td>
+
+                        <td>
+                            {{ resultado.producto.get_condicion_display }}
+                        </td>
+
+                        <td>
+                            {{ resultado.frecuencia }}
+                        </td>
+
+                        <td>
+                            {{ resultado.producto.stock_actual }}
+                        </td>
+
+                        <td>
+                            {% if resultado.categoria == "FAST" %}
+                                <span class="etiqueta etiqueta-fast">
+                                    Muy vendido
+                                </span>
+
+                            {% elif resultado.categoria == "SLOW" %}
+                                <span class="etiqueta etiqueta-slow">
+                                    Venta moderada
+                                </span>
+
+                            {% else %}
+                                <span class="etiqueta etiqueta-non">
+                                    Poco vendido
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if resultado.categoria == "FAST" %}
+
+                                {% if resultado.producto.stock_actual <= resultado.producto.stock_minimo %}
+                                    <span class="etiqueta etiqueta-urgente">
+                                        Comprar urgentemente
+                                    </span>
+                                {% else %}
+                                    <span class="etiqueta etiqueta-mantener">
+                                        Mantener abastecido
+                                    </span>
+                                {% endif %}
+
+                            {% elif resultado.categoria == "SLOW" %}
+
+                                {% if resultado.producto.stock_actual <= resultado.producto.stock_minimo %}
+                                    <span class="etiqueta etiqueta-pronto">
+                                        Reponer pronto
+                                    </span>
+                                {% else %}
+                                    <span class="etiqueta etiqueta-mantener">
+                                        Mantener stock
+                                    </span>
+                                {% endif %}
+
+                            {% else %}
+
+                                {% if resultado.producto.stock_actual == 0 %}
+                                    <span class="etiqueta etiqueta-revisar">
+                                        Revisar antes de comprar
+                                    </span>
+                                {% else %}
+                                    <span class="etiqueta etiqueta-no-comprar">
+                                        No comprar por ahora
+                                    </span>
+                                {% endif %}
+
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="10">
+                            No existen ventas confirmadas en el período analizado.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+<style>
+    .periodo-analizado {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin: 20px 0;
+        padding: 16px 20px;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+        background: #f8f8f8;
+    }
+
+    .botones-periodo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 15px 0 25px;
+    }
+
+    .boton-periodo {
+        display: inline-block;
+        padding: 10px 18px;
+        border: 1px solid #444444;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #222222;
+        font: inherit;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .boton-periodo:hover {
+        background: #eeeeee;
+    }
+
+    .boton-periodo-activo {
+        background: #222222;
+        color: #ffffff;
+    }
+
+    .boton-periodo-activo:hover {
+        background: #222222;
+    }
+
+    .consulta-personalizada {
+        margin-bottom: 30px;
+        padding: 15px;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+    }
+
+    .consulta-personalizada summary {
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+<style>
+    .panel-filtros-resultados {
+        margin-top: 28px;
+        margin-bottom: 25px;
+        padding: 20px;
+        border: 1px solid #d9dee5;
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    .panel-filtros-resultados h3 {
+        margin-top: 0;
+        margin-bottom: 18px;
+    }
+
+    .formulario-filtros-resultados {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(150px, 1fr));
+        gap: 16px;
+        align-items: end;
+    }
+
+    .formulario-filtros-resultados .grupo-filtro {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .formulario-filtros-resultados label {
+        font-weight: 600;
+    }
+
+    .formulario-filtros-resultados input,
+    .formulario-filtros-resultados select {
+        width: 100%;
+        min-height: 40px;
+        padding: 8px 10px;
+        border: 1px solid #aeb7c2;
+        border-radius: 5px;
+        background: #ffffff;
+        box-sizing: border-box;
+    }
+
+    .acciones-filtros {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 4px;
+    }
+
+    .encabezado-ranking {
+        margin-top: 25px;
+        margin-bottom: 12px;
+    }
+
+    .encabezado-ranking h3 {
+        margin-bottom: 5px;
+    }
+
+    .contenedor-tabla {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .tabla-datos {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+    .tabla-datos th,
+    .tabla-datos td {
+        padding: 12px 10px;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid #dfe4ea;
+    }
+
+    .tabla-datos th {
+        white-space: nowrap;
+    }
+
+    .tabla-datos td:nth-child(1),
+    .tabla-datos td:nth-child(7),
+    .tabla-datos td:nth-child(8) {
+        text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+        .formulario-filtros-resultados {
+            grid-template-columns: repeat(2, minmax(180px, 1fr));
+        }
+    }
+
+    @media (max-width: 600px) {
+        .formulario-filtros-resultados {
+            grid-template-columns: 1fr;
+        }
+
+        .periodo-analizado {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    .etiqueta {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .etiqueta-fast {
+        color: #146c43;
+        background: #d1e7dd;
+    }
+
+    .etiqueta-slow {
+        color: #997404;
+        background: #fff3cd;
+    }
+
+    .etiqueta-non {
+        color: #555555;
+        background: #e9ecef;
+    }
+
+    .etiqueta-urgente {
+        color: #842029;
+        background: #f8d7da;
+        border: 1px solid #f1aeb5;
+    }
+
+    .etiqueta-pronto {
+        color: #984c0c;
+        background: #ffe5d0;
+    }
+
+    .etiqueta-mantener {
+        color: #055160;
+        background: #cff4fc;
+    }
+
+    .etiqueta-revisar {
+        color: #664d03;
+        background: #fff3cd;
+    }
+
+    .etiqueta-no-comprar {
+        color: #41464b;
+        background: #e2e3e5;
+    }
+</style>
+
+{% endblock %}

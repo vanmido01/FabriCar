@@ -1,0 +1,298 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Vehículos | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+    <div>
+        <h2>Vehículos registrados</h2>
+
+        <p>
+            Consulta de vehículos utilizados para establecer
+            la compatibilidad con los productos.
+        </p>
+    </div>
+
+    {% if puede_gestionar_vehiculos %}
+        <a
+            href="{% url 'vehiculos:registrar_vehiculo' %}"
+            class="boton-enlace"
+        >
+            Registrar vehículo
+        </a>
+    {% endif %}
+
+</div>
+
+<form
+    method="get"
+    action="{% url 'vehiculos:listar_vehiculos' %}"
+    class="formulario-busqueda"
+>
+    <div class="grupo-busqueda">
+
+        <label for="id_busqueda" class="etiqueta-busqueda">
+            Buscar vehículo
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            id="id_busqueda"
+            value="{{ busqueda }}"
+            class="campo-busqueda"
+            placeholder="Marca, modelo o motor"
+        >
+
+    </div>
+
+    <div class="grupo-filtro">
+
+        <label for="id_estado" class="etiqueta-busqueda">
+            Estado
+        </label>
+
+        <select
+            name="estado"
+            id="id_estado"
+            class="campo-filtro"
+        >
+            <option
+                value=""
+                {% if not filtro_estado %}selected{% endif %}
+            >
+                Todos
+            </option>
+
+            <option
+                value="activo"
+                {% if filtro_estado == "activo" %}selected{% endif %}
+            >
+                Activos
+            </option>
+
+            <option
+                value="inactivo"
+                {% if filtro_estado == "inactivo" %}selected{% endif %}
+            >
+                Inactivos
+            </option>
+        </select>
+
+    </div>
+
+    <div class="acciones-busqueda">
+
+        <button
+            type="submit"
+            class="boton-principal"
+        >
+            Buscar
+        </button>
+
+        {% if busqueda or filtro_estado %}
+            <a
+                href="{% url 'vehiculos:listar_vehiculos' %}"
+                class="boton-secundario"
+            >
+                Limpiar
+            </a>
+        {% endif %}
+
+    </div>
+</form>
+
+{% if busqueda or filtro_estado %}
+    <p class="resultado-busqueda">
+
+        {% if busqueda %}
+            Búsqueda:
+            <strong>{{ busqueda }}</strong>
+        {% endif %}
+
+        {% if busqueda and filtro_estado %}
+            |
+        {% endif %}
+
+        {% if filtro_estado %}
+            Estado:
+            <strong>{{ filtro_estado|title }}</strong>
+        {% endif %}
+
+    </p>
+{% endif %}
+
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Año desde</th>
+                    <th>Año hasta</th>
+                    <th>Motor</th>
+                    <th>Estado</th>
+                    {% if puede_gestionar_vehiculos %}
+    <th>Acciones</th>
+{% endif %}
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for vehiculo in vehiculos %}
+
+                    <tr>
+                        <td>{{ vehiculo.marca }}</td>
+
+                        <td>{{ vehiculo.modelo }}</td>
+
+                        <td>{{ vehiculo.anio_desde }}</td>
+
+                        <td>{{ vehiculo.anio_hasta }}</td>
+
+                        <td>
+                            {{ vehiculo.motor|default:"No especificado" }}
+                        </td>
+
+                        <td>
+                            {% if vehiculo.estado %}
+                                <span class="etiqueta-activo">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="etiqueta-inactivo">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </td>
+    {% if puede_gestionar_vehiculos %}
+    <td>
+        <div class="acciones-tabla">
+
+            <a
+                href="{% url 'vehiculos:modificar_vehiculo' vehiculo.id %}"
+                class="boton-tabla"
+            >
+                Modificar
+            </a>
+
+            <form
+                method="post"
+                action="{% url 'vehiculos:cambiar_estado_vehiculo' vehiculo.id %}"
+                class="formulario-estado-producto"
+            >
+                {% csrf_token %}
+
+                {% if vehiculo.estado %}
+                    <button
+                        type="submit"
+                        class="boton-desactivar"
+                        onclick="return confirm('¿Está seguro de desactivar este vehículo?');"
+                    >
+                        Desactivar
+                    </button>
+                {% else %}
+                    <button
+                        type="submit"
+                        class="boton-activar"
+                        onclick="return confirm('¿Está seguro de activar este vehículo?');"
+                    >
+                        Activar
+                    </button>
+                {% endif %}
+
+            </form>
+
+        </div>
+    </td>
+{% endif %}
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="{% if puede_gestionar_vehiculos %}7{% else %}6{% endif %}" 
+                            class="tabla-vacia">
+                            No existen vehículos registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+{% if pagina_vehiculos.has_other_pages %}
+
+    <nav class="paginacion" aria-label="Paginación de vehículos">
+
+        <div class="informacion-paginacion">
+            Página {{ pagina_vehiculos.number }}
+            de {{ pagina_vehiculos.paginator.num_pages }}
+        </div>
+
+        <div class="controles-paginacion">
+
+            {% if pagina_vehiculos.has_previous %}
+                <a
+                    href="?page={{ pagina_vehiculos.previous_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Anterior
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Anterior
+                </span>
+            {% endif %}
+
+            {% for numero in pagina_vehiculos.paginator.page_range %}
+
+                {% if numero == pagina_vehiculos.number %}
+                    <span class="numero-pagina activo">
+                        {{ numero }}
+                    </span>
+
+                {% elif numero >= pagina_vehiculos.number|add:"-2" and numero <= pagina_vehiculos.number|add:"2" %}
+                    <a
+                        href="?page={{ numero }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                        class="numero-pagina"
+                    >
+                        {{ numero }}
+                    </a>
+                {% endif %}
+
+            {% endfor %}
+
+            {% if pagina_vehiculos.has_next %}
+                <a
+                    href="?page={{ pagina_vehiculos.next_page_number }}&q={{ busqueda|urlencode }}&estado={{ filtro_estado }}"
+                    class="boton-paginacion"
+                >
+                    Siguiente
+                </a>
+            {% else %}
+                <span class="boton-paginacion deshabilitado">
+                    Siguiente
+                </span>
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+{% endif %}
+</section>
+
+{% endblock %}

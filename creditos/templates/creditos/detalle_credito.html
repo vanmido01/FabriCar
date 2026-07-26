@@ -1,0 +1,298 @@
+{% extends "principal/base.html" %}
+
+{% block title %}
+Detalle de crédito | FABRI-CAR
+{% endblock %}
+
+{% block contenido %}
+
+<section class="presentacion">
+
+    <div class="encabezado-listado">
+
+        <div>
+            <h2>Detalle del crédito N.º {{ credito.id }}</h2>
+
+            <p>
+                Información de la cuenta por cobrar y pagos
+                registrados por el cliente.
+            </p>
+        </div>
+
+        <div class="acciones-detalle-venta">
+
+            {% if credito.estado == "PENDIENTE" or credito.estado == "PARCIAL" %}
+
+                <a
+                    href="{% url 'creditos:editar_credito' credito.id %}"
+                    class="boton-enlace"
+                >
+                    Editar crédito
+                </a>
+
+                <a
+                    href="{% url 'creditos:registrar_pago' credito.id %}"
+                    class="boton-confirmar-venta"
+                >
+                    Registrar pago
+                </a>
+
+            {% endif %}
+
+            <a
+                href="{% url 'creditos:listar_creditos' %}"
+                class="boton-secundario"
+            >
+                Volver a créditos
+            </a>
+
+        </div>
+
+    </div>
+
+    <fieldset class="seccion-formulario">
+
+        <legend>Información del crédito</legend>
+
+        <div class="cuadricula-formulario">
+
+            <div>
+                <strong>Cliente</strong>
+
+                <p>
+                    {{ credito.venta.cliente.nombre }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Documento</strong>
+
+                <p>
+                    {{ credito.venta.cliente.documento|default:"No registrado" }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Venta relacionada</strong>
+
+                <p>
+                    <a
+                        href="{% url 'ventas:detalle_venta' credito.venta.id %}"
+                        class="enlace-referencia"
+                    >
+                        Venta N.º {{ credito.venta.id }}
+                    </a>
+                </p>
+            </div>
+
+            <div>
+                <strong>Comprobante</strong>
+
+                <p>
+                    {{ credito.venta.numero_comprobante|default:"Sin número" }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Fecha de inicio</strong>
+
+                <p>
+                    {{ credito.fecha_inicio|date:"d/m/Y" }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Fecha de vencimiento</strong>
+
+                <p>
+                    {{ credito.fecha_vencimiento|date:"d/m/Y" }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Monto total</strong>
+
+                <p>
+                    Bs {{ credito.monto_total }}
+                </p>
+            </div>
+
+            <div>
+                <strong>Saldo pendiente</strong>
+
+                <p>
+                    <strong>
+                        Bs {{ credito.saldo_pendiente }}
+                    </strong>
+                </p>
+            </div>
+
+            <div>
+                <strong>Estado</strong>
+
+                <p>
+                    {% if credito.estado == "PENDIENTE" %}
+
+                        <span class="etiqueta-borrador">
+                            Pendiente
+                        </span>
+
+                    {% elif credito.estado == "PARCIAL" %}
+
+                        <span class="etiqueta-parcial">
+                            Pago parcial
+                        </span>
+
+                    {% elif credito.estado == "PAGADO" %}
+
+                        <span class="etiqueta-confirmada">
+                            Pagado
+                        </span>
+
+                    {% else %}
+
+                        <span class="etiqueta-anulada">
+                            Anulado
+                        </span>
+
+                    {% endif %}
+                </p>
+            </div>
+
+            <div>
+                <strong>Situación</strong>
+
+                <p>
+                    {% if credito.estado == "PAGADO" %}
+
+                        <span class="etiqueta-confirmada">
+                            Cancelado
+                        </span>
+
+                    {% elif credito.estado == "ANULADO" %}
+
+                        <span class="etiqueta-anulada">
+                            Sin vigencia
+                        </span>
+
+                    {% elif credito.esta_vencido %}
+
+                        <span class="etiqueta-anulada">
+                            Vencido
+                        </span>
+
+                    {% else %}
+
+                        <span class="etiqueta-vigente">
+                            Vigente
+                        </span>
+
+                    {% endif %}
+                </p>
+            </div>
+
+            <div>
+                <strong>Registrado por</strong>
+
+                <p>
+                    {% if credito.usuario_registro %}
+                        {{ credito.usuario_registro.username }}
+                    {% else %}
+                        No registrado
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+
+        <div class="campo-completo">
+
+            <strong>Observaciones</strong>
+
+            <p>
+                {{ credito.observaciones|default:"Sin observaciones" }}
+            </p>
+
+        </div>
+
+    </fieldset>
+
+    <fieldset class="seccion-formulario">
+
+        <legend>Historial de pagos</legend>
+
+        <div class="contenedor-tabla">
+
+            <table class="tabla-datos">
+
+                <thead>
+                    <tr>
+                        <th>N.º</th>
+                        <th>Fecha</th>
+                        <th>Monto pagado</th>
+                        <th>Método de pago</th>
+                        <th>Referencia</th>
+                        <th>Registrado por</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for pago in credito.pagos.all %}
+
+                        <tr>
+
+                            <td>
+                                {{ pago.id }}
+                            </td>
+
+                            <td>
+                                {{ pago.fecha_pago|date:"d/m/Y" }}
+                            </td>
+
+                            <td>
+                                Bs {{ pago.monto }}
+                            </td>
+
+                            <td>
+                                {{ pago.get_metodo_pago_display }}
+                            </td>
+
+                            <td>
+                                {{ pago.referencia|default:"Sin referencia" }}
+                            </td>
+
+                            <td>
+                                {% if pago.usuario_registro %}
+                                    {{ pago.usuario_registro.username }}
+                                {% else %}
+                                    No registrado
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td
+                                colspan="6"
+                                class="tabla-vacia"
+                            >
+                                No existen pagos registrados para este crédito.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </fieldset>
+
+</section>
+
+{% endblock %}

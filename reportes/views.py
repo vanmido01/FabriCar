@@ -404,30 +404,12 @@ def reporte_ventas_pdf(request):
 
     datos_tabla = [
         [
-            Paragraph(
-                "<b>Comprobante</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Cliente</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Fecha</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Forma de pago</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Estado</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Total</b>",
-                estilo_normal,
-            ),
+            "Comprobante",
+            "Cliente",
+            "Fecha",
+            "Forma de pago",
+            "Estado",
+            "Total",
         ]
     ]
 
@@ -839,30 +821,12 @@ def reporte_compras_pdf(request):
 
     datos_tabla = [
         [
-            Paragraph(
-                "<b>Comprobante</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Proveedor</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Fecha</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Registrado por</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Estado</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Total</b>",
-                estilo_normal,
-            ),
+            "Comprobante",
+            "Proveedor",
+            "Fecha",
+            "Registrado por",
+            "Estado",
+            "Total",
         ]
     ]
 
@@ -1220,34 +1184,13 @@ def reporte_bajo_stock_pdf(request):
 
     datos_tabla = [
         [
-            Paragraph(
-                "<b>Código</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Producto</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Marca</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Stock actual</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Stock mínimo</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Faltantes</b>",
-                estilo_normal,
-            ),
-            Paragraph(
-                "<b>Situación</b>",
-                estilo_normal,
-            ),
+            "Código",
+            "Producto",
+            "Marca",
+            "Stock actual",
+            "Stock mínimo",
+            "Faltantes",
+            "Situación",
         ]
     ]
 
@@ -1627,16 +1570,19 @@ def reporte_creditos_pdf(request):
 
     datos_tabla = [
         [
-            Paragraph("<b>Comprobante</b>", estilo_normal),
-            Paragraph("<b>Cliente</b>", estilo_normal),
-            Paragraph("<b>Vencimiento</b>", estilo_normal),
-            Paragraph("<b>Estado</b>", estilo_normal),
-            Paragraph("<b>Monto total</b>", estilo_normal),
-            Paragraph("<b>Saldo pendiente</b>", estilo_normal),
+            "Comprobante",
+            "Cliente",
+            "Vencimiento",
+            "Estado",
+            "Monto total",
+            "Saldo pendiente",
         ]
     ]
 
+    hoy = timezone.localdate()
+
     for credito in creditos:
+
         cliente = (
             str(credito.venta.cliente)
             if credito.venta and credito.venta.cliente
@@ -1655,6 +1601,33 @@ def reporte_creditos_pdf(request):
             else Decimal("0.00")
         )
 
+        fecha_vencimiento = (
+            credito.fecha_vencimiento.strftime(
+                "%d/%m/%Y"
+            )
+            if credito.fecha_vencimiento
+            else "Sin fecha"
+        )
+
+        esta_vencido = (
+            credito.fecha_vencimiento
+            and credito.fecha_vencimiento < hoy
+            and credito.saldo_pendiente
+            > Decimal("0.00")
+            and credito.estado
+            not in [
+                Credito.EstadoCredito.PAGADO,
+                Credito.EstadoCredito.ANULADO,
+            ]
+        )
+
+        if esta_vencido:
+            estado_credito = "Vencido"
+        else:
+            estado_credito = (
+                credito.get_estado_display()
+            )
+
         datos_tabla.append(
             [
                 Paragraph(
@@ -1662,17 +1635,15 @@ def reporte_creditos_pdf(request):
                     estilo_normal,
                 ),
                 Paragraph(
-                    cliente,
+                    str(cliente),
                     estilo_normal,
                 ),
                 Paragraph(
-                    credito.fecha_vencimiento.strftime(
-                        "%d/%m/%Y"
-                    ),
+                    fecha_vencimiento,
                     estilo_normal,
                 ),
                 Paragraph(
-                    credito.get_estado_display(),
+                    estado_credito,
                     estilo_normal,
                 ),
                 Paragraph(
@@ -1680,7 +1651,10 @@ def reporte_creditos_pdf(request):
                     estilo_normal,
                 ),
                 Paragraph(
-                    f"Bs {credito.saldo_pendiente:.2f}",
+                    (
+                        "Bs "
+                        f"{credito.saldo_pendiente:.2f}"
+                    ),
                     estilo_normal,
                 ),
             ]

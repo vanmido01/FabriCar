@@ -34,6 +34,11 @@ def ejecutar_clasificacion(parametro):
         for fila in detalles
     )
 
+    # Eliminar los resultados anteriores antes de recalcular.
+    ResultadoClasificacion.objects.filter(
+        parametro=parametro,
+    ).delete()
+
     if frecuencia_total == 0:
         return {
             "productos": 0,
@@ -41,10 +46,6 @@ def ejecutar_clasificacion(parametro):
             "slow": 0,
             "non": 0,
         }
-
-    ResultadoClasificacion.objects.filter(
-        parametro=parametro,
-    ).delete()
 
     fast = 0
     slow = 0

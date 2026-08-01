@@ -100,6 +100,41 @@ class ResultadoClasificacion(models.Model):
         auto_now=True,
     )
 
+    def obtener_nivel_salida(self):
+        """Devuelve el nombre comercial de la categoría."""
+
+        if self.categoria == self.Categoria.FAST:
+            return "Muy vendido"
+
+        if self.categoria == self.Categoria.SLOW:
+            return "Venta moderada"
+
+        return "Poco vendido"
+
+
+    def obtener_recomendacion(self):
+        """Devuelve la recomendación según categoría y stock."""
+
+        stock_actual = self.producto.stock_actual
+        stock_minimo = self.producto.stock_minimo
+
+        if self.categoria == self.Categoria.FAST:
+            if stock_actual <= stock_minimo:
+                return "Comprar urgentemente"
+
+            return "Mantener abastecido"
+
+        if self.categoria == self.Categoria.SLOW:
+            if stock_actual <= stock_minimo:
+                return "Reponer pronto"
+
+            return "Mantener stock"
+
+        if stock_actual == 0:
+            return "Revisar antes de comprar"
+
+        return "No comprar por ahora"
+
     class Meta:
         verbose_name = "Resultado de clasificación"
         verbose_name_plural = "Resultados de clasificación"

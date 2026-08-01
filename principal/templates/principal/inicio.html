@@ -4,29 +4,343 @@
 Inicio | FABRI-CAR
 {% endblock %}
 
+{% block encabezado_pagina %}
+Panel principal
+{% endblock %}
+
 {% block contenido %}
 
-<section class="presentacion">
+<div class="panel-inicio">
 
-    <h2>Panel principal</h2>
+    <section class="bienvenida-panel">
 
-    <p>
-        Bienvenido al sistema web FABRI-CAR,
-        <strong>{{ user.username }}</strong>.
-    </p>
+        <div class="bienvenida-contenido">
 
-    <p>
-        Rol asignado:
-        <span class="etiqueta-rol">
-            {{ rol_usuario }}
-        </span>
-    </p>
+            <span class="bienvenida-etiqueta">
+                Panel de control
+            </span>
 
-    <p>
-        Desde este panel se accederá a las funciones
-        autorizadas para cada tipo de usuario.
-    </p>
+            <h2>
+                Bienvenido, {{ user.username }}
+            </h2>
 
-</section>
+            <p>
+                Administra las operaciones principales de FABRI-CAR
+                desde un solo lugar.
+            </p>
+
+            <div class="informacion-rol">
+
+                <span>Rol asignado:</span>
+
+                <strong>
+                    {% if es_administrador %}
+                        Administrador
+                    {% elif es_empleado %}
+                        Empleado
+                    {% elif es_cliente %}
+                        Cliente
+                    {% else %}
+                        Usuario
+                    {% endif %}
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="bienvenida-marca">
+            FC
+        </div>
+
+    </section>
+
+{% if es_administrador or es_empleado %}
+
+    <section class="cuadricula-indicadores">
+
+        <a
+            href="{% url 'productos:listar_productos' %}"
+            class="tarjeta-resumen-inicio"
+        >
+            <div class="icono-resumen-inicio indicador-productos">
+                PR
+            </div>
+
+            <div class="datos-indicador">
+                <span>Productos activos</span>
+                <strong>{{ cantidad_productos|default:0 }}</strong>
+                <small>Registrados en el catálogo</small>
+            </div>
+        </a>
+
+        <a
+            href="{% url 'productos:listar_productos' %}"
+            class="tarjeta-resumen-inicio"
+        >
+            <div class="icono-resumen-inicio indicador-stock">
+                ST
+            </div>
+
+            <div class="datos-indicador">
+                <span>Stock bajo</span>
+                <strong>{{ cantidad_bajo_stock|default:0 }}</strong>
+                <small>Requieren revisión</small>
+            </div>
+        </a>
+
+        <a
+            href="{% url 'ventas:listar_ventas' %}"
+            class="tarjeta-resumen-inicio"
+        >
+            <div class="icono-resumen-inicio indicador-ventas">
+                VE
+            </div>
+
+            <div class="datos-indicador">
+                <span>Ventas confirmadas</span>
+                <strong>{{ cantidad_ventas|default:0 }}</strong>
+                <small>Operaciones registradas</small>
+            </div>
+        </a>
+
+        <a
+            href="{% url 'creditos:listar_creditos' %}"
+            class="tarjeta-resumen-inicio"
+        >
+            <div class="icono-resumen-inicio indicador-creditos">
+                CR
+            </div>
+
+            <div class="datos-indicador">
+                <span>Créditos pendientes</span>
+                <strong>{{ cantidad_creditos|default:0 }}</strong>
+                <small>Cuentas por cobrar</small>
+            </div>
+        </a>
+
+    </section>
+
+    <section class="seccion-panel">
+
+            <div class="encabezado-seccion-panel">
+
+                <div>
+                    <h3>Accesos rápidos</h3>
+
+                    <p>
+                        Ingresa directamente a los módulos del sistema.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="cuadricula-accesos">
+
+                <a
+                    href="{% url 'productos:listar_productos' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        PR
+                    </span>
+
+                    <div>
+                        <strong>Productos</strong>
+                        <span>Catálogo y existencias</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'compras:listar_compras' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        CO
+                    </span>
+
+                    <div>
+                        <strong>Compras</strong>
+                        <span>Ingreso de mercadería</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'ventas:listar_ventas' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        VE
+                    </span>
+
+                    <div>
+                        <strong>Ventas</strong>
+                        <span>Registro de operaciones</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'inventario:listar_movimientos' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        IN
+                    </span>
+
+                    <div>
+                        <strong>Inventario</strong>
+                        <span>Movimientos y ajustes</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'clientes:listar_clientes' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        CL
+                    </span>
+
+                    <div>
+                        <strong>Clientes</strong>
+                        <span>Información de clientes</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'proveedores:listar_proveedores' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        PV
+                    </span>
+
+                    <div>
+                        <strong>Proveedores</strong>
+                        <span>Directorio de proveedores</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'creditos:listar_creditos' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        CR
+                    </span>
+
+                    <div>
+                        <strong>Créditos</strong>
+                        <span>Cuentas y pagos</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'vehiculos:listar_vehiculos' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        AU
+                    </span>
+
+                    <div>
+                        <strong>Vehículos</strong>
+                        <span>Modelos y compatibilidades</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'reportes:panel_reportes' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        RE
+                    </span>
+
+                    <div>
+                        <strong>Reportes</strong>
+                        <span>Consulta de información</span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'clasificacion:clasificacion_automatica' %}"
+                    class="tarjeta-acceso"
+                >
+                    <span class="icono-acceso">
+                        CA
+                    </span>
+
+                    <div>
+                        <strong>Clasificación</strong>
+                        <span>Análisis de productos</span>
+                    </div>
+                </a>
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+    {% if es_administrador %}
+
+        <section class="seccion-panel">
+
+            <div class="encabezado-seccion-panel">
+
+                <div>
+                    <h3>Administración</h3>
+
+                    <p>
+                        Configuración y control de acceso del sistema.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="cuadricula-administracion">
+
+                <a
+                    href="{% url 'panel_administrador' %}"
+                    class="tarjeta-administracion"
+                >
+                    <span class="icono-administracion">
+                        AD
+                    </span>
+
+                    <div>
+                        <strong>Panel administrativo</strong>
+
+                        <span>
+                            Gestión de opciones administrativas
+                        </span>
+                    </div>
+                </a>
+
+                <a
+                    href="{% url 'admin:index' %}"
+                    class="tarjeta-administracion"
+                >
+                    <span class="icono-administracion">
+                        US
+                    </span>
+
+                    <div>
+                        <strong>Usuarios y permisos</strong>
+
+                        <span>
+                            Administración de cuentas y roles
+                        </span>
+                    </div>
+                </a>
+
+            </div>
+
+        </section>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

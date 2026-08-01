@@ -1,27 +1,84 @@
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
 from django.shortcuts import redirect, render
+
+from creditos.models import Credito
+from productos.models import Producto
+from ventas.models import Venta
 
 from .decorators import rol_requerido
 
 
 @login_required
 def inicio(request):
-    """Muestra la página principal según el rol del usuario."""
+    """Muestra el panel principal según el rol del usuario."""
 
-    if request.user.is_superuser:
+    usuario = request.user
+
+    if usuario.is_superuser:
         rol_usuario = "Administrador"
-    elif request.user.groups.filter(name="Administrador").exists():
+
+    elif usuario.groups.filter(
+        name="Administrador",
+    ).exists():
         rol_usuario = "Administrador"
-    elif request.user.groups.filter(name="Empleado").exists():
+
+    elif usuario.groups.filter(
+        name="Empleado",
+    ).exists():
         rol_usuario = "Empleado"
-    elif request.user.groups.filter(name="Cliente").exists():
+
+    elif usuario.groups.filter(
+        name="Cliente",
+    ).exists():
         rol_usuario = "Cliente"
+
     else:
         rol_usuario = "Sin rol asignado"
 
     contexto = {
         "rol_usuario": rol_usuario,
     }
+
+    if rol_usuario in [
+        "Administrador",
+        "Empleado",
+    ]:
+        productos_activos = Producto.objects.filter(
+            estado=True,
+        )
+
+        productos_bajo_stock = productos_activos.filter(
+            stock_actual__lte=F("stock_minimo"),
+        )
+
+        ventas_confirmadas = Venta.objects.filter(
+            estado=Venta.EstadoVenta.CONFIRMADA,
+        )
+
+        creditos_pendientes = Credito.objects.exclude(
+            estado__in=[
+                Credito.EstadoCredito.PAGADO,
+                Credito.EstadoCredito.ANULADO,
+            ]
+        )
+
+        contexto.update(
+            {
+                "cantidad_productos": (
+                    productos_activos.count()
+                ),
+                "cantidad_bajo_stock": (
+                    productos_bajo_stock.count()
+                ),
+                "cantidad_ventas": (
+                    ventas_confirmadas.count()
+                ),
+                "cantidad_creditos": (
+                    creditos_pendientes.count()
+                ),
+            }
+        )
 
     return render(
         request,

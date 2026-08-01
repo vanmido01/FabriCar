@@ -4,26 +4,102 @@
 Panel administrativo | FABRI-CAR
 {% endblock %}
 
+{% block encabezado_pagina %}
+Panel administrativo
+{% endblock %}
+
 {% block contenido %}
 
 <section class="presentacion">
 
-    <h2>Panel administrativo</h2>
+    <div class="encabezado-listado">
 
-    <p>
-        Esta página está disponible únicamente para usuarios
-        con el rol Administrador.
-    </p>
+        <div>
+            <h2>Administración del sistema</h2>
 
-    <p>
-        Desde este espacio se incorporarán progresivamente
-        las funciones de configuración, usuarios, productos,
-        compras, ventas, inventario, reportes y clasificación.
-    </p>
+            <p>
+                Gestiona usuarios, grupos, permisos y opciones
+                administrativas de FABRI-CAR.
+            </p>
+        </div>
 
-    <a href="{% url 'inicio' %}" class="boton-enlace">
-        Volver al inicio
-    </a>
+    </div>
+
+    <div class="cuadricula-panel-admin">
+
+        <a
+            href="{% url 'admin:auth_user_changelist' %}"
+            class="tarjeta-panel-admin"
+        >
+            <span class="icono-panel-admin">
+                US
+            </span>
+
+            <div>
+                <strong>Usuarios</strong>
+
+                <span>
+                    Crear, modificar y controlar las cuentas
+                    que acceden al sistema.
+                </span>
+            </div>
+        </a>
+
+        <a
+            href="{% url 'admin:auth_group_changelist' %}"
+            class="tarjeta-panel-admin"
+        >
+            <span class="icono-panel-admin">
+                GP
+            </span>
+
+            <div>
+                <strong>Grupos y permisos</strong>
+
+                <span>
+                    Administrar los roles de Administrador,
+                    Empleado y Cliente.
+                </span>
+            </div>
+        </a>
+
+        <a
+            href="{% url 'admin:index' %}"
+            class="tarjeta-panel-admin"
+        >
+            <span class="icono-panel-admin">
+                AD
+            </span>
+
+            <div>
+                <strong>Administración de Django</strong>
+
+                <span>
+                    Acceder al panel interno completo
+                    de configuración y registros.
+                </span>
+            </div>
+        </a>
+
+        <a
+            href="{% url 'inicio' %}"
+            class="tarjeta-panel-admin"
+        >
+            <span class="icono-panel-admin">
+                IN
+            </span>
+
+            <div>
+                <strong>Volver al inicio</strong>
+
+                <span>
+                    Regresar al panel principal
+                    de gestión comercial.
+                </span>
+            </div>
+        </a>
+
+    </div>
 
 </section>
 

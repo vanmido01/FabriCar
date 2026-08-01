@@ -20,64 +20,328 @@
     >
 </head>
 
-<body>
-
-    <header class="encabezado">
-        <div class="encabezado-contenido">
-            <h1>FABRI-CAR</h1>
-
-            <nav class="barra-navegacion">
-    <a href="{% url 'inicio' %}">Inicio</a>
+<body class="{% if user.is_authenticated %}sistema-autenticado{% else %}pagina-publica{% endif %}">
 
     {% if user.is_authenticated %}
 
-        {% if user.is_staff %}
-            <a href="{% url 'admin:index' %}">
-                Administración
-            </a>
-        {% endif %}
+        <div class="estructura-sistema">
 
-        <span class="usuario-actual">
-            {{ user.username }}
-        </span>
+            <aside class="menu-lateral">
 
-        <form
-            method="post"
-            action="{% url 'cerrar_sesion' %}"
-            class="formulario-salir"
-        >
-            {% csrf_token %}
+                <a
+                    href="{% url 'inicio' %}"
+                    class="marca-sistema"
+                >
+                    <span class="marca-principal">
+                        FABRI-CAR
+                    </span>
 
-            <button
-                type="submit"
-                class="boton-salir"
-            >
-                Cerrar sesión
-            </button>
-        </form>
+                    <span class="marca-descripcion">
+                        Gestión comercial
+                    </span>
+                </a>
+
+                <div class="perfil-menu">
+
+                    <div class="avatar-usuario">
+                        {{ user.username|first|upper }}
+                    </div>
+
+                    <div class="datos-usuario">
+                        <strong>
+                            {{ user.username }}
+                        </strong>
+
+                        <span>
+                            {% if es_administrador %}
+                                Administrador
+                            {% elif es_empleado %}
+                                Empleado
+                            {% elif es_cliente %}
+                                Cliente
+                            {% else %}
+                                Usuario
+                            {% endif %}
+                        </span>
+                    </div>
+
+                </div>
+
+                <nav class="navegacion-lateral">
+
+                    <span class="titulo-grupo-menu">
+                        General
+                    </span>
+
+                    <a
+                        href="{% url 'inicio' %}"
+                        class="enlace-menu
+                        {% if request.resolver_match.url_name == 'inicio' %}
+                            enlace-menu-activo
+                        {% endif %}"
+                    >
+                        <span class="icono-menu">⌂</span>
+                        <span>Inicio</span>
+                    </a>
+
+                    {% if es_administrador or es_empleado %}
+
+                        <span class="titulo-grupo-menu">
+                            Operaciones
+                        </span>
+
+                        <a
+                            href="{% url 'productos:listar_productos' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'productos' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">□</span>
+                            <span>Productos</span>
+                        </a>
+
+                        <a
+                            href="{% url 'compras:listar_compras' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'compras' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">↓</span>
+                            <span>Compras</span>
+                        </a>
+
+                        <a
+                            href="{% url 'ventas:listar_ventas' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'ventas' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">↑</span>
+                            <span>Ventas</span>
+                        </a>
+
+                        <a
+                            href="{% url 'inventario:listar_movimientos' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'inventario' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">≡</span>
+                            <span>Inventario</span>
+                        </a>
+
+                        <a
+                            href="{% url 'creditos:listar_creditos' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'creditos' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">$</span>
+                            <span>Créditos</span>
+                        </a>
+
+                        <span class="titulo-grupo-menu">
+                            Registros
+                        </span>
+
+                        <a
+                            href="{% url 'clientes:listar_clientes' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'clientes' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">C</span>
+                            <span>Clientes</span>
+                        </a>
+
+                        <a
+                            href="{% url 'proveedores:listar_proveedores' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'proveedores' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">P</span>
+                            <span>Proveedores</span>
+                        </a>
+
+                        <a
+                            href="{% url 'vehiculos:listar_vehiculos' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'vehiculos' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">V</span>
+                            <span>Vehículos</span>
+                        </a>
+
+                        <span class="titulo-grupo-menu">
+                            Análisis
+                        </span>
+
+                        <a
+                            href="{% url 'reportes:panel_reportes' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'reportes' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">▤</span>
+                            <span>Reportes</span>
+                        </a>
+
+                        <a
+                            href="{% url 'clasificacion:clasificacion_automatica' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.namespace == 'clasificacion' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">%</span>
+                            <span>Clasificación</span>
+                        </a>
+
+                    {% endif %}
+
+                    {% if es_administrador %}
+
+                        <span class="titulo-grupo-menu">
+                            Administración
+                        </span>
+
+                        <a
+                            href="{% url 'panel_administrador' %}"
+                            class="enlace-menu
+                            {% if request.resolver_match.url_name == 'panel_administrador' %}
+                                enlace-menu-activo
+                            {% endif %}"
+                        >
+                            <span class="icono-menu">⚙</span>
+                            <span>Panel administrativo</span>
+                        </a>
+
+                        <a
+                            href="{% url 'admin:index' %}"
+                            class="enlace-menu"
+                        >
+                            <span class="icono-menu">U</span>
+                            <span>Usuarios y permisos</span>
+                        </a>
+
+                    {% endif %}
+
+                </nav>
+
+                <form
+                    method="post"
+                    action="{% url 'cerrar_sesion' %}"
+                    class="formulario-cerrar-menu"
+                >
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="boton-cerrar-menu"
+                    >
+                        <span class="icono-menu">↪</span>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </form>
+
+            </aside>
+
+            <div class="area-trabajo">
+
+                <header class="barra-superior">
+
+                    <div>
+                        <span class="subtitulo-superior">
+                            Sistema FABRI-CAR
+                        </span>
+
+                        <h1>
+                            {% block encabezado_pagina %}
+                                Gestión comercial
+                            {% endblock %}
+                        </h1>
+                    </div>
+
+                    <div class="sesion-activa">
+                        <span class="indicador-activo"></span>
+                        Sesión activa
+                    </div>
+
+                </header>
 
     {% else %}
 
-        <a href="{% url 'iniciar_sesion' %}">
-            Iniciar sesión
-        </a>
+        <div class="estructura-publica">
+
+            <header class="encabezado-publico">
+
+                <a
+                    href="{% url 'inicio' %}"
+                    class="marca-publica"
+                >
+                    FABRI-CAR
+                </a>
+
+                <span>
+                    Sistema de gestión comercial
+                </span>
+
+            </header>
 
     {% endif %}
-</nav>
+
+            <main class="{% if user.is_authenticated %}contenido-principal{% else %}contenido-principal-publico{% endif %}">
+
+                {% if messages %}
+
+                    <div class="contenedor-mensajes">
+
+                        {% for message in messages %}
+
+                            <div class="mensaje-sistema {{ message.tags }}">
+                                {{ message }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+                {% block contenido %}
+                {% endblock %}
+
+            </main>
+
+            <footer class="pie-pagina">
+                <p>
+                    Sistema web para la gestión y clasificación automática
+                    de productos de FABRI-CAR.
+                </p>
+            </footer>
+
+    {% if user.is_authenticated %}
+
+            </div>
+
         </div>
-    </header>
 
-    <main class="contenido-principal">
-        {% block contenido %}
-        {% endblock %}
-    </main>
+    {% else %}
 
-    <footer class="pie-pagina">
-        <p>
-            Sistema web para la gestión y clasificación automática
-            de productos de FABRI-CAR.
-        </p>
-    </footer>
+        </div>
+
+    {% endif %}
 
 </body>
 </html>

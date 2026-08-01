@@ -4,6 +4,10 @@
 Clasificación automática de repuestos | FABRI-CAR
 {% endblock %}
 
+{% block encabezado_pagina %}
+Clasificación automática de repuestos
+{% endblock %}
+
 {% block contenido %}
 
 <section class="presentacion">
@@ -26,6 +30,17 @@ Clasificación automática de repuestos | FABRI-CAR
             {{ fecha_fin_analisis|date:"d/m/Y" }}
         </span>
     </div>
+
+    {% if parametro_id %}
+        <div class="acciones-analisis">
+            <a
+                href="{% url 'clasificacion:clasificacion_pdf' parametro_id %}{% if consulta_pdf %}?{{ consulta_pdf }}{% endif %}"
+                class="boton-principal"
+            >
+                Exportar análisis a PDF
+            </a>
+        </div>
+    {% endif %}
 
     {% if resumen %}
 
@@ -521,59 +536,56 @@ Clasificación automática de repuestos | FABRI-CAR
                         <td>
                             {% if resultado.categoria == "FAST" %}
                                 <span class="etiqueta etiqueta-fast">
-                                    Muy vendido
+                                    {{ resultado.obtener_nivel_salida }}
                                 </span>
 
                             {% elif resultado.categoria == "SLOW" %}
                                 <span class="etiqueta etiqueta-slow">
-                                    Venta moderada
+                                    {{ resultado.obtener_nivel_salida }}
                                 </span>
 
                             {% else %}
                                 <span class="etiqueta etiqueta-non">
-                                    Poco vendido
+                                    {{ resultado.obtener_nivel_salida }}
                                 </span>
                             {% endif %}
                         </td>
 
                         <td>
-                            {% if resultado.categoria == "FAST" %}
+                            {% with recomendacion=resultado.obtener_recomendacion %}
 
-                                {% if resultado.producto.stock_actual <= resultado.producto.stock_minimo %}
+                                {% if recomendacion == "Comprar urgentemente" %}
                                     <span class="etiqueta etiqueta-urgente">
-                                        Comprar urgentemente
+                                        {{ recomendacion }}
                                     </span>
-                                {% else %}
-                                    <span class="etiqueta etiqueta-mantener">
-                                        Mantener abastecido
-                                    </span>
-                                {% endif %}
 
-                            {% elif resultado.categoria == "SLOW" %}
-
-                                {% if resultado.producto.stock_actual <= resultado.producto.stock_minimo %}
+                                {% elif recomendacion == "Reponer pronto" %}
                                     <span class="etiqueta etiqueta-pronto">
-                                        Reponer pronto
+                                        {{ recomendacion }}
                                     </span>
-                                {% else %}
+
+                                {% elif recomendacion == "Mantener abastecido" %}
                                     <span class="etiqueta etiqueta-mantener">
-                                        Mantener stock
+                                        {{ recomendacion }}
                                     </span>
-                                {% endif %}
 
-                            {% else %}
+                                {% elif recomendacion == "Mantener stock" %}
+                                    <span class="etiqueta etiqueta-mantener">
+                                        {{ recomendacion }}
+                                    </span>
 
-                                {% if resultado.producto.stock_actual == 0 %}
+                                {% elif recomendacion == "Revisar antes de comprar" %}
                                     <span class="etiqueta etiqueta-revisar">
-                                        Revisar antes de comprar
+                                        {{ recomendacion }}
                                     </span>
+
                                 {% else %}
                                     <span class="etiqueta etiqueta-no-comprar">
-                                        No comprar por ahora
+                                        {{ recomendacion }}
                                     </span>
                                 {% endif %}
 
-                            {% endif %}
+                            {% endwith %}
                         </td>
                     </tr>
 

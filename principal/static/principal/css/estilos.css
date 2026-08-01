@@ -271,6 +271,7 @@ body {
 
 .campo-formulario {
     width: 100%;
+    min-width: 0;
     padding: 10px 12px;
     border: 1px solid #cbd5e1;
     border-radius: 5px;
@@ -278,6 +279,7 @@ body {
     color: #1f2937;
     font-family: inherit;
     font-size: 15px;
+    box-sizing: border-box;
 }
 
 .campo-formulario:focus {
@@ -386,6 +388,9 @@ textarea.campo-formulario {
     width: 100%;
     border-collapse: collapse;
     background-color: #ffffff;
+}
+.tabla-datos {
+    min-width: 750px;
 }
 
 .tabla-datos th,
@@ -1087,11 +1092,8 @@ textarea.campo-formulario {
 /* Columna de acciones únicamente en la lista de ventas */
 .tabla-ventas th:last-child,
 .tabla-ventas td:last-child {
-    position: sticky;
-    right: 0;
     min-width: 120px;
     text-align: center;
-    z-index: 2;
 }
 
 .tabla-ventas tbody td:last-child {
@@ -1101,7 +1103,6 @@ textarea.campo-formulario {
 .tabla-ventas thead th:last-child {
     background-color: #1f2937;
     color: #ffffff;
-    z-index: 3;
 }
 
 /* Total del detalle de venta */
@@ -1201,12 +1202,13 @@ textarea.campo-formulario {
 .formulario-filtros {
     display: grid;
     grid-template-columns:
-        minmax(240px, 1.8fr)
-        minmax(180px, 0.9fr)
-        minmax(180px, 0.9fr)
+        minmax(0, 1.5fr)
+        minmax(0, 0.8fr)
+        minmax(0, 0.8fr)
         auto;
     align-items: end;
     gap: 12px;
+    width: 100%;
     margin: 26px 0 18px;
     padding: 18px;
     border: 1px solid #cbd5e1;
@@ -1223,6 +1225,7 @@ textarea.campo-formulario {
     flex-direction: column;
     gap: 7px;
     min-width: 0;
+    width: 100%;
 }
 
 .grupo-filtro label {
@@ -1243,6 +1246,7 @@ textarea.campo-formulario {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .acciones-filtros .boton-enlace,
@@ -1418,13 +1422,7 @@ textarea.campo-formulario {
 
 /* Filtros del reporte de ventas */
 .formulario-filtros-reporte-ventas {
-    grid-template-columns:
-        minmax(230px, 1.5fr)
-        minmax(145px, 0.8fr)
-        minmax(145px, 0.8fr)
-        minmax(175px, 0.9fr)
-        minmax(175px, 0.9fr)
-        auto;
+    grid-template-columns: 1fr 150px 150px auto;
 }
 
 .formulario-filtros-reporte-ventas select {
@@ -1659,4 +1657,1101 @@ textarea.campo-formulario {
 .credito-parcial {
     background-color: #cfe2ff;
     color: #084298;
+}
+
+.barra-navegacion {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.barra-navegacion a {
+    display: inline-block;
+    padding: 8px 10px;
+    text-decoration: none;
+}
+
+.formulario-salir {
+    margin: 0;
+}
+
+.usuario-actual {
+    font-weight: 600;
+}
+
+
+/* ==================================================
+   ESTRUCTURA PRINCIPAL DEL SISTEMA FABRI-CAR
+   ================================================== */
+
+:root {
+    --color-primario: #172437;
+    --color-primario-claro: #233652;
+    --color-acento: #2563eb;
+    --color-acento-hover: #1d4ed8;
+    --color-fondo: #f3f6fa;
+    --color-superficie: #ffffff;
+    --color-texto: #1e293b;
+    --color-texto-secundario: #64748b;
+    --color-borde: #e2e8f0;
+    --color-exito: #16a34a;
+    --sombra-suave: 0 4px 18px rgba(15, 23, 42, 0.08);
+    --ancho-menu: 270px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+/* ==================================================
+   DISTRIBUCIÓN GENERAL
+   ================================================== */
+
+.estructura-sistema {
+    display: grid;
+    grid-template-columns: var(--ancho-menu) minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.area-trabajo {
+    display: flex;
+    min-width: 0;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+/* ==================================================
+   MENÚ LATERAL
+   ================================================== */
+
+.menu-lateral {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    overflow-y: auto;
+    background:
+        linear-gradient(
+            180deg,
+            #172437 0%,
+            #101b2b 100%
+        );
+    color: #ffffff;
+    box-shadow: 5px 0 20px rgba(15, 23, 42, 0.12);
+}
+
+.marca-sistema {
+    display: flex;
+    padding: 26px 24px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    flex-direction: column;
+    text-decoration: none;
+}
+
+.marca-principal {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.marca-descripcion {
+    margin-top: 4px;
+    color: #aebdd1;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+}
+
+/* ==================================================
+   PERFIL DEL USUARIO
+   ================================================== */
+
+.perfil-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 16px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.avatar-usuario {
+    display: flex;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: var(--color-acento);
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.datos-usuario {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.datos-usuario strong {
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.datos-usuario span {
+    margin-top: 3px;
+    color: #aebdd1;
+    font-size: 13px;
+}
+
+/* ==================================================
+   ENLACES DEL MENÚ
+   ================================================== */
+
+.navegacion-lateral {
+    display: flex;
+    padding: 0 14px 20px;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.titulo-grupo-menu {
+    margin: 18px 10px 7px;
+    color: #7f91aa;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+.enlace-menu {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 13px;
+    border-radius: 9px;
+    color: #d7e0ec;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.enlace-menu:hover {
+    background-color: rgba(255, 255, 255, 0.09);
+    color: #ffffff;
+    transform: translateX(2px);
+}
+
+.enlace-menu-activo {
+    background-color: var(--color-acento);
+    color: #ffffff;
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.28);
+}
+
+.enlace-menu-activo:hover {
+    background-color: var(--color-acento-hover);
+}
+
+.icono-menu {
+    display: inline-flex;
+    width: 24px;
+    height: 24px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+/* ==================================================
+   CERRAR SESIÓN
+   ================================================== */
+
+.formulario-cerrar-menu {
+    margin: auto 14px 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.boton-cerrar-menu {
+    display: flex;
+    width: 100%;
+    min-height: 43px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 13px;
+    border: 0;
+    border-radius: 9px;
+    background-color: transparent;
+    color: #d7e0ec;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.boton-cerrar-menu:hover {
+    background-color: rgba(239, 68, 68, 0.16);
+    color: #fecaca;
+}
+
+/* ==================================================
+   BARRA SUPERIOR
+   ================================================== */
+
+.barra-superior {
+    display: flex;
+    min-height: 92px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--color-borde);
+    background-color: var(--color-superficie);
+}
+
+.subtitulo-superior {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--color-texto-secundario);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.barra-superior h1 {
+    margin: 0;
+    color: var(--color-texto);
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.sesion-activa {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #bbf7d0;
+    border-radius: 20px;
+    background-color: #f0fdf4;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.indicador-activo {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-exito);
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+}
+
+/* ==================================================
+   CONTENIDO Y PIE DE PÁGINA
+   ================================================== */
+
+.contenido-principal {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 30px 32px;
+    flex: 1;
+}
+
+.pie-pagina {
+    padding: 16px 30px;
+    border-top: 1px solid var(--color-borde);
+    background-color: var(--color-superficie);
+    color: var(--color-texto-secundario);
+    text-align: center;
+}
+
+.pie-pagina p {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* ==================================================
+   MENSAJES DE DJANGO
+   ================================================== */
+
+.contenedor-mensajes {
+    display: flex;
+    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mensaje-sistema {
+    padding: 13px 16px;
+    border: 1px solid var(--color-borde);
+    border-radius: 9px;
+    background-color: var(--color-superficie);
+    box-shadow: var(--sombra-suave);
+    font-size: 13px;
+}
+
+.mensaje-sistema.success {
+    border-color: #bbf7d0;
+    background-color: #f0fdf4;
+    color: #166534;
+}
+
+.mensaje-sistema.error {
+    border-color: #fecaca;
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+.mensaje-sistema.warning {
+    border-color: #fde68a;
+    background-color: #fffbeb;
+    color: #92400e;
+}
+
+.mensaje-sistema.info {
+    border-color: #bfdbfe;
+    background-color: #eff6ff;
+    color: #1e40af;
+}
+
+/* ==================================================
+   PÁGINAS SIN AUTENTICAR
+   ================================================== */
+
+.estructura-publica {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.encabezado-publico {
+    display: flex;
+    min-height: 72px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6%;
+    background-color: var(--color-primario);
+    color: #cbd5e1;
+}
+
+.marca-publica {
+    color: #ffffff;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+.contenido-principal-publico {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 45px 30px;
+    flex: 1;
+}
+
+/* ==================================================
+   ADAPTACIÓN A PANTALLAS PEQUEÑAS
+   ================================================== */
+
+@media (max-width: 1000px) {
+    :root {
+        --ancho-menu: 230px;
+    }
+
+    .contenido-principal {
+        padding: 24px;
+    }
+
+    .barra-superior {
+        padding: 18px 24px;
+    }
+}
+
+@media (max-width: 760px) {
+    .estructura-sistema {
+        display: block;
+    }
+
+    .menu-lateral {
+        position: relative;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    .perfil-menu {
+        margin-bottom: 8px;
+    }
+
+    .navegacion-lateral {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .titulo-grupo-menu {
+        grid-column: 1 / -1;
+    }
+
+    .formulario-cerrar-menu {
+        margin-top: 0;
+    }
+
+    .barra-superior {
+        min-height: auto;
+        align-items: flex-start;
+        padding: 18px;
+        flex-direction: column;
+    }
+
+    .contenido-principal {
+        padding: 18px;
+    }
+
+    .sesion-activa {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .navegacion-lateral {
+        grid-template-columns: 1fr;
+    }
+
+    .titulo-grupo-menu {
+        grid-column: auto;
+    }
+
+    .encabezado-publico {
+        align-items: flex-start;
+        gap: 8px;
+        padding: 18px;
+        flex-direction: column;
+    }
+}
+
+/* ==================================================
+   PANEL PRINCIPAL
+   ================================================== */
+
+.panel-inicio {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.bienvenida-panel {
+    position: relative;
+    display: flex;
+    min-height: 230px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    overflow: hidden;
+    padding: 38px 42px;
+    border-radius: 18px;
+    background:
+        linear-gradient(
+            135deg,
+            var(--color-primario) 0%,
+            var(--color-primario-claro) 100%
+        );
+    color: #ffffff;
+    box-shadow: var(--sombra-suave);
+}
+
+.bienvenida-panel::after {
+    position: absolute;
+    right: -90px;
+    bottom: -120px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.05);
+    content: "";
+}
+
+.bienvenida-contenido {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+}
+
+.bienvenida-etiqueta {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 6px 11px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #bfdbfe;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.bienvenida-contenido h2 {
+    margin: 0 0 12px;
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: 750;
+}
+
+.bienvenida-contenido p {
+    max-width: 580px;
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.informacion-rol {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 22px;
+    color: #cbd5e1;
+    font-size: 13px;
+}
+
+.informacion-rol strong {
+    padding: 6px 10px;
+    border-radius: 20px;
+    background-color: rgba(37, 99, 235, 0.7);
+    color: #ffffff;
+}
+
+.bienvenida-marca {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    width: 110px;
+    height: 110px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 8px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    background-color: var(--color-acento);
+    color: #ffffff;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    transform: rotate(-4deg);
+}
+
+.seccion-panel {
+    padding: 28px;
+    border: 1px solid var(--color-borde);
+    border-radius: 16px;
+    background-color: var(--color-superficie);
+    box-shadow: var(--sombra-suave);
+}
+
+.encabezado-seccion-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+}
+
+.encabezado-seccion-panel h3 {
+    margin: 0 0 5px;
+    color: var(--color-texto);
+    font-size: 20px;
+}
+
+.encabezado-seccion-panel p {
+    margin: 0;
+    color: var(--color-texto-secundario);
+    font-size: 13px;
+}
+
+.cuadricula-accesos {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.tarjeta-acceso {
+    display: flex;
+    min-height: 92px;
+    align-items: center;
+    gap: 15px;
+    padding: 18px;
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: var(--color-texto);
+    text-decoration: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.tarjeta-acceso:hover {
+    border-color: #93c5fd;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09);
+    transform: translateY(-2px);
+}
+
+.icono-acceso {
+    display: flex;
+    width: 46px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background-color: #eff6ff;
+    color: var(--color-acento);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.tarjeta-acceso div,
+.tarjeta-administracion div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.tarjeta-acceso strong,
+.tarjeta-administracion strong {
+    color: var(--color-texto);
+    font-size: 14px;
+}
+
+.tarjeta-acceso div span,
+.tarjeta-administracion div span {
+    margin-top: 5px;
+    color: var(--color-texto-secundario);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.cuadricula-administracion {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.tarjeta-administracion {
+    display: flex;
+    min-height: 100px;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    background-color: #f8fafc;
+    color: var(--color-texto);
+    text-decoration: none;
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.tarjeta-administracion:hover {
+    border-color: #94a3b8;
+    background-color: #ffffff;
+    transform: translateY(-2px);
+}
+
+.icono-administracion {
+    display: flex;
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background-color: var(--color-primario);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+@media (max-width: 1100px) {
+    .cuadricula-accesos {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .bienvenida-panel {
+        align-items: flex-start;
+        padding: 28px;
+        flex-direction: column;
+    }
+
+    .bienvenida-marca {
+        width: 80px;
+        height: 80px;
+        font-size: 25px;
+    }
+
+    .cuadricula-accesos,
+    .cuadricula-administracion {
+        grid-template-columns: 1fr;
+    }
+
+    .seccion-panel {
+        padding: 20px;
+    }
+}
+
+/* ==================================================
+   INDICADORES DEL PANEL PRINCIPAL
+   ================================================== */
+
+.cuadricula-indicadores {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.tarjeta-resumen-inicio {
+    display: flex;
+    min-height: 130px;
+    align-items: center;
+    gap: 16px;
+    padding: 22px;
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    background-color: var(--color-superficie);
+    color: var(--color-texto);
+    box-shadow: var(--sombra-suave);
+    text-decoration: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.tarjeta-resumen-inicio:hover {
+    border-color: #93c5fd;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.11);
+    transform: translateY(-3px);
+}
+
+.icono-resumen-inicio {
+    display: flex;
+    width: 52px;
+    height: 52px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.indicador-productos {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+}
+
+.indicador-stock {
+    background-color: #fff7ed;
+    color: #c2410c;
+}
+
+.indicador-ventas {
+    background-color: #f0fdf4;
+    color: #15803d;
+}
+
+.indicador-creditos {
+    background-color: #fef2f2;
+    color: #b91c1c;
+}
+
+.datos-indicador {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.datos-indicador span {
+    color: var(--color-texto-secundario);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.datos-indicador strong {
+    margin: 4px 0;
+    color: var(--color-texto);
+    font-size: 28px;
+    line-height: 1;
+}
+
+.datos-indicador small {
+    color: var(--color-texto-secundario);
+    font-size: 11px;
+}
+
+@media (max-width: 1250px) {
+    .cuadricula-indicadores {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 620px) {
+    .cuadricula-indicadores {
+        grid-template-columns: 1fr;
+    }
+
+    .tarjeta-resumen-inicio {
+        min-height: 110px;
+    }
+}
+
+/* ==================================================
+   PANEL ADMINISTRATIVO
+   ================================================== */
+
+.cuadricula-panel-admin {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.tarjeta-panel-admin {
+    display: flex;
+    min-height: 125px;
+    align-items: center;
+    gap: 18px;
+    padding: 22px;
+    border: 1px solid var(--color-borde);
+    border-radius: 14px;
+    background-color: #f8fafc;
+    color: var(--color-texto);
+    text-decoration: none;
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.tarjeta-panel-admin:hover {
+    border-color: #93c5fd;
+    background-color: #ffffff;
+    box-shadow: var(--sombra-suave);
+    transform: translateY(-2px);
+}
+
+.icono-panel-admin {
+    display: flex;
+    width: 54px;
+    height: 54px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background-color: var(--color-primario);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.tarjeta-panel-admin div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.tarjeta-panel-admin strong {
+    color: var(--color-texto);
+    font-size: 16px;
+}
+
+.tarjeta-panel-admin div span {
+    margin-top: 7px;
+    color: var(--color-texto-secundario);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+    .cuadricula-panel-admin {
+        grid-template-columns: 1fr;
+    }
+}
+
+.acciones-filtros {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.acciones-filtros a,
+.acciones-filtros button {
+    flex-shrink: 0;
+}
+
+.contenedor-tabla {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-ventas {
+    width: 100%;
+    min-width: 900px;
+}
+
+.formulario-filtros button,
+.formulario-filtros a {
+    white-space: nowrap;
+}
+
+/* ==================================================
+   CORRECCIÓN DEFINITIVA DE VENTAS Y FILTROS
+   ================================================== */
+
+.area-trabajo,
+.contenido-principal,
+.presentacion {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.presentacion {
+    width: 100%;
+}
+
+.formulario-filtros {
+    width: 100%;
+    max-width: 100%;
+}
+
+.formulario-filtros > * {
+    min-width: 0;
+}
+
+.acciones-filtros {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.acciones-filtros .boton-enlace,
+.acciones-filtros .boton-secundario {
+    flex-shrink: 0;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.contenedor-tabla {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+/*
+A 1200 px o menos, el formulario utiliza dos columnas.
+Este límite considera el espacio ocupado por el menú lateral.
+*/
+@media (max-width: 1200px) {
+    .presentacion .formulario-filtros {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .presentacion
+    .formulario-filtros
+    .grupo-filtro:first-child {
+        grid-column: 1 / -1 !important;
+    }
+
+    .presentacion
+    .formulario-filtros
+    .acciones-filtros {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+/* Celulares y pantallas muy estrechas */
+@media (max-width: 650px) {
+    .presentacion .formulario-filtros {
+        grid-template-columns: 1fr !important;
+    }
+
+    .presentacion
+    .formulario-filtros
+    .grupo-filtro:first-child,
+    .presentacion
+    .formulario-filtros
+    .acciones-filtros {
+        grid-column: auto !important;
+    }
+
+    .presentacion
+    .formulario-filtros
+    .acciones-filtros {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .presentacion
+    .acciones-filtros
+    .boton-enlace,
+    .presentacion
+    .acciones-filtros
+    .boton-secundario {
+        width: 100%;
+        text-align: center;
+    }
 }

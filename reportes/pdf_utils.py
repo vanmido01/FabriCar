@@ -1,6 +1,7 @@
 from django.utils import timezone
 
 from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.lib.utils import ImageReader
@@ -42,6 +43,15 @@ def obtener_estilos_pdf():
         textColor=COLOR_PRINCIPAL,
     )
 
+    estilo_encabezado = ParagraphStyle(
+        name="ReporteEncabezadoTabla",
+        fontName="Helvetica-Bold",
+        fontSize=8,
+        leading=10,
+        textColor=colors.white,
+        alignment=TA_CENTER,
+    )
+
     estilo_filtros = ParagraphStyle(
         name="ReporteFiltros",
         fontName="Helvetica",
@@ -60,6 +70,7 @@ def obtener_estilos_pdf():
 
     return {
         "normal": estilo_normal,
+        "encabezado": estilo_encabezado,
         "filtros": estilo_filtros,
         "resumen": estilo_resumen,
     }

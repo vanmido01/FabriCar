@@ -10,6 +10,44 @@ Productos registrados
 
 {% block contenido %}
 
+<style>
+    .etiqueta-cantidad {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 32px;
+        height: 30px;
+        padding: 0 10px;
+
+        border: 1px solid #cbd5e1;
+        border-radius: 15px;
+        background-color: #f8fafc;
+        color: #334155;
+
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .etiqueta-condicion {
+        display: inline-block;
+        padding: 5px 10px;
+
+        border-radius: 6px;
+        background-color: #eef2ff;
+        color: #3730a3;
+
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .tabla-datos td,
+    .tabla-datos th {
+        vertical-align: middle;
+    }
+</style>
+
 <section class="presentacion">
 
     <div class="encabezado-listado">
@@ -136,8 +174,10 @@ Productos registrados
                     <th>Código</th>
                     <th>Nombre</th>
                     <th>Tipo</th>
+                    <th>Condición</th>
                     <th>Marca</th>
-                    <th>Precio de venta</th>
+                    <th>Proveedores</th>
+                    <th>Vehículos</th>
                     <th>Stock</th>
                     <th>Estado</th>
                     <th>Acciones</th>
@@ -164,106 +204,126 @@ Productos registrados
                             {% endif %}
                         </td>
 
-                        <td>
-                            {{ producto.codigo }}
-                        </td>
+                            <td>
+                                <strong>{{ producto.codigo }}</strong>
+                            </td>
 
-                        <td>
-                            {{ producto.nombre }}
-                        </td>
+                            <td>
+                                {{ producto.nombre }}
+                            </td>
 
-                        <td>
-                            {{ producto.get_tipo_display }}
-                        </td>
+                            <td>
+                                {{ producto.get_tipo_display }}
+                            </td>
 
-                        <td>
-                            {{ producto.marca|default:"Sin marca" }}
-                        </td>
-
-                        <td>
-                            Bs {{ producto.precio_venta }}
-                        </td>
-
-                        <td>
-                            {% if producto.stock_actual <= producto.stock_minimo %}
-                                <span class="etiqueta-stock-bajo">
-                                    {{ producto.stock_actual }}
+                            <td>
+                                <span class="etiqueta-condicion">
+                                    {{ producto.get_condicion_display }}
                                 </span>
-                            {% else %}
-                                <span class="etiqueta-stock-normal">
-                                    {{ producto.stock_actual }}
+                            </td>
+
+                            <td>
+                                {{ producto.marca|default:"Sin marca" }}
+                            </td>
+
+                            <td>
+                                <span
+                                    class="etiqueta-cantidad"
+                                    title="Cantidad de proveedores habituales"
+                                >
+                                    {{ producto.cantidad_proveedores }}
                                 </span>
-                            {% endif %}
-                        </td>
+                            </td>
 
-                        <td>
-                            {% if producto.estado %}
-                                <span class="etiqueta-activo">
-                                    Activo
+                            <td>
+                                <span
+                                    class="etiqueta-cantidad"
+                                    title="Cantidad de vehículos compatibles"
+                                >
+                                    {{ producto.cantidad_vehiculos }}
                                 </span>
-                            {% else %}
-                                <span class="etiqueta-inactivo">
-                                    Inactivo
-                                </span>
-                            {% endif %}
-                        </td>
-<td>
-    <div class="acciones-tabla">
+                            </td>
 
-        <a
-            href="{% url 'productos:detalle_producto' producto.id %}"
-            class="boton-tabla-secundario"
-        >
-            Ver detalle
-        </a>
+                            <td>
+                                {% if producto.stock_actual <= producto.stock_minimo %}
+                                    <span class="etiqueta-stock-bajo">
+                                        {{ producto.stock_actual }}
+                                    </span>
+                                {% else %}
+                                    <span class="etiqueta-stock-normal">
+                                        {{ producto.stock_actual }}
+                                    </span>
+                                {% endif %}
+                            </td>
 
-        {% if puede_gestionar_productos %}
+                            <td>
+                                {% if producto.estado %}
+                                    <span class="etiqueta-activo">
+                                        Activo
+                                    </span>
+                                {% else %}
+                                    <span class="etiqueta-inactivo">
+                                        Inactivo
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="acciones-tabla">
 
-            <a
-                href="{% url 'productos:modificar_producto' producto.id %}"
-                class="boton-tabla"
-            >
-                Modificar
-            </a>
+                                    <a
+                                        href="{% url 'productos:detalle_producto' producto.id %}"
+                                        class="boton-tabla-secundario"
+                                    >
+                                        Ver detalle
+                                    </a>
 
-            <form
-                method="post"
-                action="{% url 'productos:cambiar_estado_producto' producto.id %}"
-                class="formulario-estado-producto"
-            >
-                {% csrf_token %}
+                                    {% if puede_gestionar_productos %}
 
-                {% if producto.estado %}
-                    <button
-                        type="submit"
-                        class="boton-desactivar"
-                        onclick="return confirm('¿Está seguro de desactivar este producto?');"
-                    >
-                        Desactivar
-                    </button>
-                {% else %}
-                    <button
-                        type="submit"
-                        class="boton-activar"
-                        onclick="return confirm('¿Está seguro de activar este producto?');"
-                    >
-                        Activar
-                    </button>
-                {% endif %}
-            </form>
+                                        <a
+                                            href="{% url 'productos:modificar_producto' producto.id %}"
+                                            class="boton-tabla"
+                                        >
+                                            Modificar
+                                        </a>
 
-        {% endif %}
+                                        <form
+                                            method="post"
+                                            action="{% url 'productos:cambiar_estado_producto' producto.id %}"
+                                            class="formulario-estado-producto"
+                                        >
+                                            {% csrf_token %}
 
-    </div>
-</td>
+                                            {% if producto.estado %}
+                                                <button
+                                                    type="submit"
+                                                    class="boton-desactivar"
+                                                    onclick="return confirm('¿Está seguro de desactivar este producto?');"
+                                                >
+                                                    Desactivar
+                                                </button>
+                                            {% else %}
+                                                <button
+                                                    type="submit"
+                                                    class="boton-activar"
+                                                    onclick="return confirm('¿Está seguro de activar este producto?');"
+                                                >
+                                                    Activar
+                                                </button>
+                                            {% endif %}
+                                        </form>
+
+                                    {% endif %}
+
+                                </div>
+                            </td>
                     </tr>
 
                 {% empty %}
 
                     <tr>
                         <td
-    colspan="9"
-    class="tabla-vacia"
+                            colspan="11"
+                            class="tabla-vacia"
 >
                             No existen productos registrados.
                         </td>

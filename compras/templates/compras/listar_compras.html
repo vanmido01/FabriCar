@@ -10,6 +10,61 @@ Compras registradas
 
 {% block contenido %}
 
+<style>
+    .cantidad-productos-compra {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        min-width: 34px;
+        height: 30px;
+        padding: 0 10px;
+
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        background-color: #f8fafc;
+        color: #334155;
+
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .celda-ultima-accion {
+        min-width: 145px;
+    }
+
+    .celda-ultima-accion strong,
+    .celda-ultima-accion span,
+    .celda-ultima-accion small {
+        display: block;
+    }
+
+    .celda-ultima-accion strong {
+        margin-bottom: 3px;
+        color: #475569;
+        font-size: 11px;
+        text-transform: uppercase;
+    }
+
+    .celda-ultima-accion span {
+        color: #1e293b;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .celda-ultima-accion small {
+        margin-top: 3px;
+        color: #64748b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .tabla-datos th,
+    .tabla-datos td {
+        vertical-align: middle;
+    }
+</style>
+
 <section class="presentacion">
 
         <div class="encabezado-listado">
@@ -152,13 +207,14 @@ Compras registradas
             <thead>
                 <tr>
                     <th>N.º</th>
-                    <th>Fecha</th>
+                    <th>Fecha de compra</th>
                     <th>Proveedor</th>
                     <th>Comprobante</th>
                     <th>Número</th>
+                    <th>Productos</th>
                     <th>Estado</th>
                     <th>Total</th>
-                    <th>Registrado por</th>
+                    <th>Última acción</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -188,6 +244,14 @@ Compras registradas
                         <td>
                             {{ compra.numero_comprobante|default:"Sin número" }}
                         </td>
+                        <td>
+                            <span
+                                class="cantidad-productos-compra"
+                                title="Cantidad de productos diferentes"
+                            >
+                                {{ compra.cantidad_productos }}
+                            </span>
+                        </td>
 
                         <td>
                             {% if compra.estado == "BORRADOR" %}
@@ -211,13 +275,73 @@ Compras registradas
                             Bs {{ compra.total }}
                         </td>
 
-                        <td>
-                            {% if compra.usuario_registro %}
-                                {{ compra.usuario_registro.username }}
-                            {% else %}
-                                No registrado
-                            {% endif %}
-                        </td>
+                            <td class="celda-ultima-accion">
+
+                                {% if compra.estado == "ANULADA" %}
+
+                                    <strong>
+                                        Anulada por
+                                    </strong>
+
+                                    <span>
+                                        {% if compra.usuario_anulacion %}
+                                            {{ compra.usuario_anulacion.username }}
+                                        {% else %}
+                                            Usuario no registrado
+                                        {% endif %}
+                                    </span>
+
+                                    <small>
+                                        {% if compra.fecha_anulacion %}
+                                            {{ compra.fecha_anulacion|date:"d/m/Y H:i" }}
+                                        {% else %}
+                                            Fecha no registrada
+                                        {% endif %}
+                                    </small>
+
+                                {% elif compra.estado == "CONFIRMADA" %}
+
+                                    <strong>
+                                        Confirmada por
+                                    </strong>
+
+                                    <span>
+                                        {% if compra.usuario_confirmacion %}
+                                            {{ compra.usuario_confirmacion.username }}
+                                        {% else %}
+                                            Usuario no registrado
+                                        {% endif %}
+                                    </span>
+
+                                    <small>
+                                        {% if compra.fecha_confirmacion %}
+                                            {{ compra.fecha_confirmacion|date:"d/m/Y H:i" }}
+                                        {% else %}
+                                            Fecha no registrada
+                                        {% endif %}
+                                    </small>
+
+                                {% else %}
+
+                                    <strong>
+                                        Registrada por
+                                    </strong>
+
+                                    <span>
+                                        {% if compra.usuario_registro %}
+                                            {{ compra.usuario_registro.username }}
+                                        {% else %}
+                                            Usuario no registrado
+                                        {% endif %}
+                                    </span>
+
+                                    <small>
+                                        {{ compra.fecha_registro|date:"d/m/Y H:i" }}
+                                    </small>
+
+                                {% endif %}
+
+                            </td>
                             <td>
                                 <a
                                     href="{% url 'compras:detalle_compra' compra.id %}"
@@ -232,7 +356,7 @@ Compras registradas
                 {% empty %}
 
                     <tr>
-                        <td colspan="9" class="tabla-vacia">
+                        <td colspan="10" class="tabla-vacia">
                             No existen compras registradas.
                         </td>
                     </tr>

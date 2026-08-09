@@ -10,6 +10,329 @@
 
 {% block contenido %}
 
+<style>
+    /* Botones exclusivos del formulario de productos */
+
+    .formulario-producto .seccion-formulario a.boton-secundario {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+
+        min-height: 40px !important;
+        padding: 0 16px !important;
+
+        border: 1px solid #2563eb !important;
+        border-radius: 8px !important;
+        background-color: #eff6ff !important;
+        color: #1d4ed8 !important;
+
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        text-decoration: none !important;
+
+        box-shadow: 0 2px 5px rgba(37, 99, 235, 0.12) !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .formulario-producto .seccion-formulario a.boton-secundario::before {
+        content: "+";
+        font-size: 19px;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .formulario-producto .seccion-formulario a.boton-secundario:hover {
+        background-color: #dbeafe !important;
+        border-color: #1d4ed8 !important;
+        color: #1e40af !important;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 10px rgba(37, 99, 235, 0.18) !important;
+    }
+
+    .formulario-producto .acciones-formulario {
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin-top: 5px !important;
+    }
+
+    .formulario-producto .acciones-formulario a.boton-secundario {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 7px !important;
+
+        min-height: 42px !important;
+        padding: 0 18px !important;
+
+        border: 1px solid #94a3b8 !important;
+        border-radius: 8px !important;
+        background-color: #ffffff !important;
+        color: #475569 !important;
+
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        text-decoration: none !important;
+
+        transition: all 0.2s ease !important;
+    }
+
+    .formulario-producto .acciones-formulario a.boton-secundario::before {
+        content: "←";
+        font-size: 15px;
+    }
+
+    .formulario-producto .acciones-formulario a.boton-secundario:hover {
+        background-color: #f1f5f9 !important;
+        border-color: #64748b !important;
+        color: #1e293b !important;
+        transform: translateY(-1px);
+    }
+
+    .formulario-producto .acciones-formulario button.boton-principal {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+
+        min-height: 42px !important;
+        padding: 0 21px !important;
+
+        border: 1px solid #172b46 !important;
+        border-radius: 8px !important;
+        background-color: #172b46 !important;
+        color: #ffffff !important;
+
+        font-size: 13px !important;
+        font-weight: 700 !important;
+
+        box-shadow: 0 4px 9px rgba(15, 23, 42, 0.22) !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .formulario-producto .acciones-formulario button.boton-principal::before {
+        content: "✓";
+        font-size: 15px;
+    }
+
+    .formulario-producto .acciones-formulario button.boton-principal:hover {
+        background-color: #244467 !important;
+        border-color: #244467 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 13px rgba(15, 23, 42, 0.28) !important;
+    }
+
+    .formulario-producto a:focus-visible,
+    .formulario-producto button:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.30) !important;
+        outline-offset: 2px !important;
+    }
+
+    @media (max-width: 600px) {
+        .formulario-producto .acciones-formulario {
+            flex-direction: column-reverse !important;
+            align-items: stretch !important;
+        }
+
+        .formulario-producto .acciones-formulario a,
+        .formulario-producto .acciones-formulario button {
+            width: 100% !important;
+        }
+    }
+        /* Buscadores de proveedores y vehículos */
+
+    .panel-buscador-opciones {
+        margin-top: 14px;
+        margin-bottom: 14px;
+        padding: 14px;
+
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background-color: #f8fafc;
+    }
+
+    .fila-buscador-opciones {
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .campo-busqueda-opciones {
+        width: 100%;
+        min-height: 40px;
+        padding: 9px 12px;
+
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        background-color: #ffffff;
+        color: #0f172a;
+
+        font: inherit;
+        font-size: 13px;
+    }
+
+    .campo-busqueda-opciones:focus {
+        border-color: #2563eb;
+        outline: 3px solid rgba(37, 99, 235, 0.13);
+    }
+
+    .boton-limpiar-opciones {
+        min-height: 40px;
+        padding: 0 15px;
+
+        border: 1px solid #94a3b8;
+        border-radius: 7px;
+        background-color: #ffffff;
+        color: #475569;
+
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .boton-limpiar-opciones:hover {
+        border-color: #64748b;
+        background-color: #f1f5f9;
+        color: #1e293b;
+    }
+
+    .resumen-buscador-opciones {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        margin-top: 12px;
+    }
+
+    .contador-opciones-seleccionadas {
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .contador-opciones-seleccionadas strong {
+        color: #1d4ed8;
+    }
+
+    .control-solo-seleccionados {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .control-solo-seleccionados input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+
+    .lista-filtrable-opciones {
+        max-height: 330px;
+        overflow-y: auto;
+
+        padding: 10px;
+
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background-color: #ffffff;
+    }
+
+    .lista-filtrable-opciones
+    .lista-opciones-multiples {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 9px 14px;
+    }
+
+    .lista-filtrable-opciones
+    .lista-opciones-multiples > div {
+        min-width: 0;
+    }
+
+    .lista-filtrable-opciones
+    .lista-opciones-multiples label {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+
+        min-height: 40px;
+        padding: 9px 10px;
+
+        border: 1px solid #dbe3ec;
+        border-radius: 6px;
+        background-color: #f8fafc;
+        color: #334155;
+
+        font-size: 12px;
+        line-height: 1.45;
+        cursor: pointer;
+    }
+
+    .lista-filtrable-opciones
+    .lista-opciones-multiples label:hover {
+        border-color: #93c5fd;
+        background-color: #eff6ff;
+    }
+
+    .lista-filtrable-opciones
+    .lista-opciones-multiples input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+        margin-top: 1px;
+        cursor: pointer;
+    }
+
+    .opcion-multiple-oculta {
+        display: none !important;
+    }
+
+    .mensaje-sin-resultados-opciones {
+        display: none;
+        margin: 12px 0 0;
+        padding: 11px 13px;
+
+        border: 1px solid #fde68a;
+        border-radius: 7px;
+        background-color: #fffbeb;
+        color: #92400e;
+
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .mensaje-sin-resultados-opciones.visible {
+        display: block;
+    }
+
+    @media (max-width: 760px) {
+        .fila-buscador-opciones {
+            grid-template-columns: 1fr;
+        }
+
+        .boton-limpiar-opciones {
+            width: 100%;
+        }
+
+        .lista-filtrable-opciones
+        .lista-opciones-multiples {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 <section class="presentacion">
 
     <div class="encabezado-formulario">
@@ -53,180 +376,289 @@
         class="formulario-producto"
     >
         {% csrf_token %}
-
         <fieldset class="seccion-formulario">
 
-            <legend>Información general</legend>
+    <legend>Información general</legend>
 
-            <div class="cuadricula-formulario">
+    <div class="cuadricula-formulario">
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.codigo.id_for_label }}">
-                        Código
-                    </label>
+        <div class="grupo-campo">
+            <label for="{{ formulario.codigo.id_for_label }}">
+                Código
+            </label>
 
-                    {{ formulario.codigo }}
+            {{ formulario.codigo }}
 
-                    {% for error in formulario.codigo.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+            {% for error in formulario.codigo.errors %}
+                <span class="error-campo">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.nombre.id_for_label }}">
-                        Nombre
-                    </label>
+        <div class="grupo-campo">
+            <label for="{{ formulario.nombre.id_for_label }}">
+                Nombre
+            </label>
 
-                    {{ formulario.nombre }}
+            {{ formulario.nombre }}
 
-                    {% for error in formulario.nombre.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+            {% for error in formulario.nombre.errors %}
+                <span class="error-campo">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.tipo.id_for_label }}">
-                        Tipo de repuesto
-                    </label>
+        <div class="grupo-campo">
+            <label for="{{ formulario.tipo.id_for_label }}">
+                Tipo de repuesto
+            </label>
 
-                    {{ formulario.tipo }}
+            {{ formulario.tipo }}
 
-                    {% for error in formulario.tipo.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+            {% for error in formulario.tipo.errors %}
+                <span class="error-campo">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.condicion.id_for_label }}">
-                        Condición
-                    </label>
+        <div class="grupo-campo">
+            <label for="{{ formulario.condicion.id_for_label }}">
+                Condición
+            </label>
 
-                    {{ formulario.condicion }}
+            {{ formulario.condicion }}
 
-                    {% for error in formulario.condicion.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+            {% for error in formulario.condicion.errors %}
+                <span class="error-campo">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.marca.id_for_label }}">
-                        Marca
-                    </label>
+        <div class="grupo-campo">
+            <label for="{{ formulario.marca.id_for_label }}">
+                Marca del repuesto
+            </label>
 
-                    {{ formulario.marca }}
+            {{ formulario.marca }}
 
-                    {% for error in formulario.marca.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+            {% for error in formulario.marca.errors %}
+                <span class="error-campo">{{ error }}</span>
+            {% endfor %}
+        </div>
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.procedencia.id_for_label }}">
-                        Procedencia
-                    </label>
+        <div class="grupo-campo">
+            <label for="{{ formulario.procedencia.id_for_label }}">
+                Procedencia
+            </label>
 
-                    {{ formulario.procedencia }}
+            {{ formulario.procedencia }}
 
-                    {% for error in formulario.procedencia.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+            {% for error in formulario.procedencia.errors %}
+                <span class="error-campo">{{ error }}</span>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <div class="grupo-campo campo-completo">
+        <label for="{{ formulario.descripcion.id_for_label }}">
+            Descripción técnica
+        </label>
+
+        {{ formulario.descripcion }}
+
+        {% for error in formulario.descripcion.errors %}
+            <span class="error-campo">{{ error }}</span>
+        {% endfor %}
+    </div>
+
+</fieldset>
+
+    <fieldset class="seccion-formulario">
+
+        <legend>Proveedores habituales</legend>
+
+        <p>
+            Seleccione uno o varios proveedores que habitualmente
+            pueden suministrar este producto.
+        </p>
+
+        <div class="panel-buscador-opciones">
+
+            <div class="fila-buscador-opciones">
+
+                <input
+                    type="search"
+                    id="buscar-proveedor-producto"
+                    class="campo-busqueda-opciones"
+                    placeholder="Buscar por nombre, razón social o NIT..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    id="limpiar-busqueda-proveedores"
+                    class="boton-limpiar-opciones"
+                >
+                    Limpiar búsqueda
+                </button>
 
             </div>
 
-            <div class="grupo-campo campo-completo">
-                <label for="{{ formulario.descripcion.id_for_label }}">
-                    Descripción
+            <div class="resumen-buscador-opciones">
+
+                <span class="contador-opciones-seleccionadas">
+                    Seleccionados:
+                    <strong id="contador-proveedores-seleccionados">
+                        0
+                    </strong>
+                </span>
+
+                <label class="control-solo-seleccionados">
+
+                    <input
+                        type="checkbox"
+                        id="mostrar-solo-proveedores-seleccionados"
+                    >
+
+                    Mostrar solo seleccionados
+
                 </label>
 
-                {{ formulario.descripcion }}
-
-                {% for error in formulario.descripcion.errors %}
-                    <span class="error-campo">
-                        {{ error }}
-                    </span>
-                {% endfor %}
             </div>
 
-        </fieldset>
+        </div>
 
-        <fieldset class="seccion-formulario">
+        <div
+            id="lista-proveedores-producto"
+            class="contenedor-opciones-multiples lista-filtrable-opciones"
+        >
 
-            <legend>Precios e inventario</legend>
+            {{ formulario.proveedores_habituales }}
 
-            <div class="cuadricula-formulario">
+            {% for error in formulario.proveedores_habituales.errors %}
+                <span class="error-campo">
+                    {{ error }}
+                </span>
+            {% endfor %}
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.precio_compra.id_for_label }}">
-                        Precio de compra
-                    </label>
+        </div>
 
-                    {{ formulario.precio_compra }}
+        <p
+            id="sin-resultados-proveedores"
+            class="mensaje-sin-resultados-opciones"
+        >
+            No se encontraron proveedores que coincidan con la búsqueda.
+        </p>
 
-                    {% for error in formulario.precio_compra.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+        <div style="margin-top: 18px;">
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.precio_venta.id_for_label }}">
-                        Precio de venta
-                    </label>
+            <a
+                href="{% url 'proveedores:registrar_proveedor' %}"
+                class="boton-secundario"
+                target="_blank"
+                rel="noopener"
+            >
+                Registrar nuevo proveedor
+            </a>
 
-                    {{ formulario.precio_venta }}
+        </div>
 
-                    {% for error in formulario.precio_venta.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+        <p style="margin-top: 12px;">
+            El registro del proveedor se abrirá en otra pestaña
+            para no perder los datos escritos en este formulario.
+        </p>
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.stock_actual.id_for_label }}">
-                        Stock actual
-                    </label>
+    </fieldset>
 
-                    {{ formulario.stock_actual }}
 
-                    {% for error in formulario.stock_actual.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+    <fieldset class="seccion-formulario">
 
-                <div class="grupo-campo">
-                    <label for="{{ formulario.stock_minimo.id_for_label }}">
-                        Stock mínimo
-                    </label>
+        <legend>Compatibilidad vehicular</legend>
 
-                    {{ formulario.stock_minimo }}
+        <p>
+            Seleccione todos los vehículos con los que este producto
+            sea compatible.
+        </p>
 
-                    {% for error in formulario.stock_minimo.errors %}
-                        <span class="error-campo">
-                            {{ error }}
-                        </span>
-                    {% endfor %}
-                </div>
+        <div class="panel-buscador-opciones">
+
+            <div class="fila-buscador-opciones">
+
+                <input
+                    type="search"
+                    id="buscar-vehiculo-producto"
+                    class="campo-busqueda-opciones"
+                    placeholder="Buscar por marca, modelo, año o motor..."
+                    autocomplete="off"
+                >
+
+                <button
+                    type="button"
+                    id="limpiar-busqueda-vehiculos"
+                    class="boton-limpiar-opciones"
+                >
+                    Limpiar búsqueda
+                </button>
 
             </div>
 
-        </fieldset>
+            <div class="resumen-buscador-opciones">
+
+                <span class="contador-opciones-seleccionadas">
+                    Seleccionados:
+                    <strong id="contador-vehiculos-seleccionados">
+                        0
+                    </strong>
+                </span>
+
+                <label class="control-solo-seleccionados">
+
+                    <input
+                        type="checkbox"
+                        id="mostrar-solo-vehiculos-seleccionados"
+                    >
+
+                    Mostrar solo seleccionados
+
+                </label>
+
+            </div>
+
+        </div>
+
+        <div
+            id="lista-vehiculos-producto"
+            class="contenedor-opciones-multiples lista-filtrable-opciones"
+        >
+
+            {{ formulario.vehiculos_compatibles }}
+
+            {% for error in formulario.vehiculos_compatibles.errors %}
+                <span class="error-campo">
+                    {{ error }}
+                </span>
+            {% endfor %}
+
+        </div>
+
+        <p
+            id="sin-resultados-vehiculos"
+            class="mensaje-sin-resultados-opciones"
+        >
+            No se encontraron vehículos que coincidan con la búsqueda.
+        </p>
+
+        <div style="margin-top: 18px;">
+
+            <a
+                href="{% url 'vehiculos:registrar_vehiculo' %}"
+                class="boton-secundario"
+                target="_blank"
+                rel="noopener"
+            >
+                Registrar nuevo vehículo
+            </a>
+
+        </div>
+
+    </fieldset>
 
         <fieldset class="seccion-formulario">
 
@@ -265,27 +697,266 @@
         <div class="acciones-formulario">
 
             <a
-    href="{% url 'productos:listar_productos' %}"
-    class="boton-secundario"
->
-    Cancelar
-</a>
+                href="{% url 'productos:listar_productos' %}"
+                class="boton-secundario"
+            >
+                Cancelar
+            </a>
 
             <button
-    type="submit"
-    class="boton-principal"
->
-    {% if modo_edicion %}
-        Guardar cambios
-    {% else %}
-        Guardar producto
-    {% endif %}
-</button>
+                type="submit"
+                class="boton-principal"
+            >
+                {% if modo_edicion %}
+                    Guardar cambios
+                {% else %}
+                    Guardar producto
+                {% endif %}
+            </button>
 
         </div>
 
     </form>
 
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        function normalizarTexto(valor) {
+            return String(valor || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(
+                    /[\u0300-\u036f]/g,
+                    ""
+                )
+                .trim();
+        }
+
+        function obtenerContenedorOpcion(checkbox) {
+            const etiqueta = checkbox.closest("label");
+
+            if (etiqueta && etiqueta.parentElement) {
+                return etiqueta.parentElement;
+            }
+
+            return checkbox.parentElement;
+        }
+
+        function configurarBuscadorOpciones(configuracion) {
+            const campoBusqueda = document.getElementById(
+                configuracion.campoBusquedaId
+            );
+
+            const lista = document.getElementById(
+                configuracion.listaId
+            );
+
+            const botonLimpiar = document.getElementById(
+                configuracion.botonLimpiarId
+            );
+
+            const campoSoloSeleccionados = document.getElementById(
+                configuracion.soloSeleccionadosId
+            );
+
+            const contador = document.getElementById(
+                configuracion.contadorId
+            );
+
+            const mensajeSinResultados = document.getElementById(
+                configuracion.mensajeSinResultadosId
+            );
+
+            if (
+                !campoBusqueda
+                || !lista
+                || !contador
+            ) {
+                return;
+            }
+
+            const checkboxes = Array.from(
+                lista.querySelectorAll(
+                    'input[type="checkbox"]'
+                )
+            );
+
+            function actualizarContador() {
+                const cantidadSeleccionada = (
+                    checkboxes.filter(
+                        function (checkbox) {
+                            return checkbox.checked;
+                        }
+                    ).length
+                );
+
+                contador.textContent = cantidadSeleccionada;
+            }
+
+            function filtrarOpciones() {
+                const textoBusqueda = normalizarTexto(
+                    campoBusqueda.value
+                );
+
+                const palabrasBusqueda = textoBusqueda
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+                const mostrarSoloSeleccionados = Boolean(
+                    campoSoloSeleccionados
+                    && campoSoloSeleccionados.checked
+                );
+
+                let opcionesVisibles = 0;
+
+                checkboxes.forEach(function (checkbox) {
+                    const contenedorOpcion = (
+                        obtenerContenedorOpcion(
+                            checkbox
+                        )
+                    );
+
+                    if (!contenedorOpcion) {
+                        return;
+                    }
+
+                    const textoOpcion = normalizarTexto(
+                        contenedorOpcion.textContent
+                    );
+
+                    const coincideBusqueda = (
+                        palabrasBusqueda.length === 0
+                        || palabrasBusqueda.every(
+                            function (palabra) {
+                                return textoOpcion.includes(
+                                    palabra
+                                );
+                            }
+                        )
+                    );
+
+                    const cumpleSeleccion = (
+                        !mostrarSoloSeleccionados
+                        || checkbox.checked
+                    );
+
+                    const debeMostrar = (
+                        coincideBusqueda
+                        && cumpleSeleccion
+                    );
+
+                    contenedorOpcion.classList.toggle(
+                        "opcion-multiple-oculta",
+                        !debeMostrar
+                    );
+
+                    if (debeMostrar) {
+                        opcionesVisibles += 1;
+                    }
+                });
+
+                if (mensajeSinResultados) {
+                    mensajeSinResultados.classList.toggle(
+                        "visible",
+                        opcionesVisibles === 0
+                    );
+                }
+
+                actualizarContador();
+            }
+
+            campoBusqueda.addEventListener(
+                "input",
+                filtrarOpciones
+            );
+
+            if (campoSoloSeleccionados) {
+                campoSoloSeleccionados.addEventListener(
+                    "change",
+                    filtrarOpciones
+                );
+            }
+
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener(
+                    "change",
+                    function () {
+                        actualizarContador();
+
+                        if (
+                            campoSoloSeleccionados
+                            && campoSoloSeleccionados.checked
+                        ) {
+                            filtrarOpciones();
+                        }
+                    }
+                );
+            });
+
+            if (botonLimpiar) {
+                botonLimpiar.addEventListener(
+                    "click",
+                    function () {
+                        campoBusqueda.value = "";
+
+                        if (campoSoloSeleccionados) {
+                            campoSoloSeleccionados.checked = false;
+                        }
+
+                        filtrarOpciones();
+                        campoBusqueda.focus();
+                    }
+                );
+            }
+
+            actualizarContador();
+            filtrarOpciones();
+        }
+
+        configurarBuscadorOpciones({
+            campoBusquedaId: (
+                "buscar-proveedor-producto"
+            ),
+            listaId: (
+                "lista-proveedores-producto"
+            ),
+            botonLimpiarId: (
+                "limpiar-busqueda-proveedores"
+            ),
+            soloSeleccionadosId: (
+                "mostrar-solo-proveedores-seleccionados"
+            ),
+            contadorId: (
+                "contador-proveedores-seleccionados"
+            ),
+            mensajeSinResultadosId: (
+                "sin-resultados-proveedores"
+            ),
+        });
+
+        configurarBuscadorOpciones({
+            campoBusquedaId: (
+                "buscar-vehiculo-producto"
+            ),
+            listaId: (
+                "lista-vehiculos-producto"
+            ),
+            botonLimpiarId: (
+                "limpiar-busqueda-vehiculos"
+            ),
+            soloSeleccionadosId: (
+                "mostrar-solo-vehiculos-seleccionados"
+            ),
+            contadorId: (
+                "contador-vehiculos-seleccionados"
+            ),
+            mensajeSinResultadosId: (
+                "sin-resultados-vehiculos"
+            ),
+        });
+    });
+</script>
 
 {% endblock %}

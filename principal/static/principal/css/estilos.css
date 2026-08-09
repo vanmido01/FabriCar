@@ -918,7 +918,7 @@ textarea.campo-formulario {
 
 .fila-detalle-compra {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
     align-items: end;
     gap: 15px;
     margin-bottom: 15px;
@@ -2753,5 +2753,152 @@ Este límite considera el espacio ocupado por el menú lateral.
     .boton-secundario {
         width: 100%;
         text-align: center;
+    }
+}
+
+/* Selección múltiple de proveedores y vehículos */
+.contenedor-opciones-multiples {
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background-color: #ffffff;
+}
+
+.lista-opciones-multiples {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 18px;
+}
+
+.lista-opciones-multiples > div label {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: #f8fafc;
+    cursor: pointer;
+}
+
+.lista-opciones-multiples input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 750px) {
+    .lista-opciones-multiples {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==============================
+   BOTONES DEL FORMULARIO PRODUCTO
+   ============================== */
+
+/* Configuración general */
+.formulario-producto .boton-principal,
+.formulario-producto .boton-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 38px;
+    padding: 9px 18px;
+
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+/* Botón principal: Guardar */
+.formulario-producto .boton-principal {
+    border: 1px solid #14263d;
+    background-color: #14263d;
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(20, 38, 61, 0.18);
+}
+
+.formulario-producto .boton-principal:hover {
+    background-color: #1f3b5c;
+    border-color: #1f3b5c;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(20, 38, 61, 0.25);
+}
+
+.formulario-producto .boton-principal:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(20, 38, 61, 0.18);
+}
+
+/* Botones para registrar proveedor o vehículo */
+.seccion-formulario .boton-secundario {
+    border: 1px solid #2563eb;
+    background-color: #ffffff;
+    color: #1d4ed8;
+    box-shadow: 0 2px 5px rgba(37, 99, 235, 0.08);
+}
+
+.seccion-formulario .boton-secundario:hover {
+    background-color: #eff6ff;
+    border-color: #1d4ed8;
+    color: #1e40af;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 9px rgba(37, 99, 235, 0.16);
+}
+
+/* Botón Cancelar */
+.acciones-formulario .boton-secundario {
+    border: 1px solid #94a3b8;
+    background-color: #ffffff;
+    color: #475569;
+}
+
+.acciones-formulario .boton-secundario:hover {
+    background-color: #f1f5f9;
+    border-color: #64748b;
+    color: #1e293b;
+    transform: translateY(-1px);
+}
+
+/* Contenedor de botones inferiores */
+.acciones-formulario {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Accesibilidad al usar teclado */
+.formulario-producto .boton-principal:focus-visible,
+.formulario-producto .boton-secundario:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.25);
+    outline-offset: 2px;
+}
+
+/* Adaptación para celular */
+@media (max-width: 600px) {
+    .acciones-formulario {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .acciones-formulario .boton-principal,
+    .acciones-formulario .boton-secundario {
+        width: 100%;
     }
 }

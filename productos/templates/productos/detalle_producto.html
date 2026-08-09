@@ -26,14 +26,16 @@ Detalle del producto | FABRI-CAR
                 Volver a productos
             </a>
 
-            {% if puede_gestionar_productos %}
-                <a
-                    href="{% url 'productos:modificar_producto' producto.id %}"
-                    class="boton-principal"
-                >
-                    Modificar
-                </a>
-            {% endif %}
+        {% if puede_gestionar_productos %}
+
+            <a
+                href="{% url 'productos:modificar_producto' producto.id %}"
+                class="boton-principal"
+            >
+                Modificar
+            </a>
+
+        {% endif %}
 
         </div>
     </div>
@@ -156,6 +158,85 @@ Detalle del producto | FABRI-CAR
         </div>
 
     </div>
+
+<div class="seccion-compatibilidades">
+
+    <div class="encabezado-compatibilidades">
+        <div>
+            <h3>Proveedores habituales</h3>
+
+            <p>
+                Proveedores que normalmente suministran este producto.
+            </p>
+        </div>
+    </div>
+
+    <div class="contenedor-tabla">
+
+        <table class="tabla-datos">
+
+            <thead>
+                <tr>
+                    <th>Razón social</th>
+                    <th>NIT</th>
+                    <th>Persona de contacto</th>
+                    <th>Teléfono</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for proveedor in producto.proveedores_habituales.all %}
+
+                    <tr>
+                        <td>
+                            {{ proveedor.razon_social }}
+                        </td>
+
+                        <td>
+                            {{ proveedor.nit }}
+                        </td>
+
+                        <td>
+                            {{ proveedor.persona_contacto|default:"No especificada" }}
+                        </td>
+
+                        <td>
+                            {{ proveedor.telefono|default:"No especificado" }}
+                        </td>
+
+                        <td>
+                            {% if proveedor.estado %}
+                                <span class="etiqueta-activo">
+                                    Activo
+                                </span>
+                            {% else %}
+                                <span class="etiqueta-inactivo">
+                                    Inactivo
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="5" class="tabla-vacia">
+                            Este producto no tiene proveedores habituales registrados.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
 <div class="seccion-compatibilidades">
 
     <div class="encabezado-compatibilidades">

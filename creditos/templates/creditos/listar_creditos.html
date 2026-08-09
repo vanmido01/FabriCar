@@ -42,7 +42,7 @@ Créditos y cuentas por cobrar
                 name="q"
                 value="{{ busqueda }}"
                 class="campo-formulario"
-                placeholder="Cliente, documento o comprobante"
+                placeholder="Código de venta, cliente, documento o comprobante"
             >
 
         </div>
@@ -166,12 +166,16 @@ Créditos y cuentas por cobrar
                                 href="{% url 'ventas:detalle_venta' credito.venta.id %}"
                                 class="enlace-referencia"
                             >
-                                Venta N.º {{ credito.venta.id }}
+                                {% if credito.venta.codigo_venta %}
+                                    {{ credito.venta.codigo_venta }}
+                                {% else %}
+                                    Venta N.º {{ credito.venta.id }}
+                                {% endif %}
                             </a>
                         </td>
 
                         <td>
-                            {{ credito.venta.cliente.nombre }}
+                            {{ credito.venta.nombre_cliente_mostrado }}
                         </td>
 
                         <td>

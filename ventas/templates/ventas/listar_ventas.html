@@ -10,6 +10,52 @@ Ventas registradas
 
 {% block contenido %}
 
+<style>
+    .codigo-interno-venta {
+        display: block;
+        color: #172b46;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .codigo-pendiente-venta {
+        display: inline-block;
+        padding: 4px 8px;
+
+        border-radius: 12px;
+        background-color: #fef3c7;
+        color: #92400e;
+
+        font-size: 11px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .referencia-id-venta {
+        display: block;
+        margin-top: 4px;
+
+        color: #64748b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .nombre-cliente-venta {
+        display: block;
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+    .tipo-cliente-venta {
+        display: block;
+        margin-top: 4px;
+
+        color: #64748b;
+        font-size: 11px;
+    }
+</style>
+
 <section class="presentacion">
 
     <div class="encabezado-listado">
@@ -140,11 +186,11 @@ Ventas registradas
 
             <thead>
                 <tr>
-                    <th>N.º</th>
+                    <th>Código de venta</th>
                     <th>Fecha</th>
                     <th>Cliente</th>
-                    <th>Comprobante</th>
-                    <th>Número</th>
+                    <th>Comprobante externo</th>
+                    <th>Número externo</th>
                     <th>Forma de pago</th>
                     <th>Estado</th>
                     <th>Total</th>
@@ -160,7 +206,23 @@ Ventas registradas
                     <tr>
 
                         <td>
-                            {{ venta.id }}
+                            {% if venta.codigo_venta %}
+
+                                <span class="codigo-interno-venta">
+                                    {{ venta.codigo_venta }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="codigo-pendiente-venta">
+                                    Pendiente
+                                </span>
+
+                                <small class="referencia-id-venta">
+                                    Borrador N.º {{ venta.id }}
+                                </small>
+
+                            {% endif %}
                         </td>
 
                         <td>
@@ -168,7 +230,13 @@ Ventas registradas
                         </td>
 
                         <td>
-                            {{ venta.cliente.nombre }}
+                            <span class="nombre-cliente-venta">
+                                {{ venta.nombre_cliente_mostrado }}
+                            </span>
+
+                            <small class="tipo-cliente-venta">
+                                {{ venta.get_tipo_cliente_display }}
+                            </small>
                         </td>
 
                         <td>
@@ -176,7 +244,7 @@ Ventas registradas
                         </td>
 
                         <td>
-                            {{ venta.numero_comprobante|default:"Sin número" }}
+                            {{ venta.numero_comprobante|default:"No registrado" }}
                         </td>
 
                         <td>

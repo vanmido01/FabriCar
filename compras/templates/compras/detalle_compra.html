@@ -6,6 +6,378 @@ Detalle de compra | FABRI-CAR
 
 {% block contenido %}
 
+<style>
+    .modal-anulacion {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+
+        display: none;
+        align-items: center;
+        justify-content: center;
+
+        padding: 20px;
+        background-color: rgba(15, 23, 42, 0.62);
+        backdrop-filter: blur(2px);
+    }
+
+    .modal-anulacion.visible {
+        display: flex;
+    }
+
+    .contenido-modal-anulacion {
+        width: 100%;
+        max-width: 520px;
+        overflow: hidden;
+
+        border: 1px solid #fecaca;
+        border-radius: 12px;
+        background-color: #ffffff;
+
+        box-shadow:
+            0 20px 45px rgba(15, 23, 42, 0.25);
+    }
+
+    .encabezado-modal-anulacion {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+
+        padding: 20px 22px;
+        border-bottom: 1px solid #fee2e2;
+        background-color: #fff7f7;
+    }
+
+    .encabezado-modal-anulacion h3 {
+        margin: 0 0 5px;
+        color: #991b1b;
+        font-size: 18px;
+    }
+
+    .encabezado-modal-anulacion p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .cerrar-modal-anulacion {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 34px;
+        height: 34px;
+
+        border: 0;
+        border-radius: 50%;
+        background-color: transparent;
+        color: #64748b;
+
+        font-size: 23px;
+        cursor: pointer;
+    }
+
+    .cerrar-modal-anulacion:hover {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .cuerpo-modal-anulacion {
+        padding: 22px;
+    }
+
+    .advertencia-anulacion {
+        margin-bottom: 18px;
+        padding: 13px 15px;
+
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        background-color: #fffbeb;
+        color: #92400e;
+
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .grupo-motivo-anulacion label {
+        display: block;
+        margin-bottom: 7px;
+
+        color: #334155;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .grupo-motivo-anulacion textarea {
+        width: 100%;
+        min-height: 115px;
+        resize: vertical;
+
+        padding: 11px 12px;
+
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        background-color: #ffffff;
+        color: #0f172a;
+
+        font: inherit;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .grupo-motivo-anulacion textarea:focus {
+        border-color: #dc2626;
+        outline: 3px solid rgba(220, 38, 38, 0.13);
+    }
+
+    .ayuda-motivo-anulacion {
+        display: block;
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    .acciones-modal-anulacion {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+
+        margin-top: 21px;
+    }
+
+    .boton-cancelar-anulacion {
+        min-height: 40px;
+        padding: 0 17px;
+
+        border: 1px solid #94a3b8;
+        border-radius: 7px;
+        background-color: #ffffff;
+        color: #475569;
+
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .boton-confirmar-anulacion {
+        min-height: 40px;
+        padding: 0 18px;
+
+        border: 1px solid #b91c1c;
+        border-radius: 7px;
+        background-color: #b91c1c;
+        color: #ffffff;
+
+        font-weight: 700;
+        cursor: pointer;
+
+        box-shadow: 0 3px 8px rgba(185, 28, 28, 0.18);
+    }
+
+    .boton-confirmar-anulacion:hover {
+        background-color: #991b1b;
+        border-color: #991b1b;
+    }
+
+    /* Información de auditoría de confirmación */
+    .bloque-auditoria-confirmacion {
+        margin-top: 22px;
+        padding: 18px 20px;
+
+        border: 1px solid #bbf7d0;
+        border-left: 5px solid #15803d;
+        border-radius: 9px;
+
+        background-color: #f0fdf4;
+    }
+
+    .encabezado-auditoria-confirmacion {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+
+        margin-bottom: 16px;
+    }
+
+    .encabezado-auditoria-confirmacion h3 {
+        margin: 0;
+        color: #166534;
+        font-size: 16px;
+    }
+
+    .etiqueta-auditoria-confirmacion {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 5px 10px;
+
+        border-radius: 15px;
+        background-color: #dcfce7;
+        color: #166534;
+
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .cuadricula-auditoria-confirmacion {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px 24px;
+    }
+
+    .dato-auditoria-confirmacion {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .titulo-auditoria-confirmacion {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .valor-auditoria-confirmacion {
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 650px) {
+        .cuadricula-auditoria-confirmacion {
+            grid-template-columns: 1fr;
+        }
+
+        .encabezado-auditoria-confirmacion {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    /* Información de auditoría de una compra anulada */
+    .bloque-auditoria-anulacion {
+        margin-top: 22px;
+        padding: 18px 20px;
+
+        border: 1px solid #fecaca;
+        border-left: 5px solid #b91c1c;
+        border-radius: 9px;
+
+        background-color: #fff7f7;
+    }
+
+    .encabezado-auditoria-anulacion {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+
+        margin-bottom: 16px;
+    }
+
+    .encabezado-auditoria-anulacion h3 {
+        margin: 0;
+        color: #991b1b;
+        font-size: 16px;
+    }
+
+    .etiqueta-auditoria-anulacion {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 5px 10px;
+
+        border-radius: 15px;
+        background-color: #fee2e2;
+        color: #991b1b;
+
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .cuadricula-auditoria-anulacion {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px 24px;
+    }
+
+    .dato-auditoria-anulacion {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .titulo-auditoria-anulacion {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .valor-auditoria-anulacion {
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .motivo-auditoria-anulacion {
+        grid-column: 1 / -1;
+
+        margin-top: 2px;
+        padding: 13px 15px;
+
+        border: 1px solid #fecaca;
+        border-radius: 7px;
+        background-color: #ffffff;
+    }
+
+    .motivo-auditoria-anulacion p {
+        margin: 6px 0 0;
+        color: #334155;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+
+    @media (max-width: 650px) {
+        .cuadricula-auditoria-anulacion {
+            grid-template-columns: 1fr;
+        }
+
+        .motivo-auditoria-anulacion {
+            grid-column: auto;
+        }
+
+        .encabezado-auditoria-anulacion {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+
+    body.modal-abierto {
+        overflow: hidden;
+    }
+
+    @media (max-width: 550px) {
+        .acciones-modal-anulacion {
+            flex-direction: column-reverse;
+        }
+
+        .acciones-modal-anulacion button {
+            width: 100%;
+        }
+    }
+</style>
+
 <section class="presentacion">
 
     <div class="encabezado-detalle">
@@ -59,21 +431,13 @@ Detalle de compra | FABRI-CAR
 
                 {% if compra.estado == "BORRADOR" or compra.estado == "CONFIRMADA" %}
 
-                    <form
-                        method="post"
-                        action="{% url 'compras:anular_compra' compra.id %}"
-                        class="formulario-anulacion"
+                    <button
+                        type="button"
+                        id="abrir-modal-anulacion"
+                        class="boton-anular"
                     >
-                        {% csrf_token %}
-
-                        <button
-                            type="submit"
-                            class="boton-anular"
-                            onclick="return confirm('¿Está seguro de anular esta compra? Si está confirmada, las cantidades serán descontadas del inventario.');"
-                        >
-                            Anular compra
-                        </button>
-                    </form>
+                        Anular compra
+                    </button>
 
                 {% endif %}
 
@@ -82,6 +446,20 @@ Detalle de compra | FABRI-CAR
         </div>
 
     </div>
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div
+                    class="{% if message.tags == 'error' %}mensaje-error{% else %}mensaje-exito{% endif %}"
+                >
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
 
     <div class="tarjeta-informacion-compra">
 
@@ -155,6 +533,8 @@ Detalle de compra | FABRI-CAR
 
         </div>
 
+
+
         <div class="descripcion-detalle">
 
             <span class="titulo-dato">Observaciones</span>
@@ -164,6 +544,155 @@ Detalle de compra | FABRI-CAR
             </p>
 
         </div>
+
+        {% if compra.estado == "CONFIRMADA" or compra.usuario_confirmacion or compra.fecha_confirmacion %}
+
+            <div class="bloque-auditoria-confirmacion">
+
+                <div class="encabezado-auditoria-confirmacion">
+
+                    <h3>
+                        Información de confirmación
+                    </h3>
+
+                    <span class="etiqueta-auditoria-confirmacion">
+                        Inventario actualizado
+                    </span>
+
+                </div>
+
+                <div class="cuadricula-auditoria-confirmacion">
+
+                    <div class="dato-auditoria-confirmacion">
+
+                        <span class="titulo-auditoria-confirmacion">
+                            Confirmada por
+                        </span>
+
+                        <span class="valor-auditoria-confirmacion">
+
+                            {% if compra.usuario_confirmacion %}
+
+                                {{ compra.usuario_confirmacion.username }}
+
+                            {% else %}
+
+                                Usuario no registrado
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    <div class="dato-auditoria-confirmacion">
+
+                        <span class="titulo-auditoria-confirmacion">
+                            Fecha de confirmación
+                        </span>
+
+                        <span class="valor-auditoria-confirmacion">
+
+                            {% if compra.fecha_confirmacion %}
+
+                                {{ compra.fecha_confirmacion|date:"d/m/Y H:i" }}
+
+                            {% else %}
+
+                                Fecha no registrada
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+                {% if compra.estado == "ANULADA" %}
+
+            <div class="bloque-auditoria-anulacion">
+
+                <div class="encabezado-auditoria-anulacion">
+
+                    <h3>
+                        Información de anulación
+                    </h3>
+
+                    <span class="etiqueta-auditoria-anulacion">
+                        Operación anulada
+                    </span>
+
+                </div>
+
+                <div class="cuadricula-auditoria-anulacion">
+
+                    <div class="dato-auditoria-anulacion">
+
+                        <span class="titulo-auditoria-anulacion">
+                            Anulada por
+                        </span>
+
+                        <span class="valor-auditoria-anulacion">
+
+                            {% if compra.usuario_anulacion %}
+
+                                {{ compra.usuario_anulacion.username }}
+
+                            {% else %}
+
+                                Usuario no registrado
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    <div class="dato-auditoria-anulacion">
+
+                        <span class="titulo-auditoria-anulacion">
+                            Fecha de anulación
+                        </span>
+
+                        <span class="valor-auditoria-anulacion">
+
+                            {% if compra.fecha_anulacion %}
+
+                                {{ compra.fecha_anulacion|date:"d/m/Y H:i" }}
+
+                            {% else %}
+
+                                Fecha no registrada
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    <div class="motivo-auditoria-anulacion">
+
+                        <span class="titulo-auditoria-anulacion">
+                            Motivo de anulación
+                        </span>
+
+                        <p>
+                            {{ compra.motivo_anulacion|default:"No se registró un motivo de anulación." }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
 
     </div>
 
@@ -189,6 +718,7 @@ Detalle de compra | FABRI-CAR
                         <th>Producto</th>
                         <th>Cantidad</th>
                         <th>Costo unitario</th>
+                        <th>Precio de venta</th>
                         <th>Subtotal</th>
                     </tr>
                 </thead>
@@ -206,13 +736,15 @@ Detalle de compra | FABRI-CAR
 
                             <td>Bs {{ detalle.costo_unitario }}</td>
 
+                            <td>Bs {{ detalle.precio_venta }}</td>
+
                             <td>Bs {{ detalle.subtotal }}</td>
                         </tr>
 
                     {% empty %}
 
                         <tr>
-                            <td colspan="5" class="tabla-vacia">
+                            <td colspan="6" class="tabla-vacia">
                                 La compra no tiene productos registrados.
                             </td>
                         </tr>
@@ -223,7 +755,7 @@ Detalle de compra | FABRI-CAR
 
                 <tfoot>
                     <tr class="fila-total-compra">
-                        <td colspan="4">
+                        <td colspan="5">
                             Total de la compra
                         </td>
 
@@ -240,5 +772,188 @@ Detalle de compra | FABRI-CAR
     </div>
 
 </section>
+
+{% if puede_gestionar_compras %}
+
+    {% if compra.estado == "BORRADOR" or compra.estado == "CONFIRMADA" %}
+
+        <div
+            id="modal-anulacion"
+            class="modal-anulacion"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-modal-anulacion"
+            aria-hidden="true"
+        >
+
+            <div class="contenido-modal-anulacion">
+
+                <div class="encabezado-modal-anulacion">
+
+                    <div>
+                        <h3 id="titulo-modal-anulacion">
+                            Anular compra N.º {{ compra.id }}
+                        </h3>
+
+                        <p>
+                            Esta acción quedará registrada en el historial
+                            del sistema.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="cerrar-modal-anulacion"
+                        class="cerrar-modal-anulacion"
+                        aria-label="Cerrar"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+                <form
+                    method="post"
+                    action="{% url 'compras:anular_compra' compra.id %}"
+                    id="formulario-anulacion"
+                    class="cuerpo-modal-anulacion"
+                >
+                    {% csrf_token %}
+
+                    <div class="advertencia-anulacion">
+
+                        {% if compra.estado == "CONFIRMADA" %}
+
+                            Al anular esta compra, las cantidades ingresadas
+                            serán descontadas del inventario. La operación
+                            se bloqueará si algún producto no tiene stock
+                            suficiente para realizar la reversión.
+
+                        {% else %}
+
+                            La compra está en borrador y todavía no modificó
+                            el inventario. Al anularla dejará de estar
+                            disponible para edición o confirmación.
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="grupo-motivo-anulacion">
+
+                        <label for="id_motivo_anulacion">
+                            Motivo de anulación
+                        </label>
+
+                        <textarea
+                            name="motivo_anulacion"
+                            id="id_motivo_anulacion"
+                            required
+                            minlength="5"
+                            maxlength="500"
+                            placeholder="Explique claramente por qué se anula esta compra."
+                        ></textarea>
+
+                        <small class="ayuda-motivo-anulacion">
+                            Escriba al menos 5 caracteres. Este motivo
+                            quedará guardado en el historial.
+                        </small>
+
+                    </div>
+
+                    <div class="acciones-modal-anulacion">
+
+                        <button
+                            type="button"
+                            id="cancelar-modal-anulacion"
+                            class="boton-cancelar-anulacion"
+                        >
+                            Volver
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="boton-confirmar-anulacion"
+                        >
+                            Sí, anular compra
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const botonAbrir = document.getElementById(
+            "abrir-modal-anulacion"
+        );
+
+        const modal = document.getElementById(
+            "modal-anulacion"
+        );
+
+        const botonCerrar = document.getElementById(
+            "cerrar-modal-anulacion"
+        );
+
+        const botonCancelar = document.getElementById(
+            "cancelar-modal-anulacion"
+        );
+
+        const campoMotivo = document.getElementById(
+            "id_motivo_anulacion"
+        );
+
+        if (!botonAbrir || !modal) {
+            return;
+        }
+
+        function abrirModal() {
+            modal.classList.add("visible");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.classList.add("modal-abierto");
+
+            window.setTimeout(function () {
+                campoMotivo.focus();
+            }, 100);
+        }
+
+        function cerrarModal() {
+            modal.classList.remove("visible");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.classList.remove("modal-abierto");
+
+            botonAbrir.focus();
+        }
+
+        botonAbrir.addEventListener("click", abrirModal);
+
+        botonCerrar.addEventListener("click", cerrarModal);
+        botonCancelar.addEventListener("click", cerrarModal);
+
+        modal.addEventListener("click", function (evento) {
+            if (evento.target === modal) {
+                cerrarModal();
+            }
+        });
+
+        document.addEventListener("keydown", function (evento) {
+            if (
+                evento.key === "Escape"
+                && modal.classList.contains("visible")
+            ) {
+                cerrarModal();
+            }
+        });
+    });
+</script>
 
 {% endblock %}

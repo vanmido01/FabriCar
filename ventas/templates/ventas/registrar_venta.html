@@ -6,6 +6,308 @@ Registrar venta | FABRI-CAR
 
 {% block contenido %}
 
+<style>
+    .texto-ayuda {
+        display: block;
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    [hidden] {
+        display: none !important;
+    }
+
+    .referencia-producto {
+        display: block;
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .referencia-producto.con-valor {
+        color: #1d4ed8;
+        font-weight: 600;
+    }
+
+        .seccion-condiciones-credito {
+        border-color: #bfdbfe;
+        background-color: #f8fbff;
+    }
+
+    .seccion-condiciones-credito legend {
+        color: #1d4ed8;
+    }
+
+    .aviso-condiciones-credito {
+        margin-bottom: 18px;
+        padding: 12px 14px;
+
+        border: 1px solid #bfdbfe;
+        border-radius: 7px;
+        background-color: #eff6ff;
+        color: #1e3a8a;
+
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .ayuda-condicion-credito {
+        display: block;
+        margin-top: 6px;
+
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .nota-pago-inicial {
+        grid-column: 1 / -1;
+
+        padding: 11px 13px;
+        border-left: 4px solid #16a34a;
+        border-radius: 5px;
+        background-color: #f0fdf4;
+        color: #166534;
+
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    
+        /* Tabla de productos de la venta */
+
+    .contenedor-tabla-productos-venta {
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+
+    .tabla-productos-venta {
+        width: 100%;
+        min-width: 760px;
+        table-layout: fixed;
+    }
+
+    .tabla-productos-venta th,
+    .tabla-productos-venta td {
+        vertical-align: top;
+    }
+
+    .tabla-productos-venta th:nth-child(1),
+    .tabla-productos-venta td:nth-child(1) {
+        width: 40%;
+    }
+
+    .tabla-productos-venta th:nth-child(2),
+    .tabla-productos-venta td:nth-child(2) {
+        width: 12%;
+    }
+
+    .tabla-productos-venta th:nth-child(3),
+    .tabla-productos-venta td:nth-child(3) {
+        width: 18%;
+    }
+
+    .tabla-productos-venta th:nth-child(4),
+    .tabla-productos-venta td:nth-child(4) {
+        width: 18%;
+    }
+
+    .tabla-productos-venta th:nth-child(5),
+    .tabla-productos-venta td:nth-child(5) {
+        width: 12%;
+        text-align: center;
+    }
+
+    .tabla-productos-venta select,
+    .tabla-productos-venta input {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .tabla-productos-venta .selector-producto {
+        min-width: 100%;
+    }
+
+    .tabla-productos-venta .campo-cantidad,
+    .tabla-productos-venta .campo-precio-unitario {
+        text-align: right;
+    }
+
+    .tabla-productos-venta .subtotal-detalle {
+        padding-top: 15px;
+        text-align: right;
+        white-space: nowrap;
+        font-weight: 700;
+        color: #172b46;
+    }
+
+    .tabla-productos-venta .boton-eliminar {
+        width: 100%;
+        min-width: 70px;
+        margin-top: 4px;
+        white-space: nowrap;
+    }
+
+    .tabla-productos-venta .referencia-producto {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 850px) {
+        .contenedor-tabla-productos-venta {
+            padding-bottom: 8px;
+        }
+    }
+        /* Buscador AJAX de productos */
+
+    .selector-producto-oculto {
+        display: none !important;
+    }
+
+    .autocomplete-producto-venta {
+        position: relative;
+        width: 100%;
+    }
+
+    .contenedor-busqueda-producto {
+        position: relative;
+        width: 100%;
+    }
+
+    .buscador-producto-venta {
+        width: 100%;
+        min-height: 38px;
+        padding-right: 38px !important;
+        box-sizing: border-box;
+    }
+
+    .limpiar-producto-venta {
+        position: absolute;
+        top: 50%;
+        right: 7px;
+        transform: translateY(-50%);
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 26px;
+        height: 26px;
+
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+
+        background-color: #e2e8f0;
+        color: #475569;
+
+        font-size: 18px;
+        line-height: 1;
+
+        cursor: pointer;
+    }
+
+    .limpiar-producto-venta:hover {
+        background-color: #cbd5e1;
+        color: #0f172a;
+    }
+
+    .resultados-producto-venta {
+        width: 100%;
+        max-height: 260px;
+        overflow-y: auto;
+
+        margin-top: 5px;
+
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+
+        background-color: #ffffff;
+
+        box-shadow:
+            0 8px 18px rgba(15, 23, 42, 0.12);
+    }
+
+    .resultado-producto-venta {
+        display: block;
+        width: 100%;
+
+        padding: 10px 12px;
+
+        border: 0;
+        border-bottom: 1px solid #e2e8f0;
+
+        background-color: #ffffff;
+        color: #334155;
+
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .resultado-producto-venta:last-child {
+        border-bottom: 0;
+    }
+
+    .resultado-producto-venta:hover {
+        background-color: #eff6ff;
+    }
+
+    .codigo-resultado-producto {
+        display: block;
+
+        color: #172b46;
+
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1.35;
+    }
+
+    .nombre-resultado-producto {
+        display: block;
+        margin-top: 2px;
+
+        color: #334155;
+
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+    .datos-resultado-producto {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+
+        margin-top: 5px;
+
+        color: #64748b;
+
+        font-size: 10px;
+        line-height: 1.35;
+    }
+
+    .mensaje-resultado-producto {
+        padding: 11px 12px;
+
+        color: #64748b;
+
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .mensaje-resultado-producto.error {
+        color: #b91c1c;
+    }
+
+    .producto-seleccionado-venta {
+        border-color: #2563eb !important;
+        background-color: #f8fbff !important;
+    }
+</style>
+
 <section class="presentacion">
 
     <div class="encabezado-formulario">
@@ -51,8 +353,20 @@ Registrar venta | FABRI-CAR
             <div class="cuadricula-formulario">
 
                 <div>
+                    <label for="{{ formulario.tipo_cliente.id_for_label }}">
+                        Tipo de cliente
+                    </label>
+
+                    {{ formulario.tipo_cliente }}
+
+                    {% for error in formulario.tipo_cliente.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <div id="bloque-cliente-registrado">
                     <label for="{{ formulario.cliente.id_for_label }}">
-                        Cliente
+                        Cliente registrado
                     </label>
 
                     {{ formulario.cliente }}
@@ -60,6 +374,54 @@ Registrar venta | FABRI-CAR
                     {% for error in formulario.cliente.errors %}
                         <p class="error-campo">{{ error }}</p>
                     {% endfor %}
+                </div>
+
+                <div class="bloque-cliente-ocasional">
+                    <label for="{{ formulario.nombre_cliente_ocasional.id_for_label }}">
+                        Nombre del cliente ocasional
+                    </label>
+
+                    {{ formulario.nombre_cliente_ocasional }}
+
+                    {% for error in formulario.nombre_cliente_ocasional.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+
+                    <small class="texto-ayuda">
+                        Puede dejarlo vacío para registrar “Consumidor final”.
+                    </small>
+                </div>
+
+                <div class="bloque-cliente-ocasional">
+                    <label for="{{ formulario.documento_cliente_ocasional.id_for_label }}">
+                        NIT o C.I. del cliente ocasional
+                    </label>
+
+                    {{ formulario.documento_cliente_ocasional }}
+
+                    {% for error in formulario.documento_cliente_ocasional.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+
+                    <small class="texto-ayuda">
+                        Campo opcional.
+                    </small>
+                </div>
+
+                <div class="bloque-cliente-ocasional">
+                    <label for="{{ formulario.telefono_cliente_ocasional.id_for_label }}">
+                        Teléfono del cliente ocasional
+                    </label>
+
+                    {{ formulario.telefono_cliente_ocasional }}
+
+                    {% for error in formulario.telefono_cliente_ocasional.errors %}
+                        <p class="error-campo">{{ error }}</p>
+                    {% endfor %}
+
+                    <small class="texto-ayuda">
+                        Campo opcional.
+                    </small>
                 </div>
 
                 <div>
@@ -88,7 +450,7 @@ Registrar venta | FABRI-CAR
 
                 <div>
                     <label for="{{ formulario.numero_comprobante.id_for_label }}">
-                        Número de comprobante
+                        Número de factura o comprobante externo
                     </label>
 
                     {{ formulario.numero_comprobante }}
@@ -96,6 +458,11 @@ Registrar venta | FABRI-CAR
                     {% for error in formulario.numero_comprobante.errors %}
                         <p class="error-campo">{{ error }}</p>
                     {% endfor %}
+
+                    <small class="texto-ayuda">
+                        Opcional. Regístrelo solamente cuando exista una
+                        factura, recibo u otro comprobante externo.
+                    </small>
                 </div>
 
                 <div>
@@ -128,15 +495,126 @@ Registrar venta | FABRI-CAR
 
         </fieldset>
 
+        <fieldset
+            id="seccion-condiciones-credito"
+            class="seccion-formulario seccion-condiciones-credito"
+            hidden
+        >
+
+            <legend>Condiciones del crédito</legend>
+
+            <div class="aviso-condiciones-credito">
+                Defina la fecha de vencimiento y, cuando corresponda,
+                registre el pago inicial entregado por el cliente.
+                El crédito se generará al confirmar la venta.
+            </div>
+
+            <div class="cuadricula-formulario">
+
+                <div>
+                    <label
+                        for="{{ formulario.fecha_vencimiento_credito.id_for_label }}"
+                    >
+                        Fecha de vencimiento
+                    </label>
+
+                    {{ formulario.fecha_vencimiento_credito }}
+
+                    {% for error in formulario.fecha_vencimiento_credito.errors %}
+                        <p class="error-campo">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    <small class="ayuda-condicion-credito">
+                        Obligatoria para una venta a crédito.
+                        Si está vacía, se propondrán 30 días
+                        después de la fecha de venta.
+                    </small>
+                </div>
+
+                <div>
+                    <label
+                        for="{{ formulario.monto_pago_inicial.id_for_label }}"
+                    >
+                        Pago inicial
+                    </label>
+
+                    {{ formulario.monto_pago_inicial }}
+
+                    {% for error in formulario.monto_pago_inicial.errors %}
+                        <p class="error-campo">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    <small class="ayuda-condicion-credito">
+                        Escriba 0.00 cuando el cliente no realice
+                        un pago inicial.
+                    </small>
+                </div>
+
+                <div>
+                    <label
+                        for="{{ formulario.metodo_pago_inicial.id_for_label }}"
+                    >
+                        Método del pago inicial
+                    </label>
+
+                    {{ formulario.metodo_pago_inicial }}
+
+                    {% for error in formulario.metodo_pago_inicial.errors %}
+                        <p class="error-campo">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    <small class="ayuda-condicion-credito">
+                        Obligatorio solamente cuando el pago inicial
+                        sea mayor a cero.
+                    </small>
+                </div>
+
+                <div>
+                    <label
+                        for="{{ formulario.referencia_pago_inicial.id_for_label }}"
+                    >
+                        Referencia del pago inicial
+                    </label>
+
+                    {{ formulario.referencia_pago_inicial }}
+
+                    {% for error in formulario.referencia_pago_inicial.errors %}
+                        <p class="error-campo">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                    <small class="ayuda-condicion-credito">
+                        Puede registrar el número de transferencia,
+                        depósito o referencia QR. Es opcional para efectivo.
+                    </small>
+                </div>
+
+                <div class="nota-pago-inicial">
+                    Cuando la venta sea confirmada, el pago inicial
+                    se registrará automáticamente en el historial del
+                    crédito y podrá emitir su comprobante PDF.
+                </div>
+
+            </div>
+
+        </fieldset>
+
         <fieldset class="seccion-formulario">
 
             <legend>Productos de la venta</legend>
 
             {{ detalles_formset.management_form }}
 
-            <div class="contenedor-tabla">
+            <div class="contenedor-tabla contenedor-tabla-productos-venta">
 
-                <table class="tabla-datos">
+                <table class="tabla-datos tabla-productos-venta">
 
                     <thead>
                         <tr>
@@ -159,7 +637,41 @@ Registrar venta | FABRI-CAR
                                         {{ campo_oculto }}
                                     {% endfor %}
 
+                                <div class="autocomplete-producto-venta">
+
                                     {{ detalle.producto }}
+
+                                    <div class="contenedor-busqueda-producto">
+
+                                        <input
+                                            type="search"
+                                            class="campo-formulario buscador-producto-venta"
+                                            placeholder="Escriba código o nombre del producto..."
+                                            autocomplete="off"
+                                            spellcheck="false"
+                                        >
+
+                                        <button
+                                            type="button"
+                                            class="limpiar-producto-venta"
+                                            title="Quitar producto seleccionado"
+                                            hidden
+                                        >
+                                            ×
+                                        </button>
+
+                                    </div>
+
+                                    <div
+                                        class="resultados-producto-venta"
+                                        hidden
+                                    ></div>
+
+                                </div>
+
+                                <small class="referencia-producto stock-disponible">
+                                    Stock disponible: —
+                                </small>
 
                                     {% for error in detalle.producto.errors %}
                                         <p class="error-campo">{{ error }}</p>
@@ -176,6 +688,10 @@ Registrar venta | FABRI-CAR
 
                                 <td>
                                     {{ detalle.precio_unitario }}
+
+                                    <small class="referencia-producto precio-vigente">
+                                        Precio vigente: —
+                                    </small>
 
                                     {% for error in detalle.precio_unitario.errors %}
                                         <p class="error-campo">{{ error }}</p>
@@ -260,7 +776,41 @@ Registrar venta | FABRI-CAR
                 {{ campo_oculto }}
             {% endfor %}
 
+        <div class="autocomplete-producto-venta">
+
             {{ detalles_formset.empty_form.producto }}
+
+            <div class="contenedor-busqueda-producto">
+
+                <input
+                    type="search"
+                    class="campo-formulario buscador-producto-venta"
+                    placeholder="Escriba código o nombre del producto..."
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+
+                <button
+                    type="button"
+                    class="limpiar-producto-venta"
+                    title="Quitar producto seleccionado"
+                    hidden
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <div
+                class="resultados-producto-venta"
+                hidden
+            ></div>
+
+        </div>
+
+        <small class="referencia-producto stock-disponible">
+            Stock disponible: —
+        </small>
         </td>
 
         <td>
@@ -269,6 +819,9 @@ Registrar venta | FABRI-CAR
 
         <td>
             {{ detalles_formset.empty_form.precio_unitario }}
+            <small class="referencia-producto precio-vigente">
+                Precio vigente: —
+            </small>
         </td>
 
         <td class="subtotal-detalle">
@@ -292,8 +845,67 @@ Registrar venta | FABRI-CAR
 
 </template>
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
+        /*
+         * =====================================================
+         * CLIENTE REGISTRADO / OCASIONAL
+         * =====================================================
+         */
+
+        const selectorTipoCliente = document.getElementById(
+            "id_tipo_cliente"
+        );
+
+        const bloqueClienteRegistrado = document.getElementById(
+            "bloque-cliente-registrado"
+        );
+
+        const bloquesClienteOcasional = document.querySelectorAll(
+            ".bloque-cliente-ocasional"
+        );
+
+        function actualizarCamposCliente() {
+            if (!selectorTipoCliente) {
+                return;
+            }
+
+            const esOcasional = (
+                selectorTipoCliente.value === "OCASIONAL"
+            );
+
+            if (bloqueClienteRegistrado) {
+                bloqueClienteRegistrado.hidden = esOcasional;
+            }
+
+            bloquesClienteOcasional.forEach(
+                function (bloque) {
+                    bloque.hidden = !esOcasional;
+                }
+            );
+        }
+
+        if (selectorTipoCliente) {
+            selectorTipoCliente.addEventListener(
+                "change",
+                actualizarCamposCliente
+            );
+
+            actualizarCamposCliente();
+        }
+
+
+        /*
+         * =====================================================
+         * CONFIGURACIÓN GENERAL DE PRODUCTOS
+         * =====================================================
+         */
+
+        const urlBusquedaProductos = (
+            "{% url 'ventas:buscar_productos_venta' %}"
+        );
 
         const contenedor = document.getElementById(
             "contenedor-detalles"
@@ -315,15 +927,134 @@ Registrar venta | FABRI-CAR
             "total-venta"
         );
 
+        const formatoMoneda = new Intl.NumberFormat(
+            "es-BO",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }
+        );
+
+        function convertirNumero(valor) {
+            const numero = parseFloat(
+                String(valor || "")
+                    .trim()
+                    .replace(",", ".")
+            );
+
+            return Number.isFinite(numero)
+                ? numero
+                : 0;
+        }
+
+        function mostrarMoneda(valor) {
+            return (
+                "Bs "
+                + formatoMoneda.format(valor)
+            );
+        }
+
+        function etiquetaProducto(producto) {
+            return (
+                `${producto.codigo} — ${producto.nombre}`
+            );
+        }
+
+
+        /*
+         * =====================================================
+         * TOTAL DE LA VENTA
+         * =====================================================
+         */
+
         function calcularTotales() {
+            if (!contenedor) {
+                return;
+            }
 
             let totalGeneral = 0;
 
-            const filas = contenedor.querySelectorAll(
-                ".fila-detalle"
-            );
+            contenedor
+                .querySelectorAll(".fila-detalle")
+                .forEach(function (fila) {
 
-            filas.forEach(function (fila) {
+                    const campoEliminar = fila.querySelector(
+                        'input[name$="-DELETE"]'
+                    );
+
+                    if (
+                        campoEliminar
+                        && campoEliminar.checked
+                    ) {
+                        return;
+                    }
+
+                    const campoCantidad = fila.querySelector(
+                        ".campo-cantidad"
+                    );
+
+                    const campoPrecio = fila.querySelector(
+                        ".campo-precio-unitario"
+                    );
+
+                    const subtotalElemento = fila.querySelector(
+                        ".subtotal-detalle"
+                    );
+
+                    const cantidad = convertirNumero(
+                        campoCantidad
+                            ? campoCantidad.value
+                            : 0
+                    );
+
+                    const precio = convertirNumero(
+                        campoPrecio
+                            ? campoPrecio.value
+                            : 0
+                    );
+
+                    const subtotal = cantidad * precio;
+
+                    if (subtotalElemento) {
+                        subtotalElemento.textContent = (
+                            mostrarMoneda(subtotal)
+                        );
+                    }
+
+                    totalGeneral += subtotal;
+                });
+
+            if (totalVenta) {
+                totalVenta.textContent = (
+                    mostrarMoneda(totalGeneral)
+                );
+            }
+        }
+
+
+        /*
+         * =====================================================
+         * PRODUCTOS DUPLICADOS
+         * =====================================================
+         */
+
+        function productoYaSeleccionado(
+            productoId,
+            filaActual
+        ) {
+            if (!contenedor) {
+                return false;
+            }
+
+            return Array.from(
+                contenedor.querySelectorAll(
+                    ".fila-detalle"
+                )
+            ).some(function (fila) {
+
+                if (fila === filaActual) {
+                    return false;
+                }
 
                 const campoEliminar = fila.querySelector(
                     'input[name$="-DELETE"]'
@@ -333,102 +1064,1108 @@ Registrar venta | FABRI-CAR
                     campoEliminar
                     && campoEliminar.checked
                 ) {
+                    return false;
+                }
+
+                const selector = fila.querySelector(
+                    ".selector-producto"
+                );
+
+                return (
+                    selector
+                    && selector.value === String(productoId)
+                );
+            });
+        }
+
+
+        /*
+         * =====================================================
+         * MENSAJES DE RESULTADOS
+         * =====================================================
+         */
+
+        function mostrarMensajeResultados(
+            contenedorResultados,
+            mensaje,
+            esError
+        ) {
+            contenedorResultados.textContent = "";
+
+            const elemento = document.createElement(
+                "div"
+            );
+
+            elemento.className = (
+                "mensaje-resultado-producto"
+                + (
+                    esError
+                        ? " error"
+                        : ""
+                )
+            );
+
+            elemento.textContent = mensaje;
+
+            contenedorResultados.appendChild(
+                elemento
+            );
+
+            contenedorResultados.hidden = false;
+        }
+
+
+        /*
+         * =====================================================
+         * LIMPIAR PRODUCTO
+         * =====================================================
+         */
+
+        function limpiarProducto(
+            fila,
+            limpiarTexto
+        ) {
+            const selector = fila.querySelector(
+                ".selector-producto"
+            );
+
+            const buscador = fila.querySelector(
+                ".buscador-producto-venta"
+            );
+
+            const botonLimpiar = fila.querySelector(
+                ".limpiar-producto-venta"
+            );
+
+            const textoStock = fila.querySelector(
+                ".stock-disponible"
+            );
+
+            const textoPrecio = fila.querySelector(
+                ".precio-vigente"
+            );
+
+            const campoCantidad = fila.querySelector(
+                ".campo-cantidad"
+            );
+
+            const campoPrecio = fila.querySelector(
+                ".campo-precio-unitario"
+            );
+
+            if (selector) {
+                selector.value = "";
+
+                Array.from(
+                    selector.options
+                ).forEach(function (opcion) {
+                    if (opcion.value) {
+                        opcion.remove();
+                    }
+                });
+            }
+
+            if (buscador) {
+                buscador.dataset.productoId = "";
+                buscador.dataset.etiquetaSeleccionada = "";
+
+                buscador.classList.remove(
+                    "producto-seleccionado-venta"
+                );
+
+                if (limpiarTexto) {
+                    buscador.value = "";
+                }
+            }
+
+            if (botonLimpiar) {
+                botonLimpiar.hidden = true;
+            }
+
+            if (textoStock) {
+                textoStock.textContent = (
+                    "Stock disponible: —"
+                );
+
+                textoStock.classList.remove(
+                    "con-valor"
+                );
+            }
+
+            if (textoPrecio) {
+                textoPrecio.textContent = (
+                    "Precio vigente: —"
+                );
+
+                textoPrecio.classList.remove(
+                    "con-valor"
+                );
+            }
+
+            if (campoCantidad) {
+                campoCantidad.removeAttribute(
+                    "max"
+                );
+            }
+
+            if (campoPrecio) {
+                campoPrecio.value = "";
+            }
+
+            calcularTotales();
+        }
+
+
+        /*
+         * =====================================================
+         * SELECCIONAR PRODUCTO
+         * =====================================================
+         */
+
+        function seleccionarProducto(
+            fila,
+            producto,
+            completarPrecio
+        ) {
+            const selector = fila.querySelector(
+                ".selector-producto"
+            );
+
+            const buscador = fila.querySelector(
+                ".buscador-producto-venta"
+            );
+
+            const botonLimpiar = fila.querySelector(
+                ".limpiar-producto-venta"
+            );
+
+            const resultados = fila.querySelector(
+                ".resultados-producto-venta"
+            );
+
+            const textoStock = fila.querySelector(
+                ".stock-disponible"
+            );
+
+            const textoPrecio = fila.querySelector(
+                ".precio-vigente"
+            );
+
+            const campoCantidad = fila.querySelector(
+                ".campo-cantidad"
+            );
+
+            const campoPrecio = fila.querySelector(
+                ".campo-precio-unitario"
+            );
+
+            if (!selector || !buscador) {
+                return;
+            }
+
+            const valorId = String(
+                producto.id
+            );
+
+            Array.from(
+                selector.options
+            ).forEach(function (opcion) {
+                if (
+                    opcion.value
+                    && opcion.value !== valorId
+                ) {
+                    opcion.remove();
+                }
+            });
+
+            let opcionSeleccionada = Array.from(
+                selector.options
+            ).find(function (opcion) {
+                return opcion.value === valorId;
+            });
+
+            if (!opcionSeleccionada) {
+                opcionSeleccionada = new Option(
+                    etiquetaProducto(producto),
+                    valorId,
+                    true,
+                    true
+                );
+
+                selector.appendChild(
+                    opcionSeleccionada
+                );
+            }
+
+            opcionSeleccionada.textContent = (
+                etiquetaProducto(producto)
+            );
+
+            selector.value = valorId;
+
+            const etiqueta = etiquetaProducto(
+                producto
+            );
+
+            buscador.value = etiqueta;
+
+            buscador.dataset.productoId = valorId;
+
+            buscador.dataset.etiquetaSeleccionada = (
+                etiqueta
+            );
+
+            buscador.classList.add(
+                "producto-seleccionado-venta"
+            );
+
+            if (botonLimpiar) {
+                botonLimpiar.hidden = false;
+            }
+
+            const stock = parseInt(
+                producto.stock,
+                10
+            ) || 0;
+
+            const precio = convertirNumero(
+                producto.precio_venta
+            );
+
+            if (textoStock) {
+                textoStock.textContent = (
+                    `Stock disponible: ${stock}`
+                );
+
+                textoStock.classList.add(
+                    "con-valor"
+                );
+            }
+
+            if (textoPrecio) {
+                textoPrecio.textContent = (
+                    "Precio vigente: "
+                    + mostrarMoneda(precio)
+                );
+
+                textoPrecio.classList.add(
+                    "con-valor"
+                );
+            }
+
+            if (campoCantidad) {
+                campoCantidad.max = stock;
+            }
+
+            if (
+                completarPrecio
+                && campoPrecio
+            ) {
+                campoPrecio.value = (
+                    precio.toFixed(2)
+                );
+            }
+
+            if (resultados) {
+                resultados.hidden = true;
+                resultados.textContent = "";
+            }
+
+            calcularTotales();
+        }
+
+
+        /*
+         * =====================================================
+         * MOSTRAR PRODUCTOS ENCONTRADOS
+         * =====================================================
+         */
+
+        function mostrarProductosEncontrados(
+            fila,
+            productos
+        ) {
+            const resultados = fila.querySelector(
+                ".resultados-producto-venta"
+            );
+
+            if (!resultados) {
+                return;
+            }
+
+            resultados.textContent = "";
+
+            if (!productos.length) {
+                mostrarMensajeResultados(
+                    resultados,
+                    "No se encontraron productos disponibles.",
+                    false
+                );
+
+                return;
+            }
+
+            productos.forEach(function (producto) {
+
+                const boton = document.createElement(
+                    "button"
+                );
+
+                boton.type = "button";
+
+                boton.className = (
+                    "resultado-producto-venta"
+                );
+
+                const codigo = document.createElement(
+                    "span"
+                );
+
+                codigo.className = (
+                    "codigo-resultado-producto"
+                );
+
+                codigo.textContent = producto.codigo;
+
+                const nombre = document.createElement(
+                    "span"
+                );
+
+                nombre.className = (
+                    "nombre-resultado-producto"
+                );
+
+                nombre.textContent = producto.nombre;
+
+                const datos = document.createElement(
+                    "span"
+                );
+
+                datos.className = (
+                    "datos-resultado-producto"
+                );
+
+                const stock = document.createElement(
+                    "span"
+                );
+
+                stock.textContent = (
+                    `Stock: ${producto.stock}`
+                );
+
+                const precio = document.createElement(
+                    "span"
+                );
+
+                precio.textContent = (
+                    "Precio: "
+                    + mostrarMoneda(
+                        convertirNumero(
+                            producto.precio_venta
+                        )
+                    )
+                );
+
+                datos.appendChild(stock);
+                datos.appendChild(precio);
+
+                boton.appendChild(codigo);
+                boton.appendChild(nombre);
+                boton.appendChild(datos);
+
+                boton.addEventListener(
+                    "click",
+                    function () {
+
+                        if (
+                            productoYaSeleccionado(
+                                producto.id,
+                                fila
+                            )
+                        ) {
+                            mostrarMensajeResultados(
+                                resultados,
+                                (
+                                    "Este producto ya fue "
+                                    + "agregado a la venta."
+                                ),
+                                true
+                            );
+
+                            return;
+                        }
+
+                        seleccionarProducto(
+                            fila,
+                            producto,
+                            true
+                        );
+                    }
+                );
+
+                resultados.appendChild(
+                    boton
+                );
+            });
+
+            resultados.hidden = false;
+        }
+
+
+        /*
+         * =====================================================
+         * AUTOCOMPLETADO POR FILA
+         * =====================================================
+         */
+
+        function configurarAutocompleteFila(
+            fila
+        ) {
+            if (
+                !fila
+                || fila.dataset.autocompleteConfigurado
+            ) {
+                return;
+            }
+
+            fila.dataset.autocompleteConfigurado = "1";
+
+            const selector = fila.querySelector(
+                ".selector-producto"
+            );
+
+            const buscador = fila.querySelector(
+                ".buscador-producto-venta"
+            );
+
+            const resultados = fila.querySelector(
+                ".resultados-producto-venta"
+            );
+
+            const botonLimpiar = fila.querySelector(
+                ".limpiar-producto-venta"
+            );
+
+            if (
+                !selector
+                || !buscador
+                || !resultados
+            ) {
+                return;
+            }
+
+            let temporizadorBusqueda = null;
+            let controladorBusqueda = null;
+
+
+            /*
+             * Producto previamente seleccionado:
+             * edición o retorno por error de formulario.
+             */
+
+            if (selector.value) {
+
+                const idInicial = selector.value;
+
+                const opcionInicial = (
+                    selector.options[
+                        selector.selectedIndex
+                    ]
+                );
+
+                if (opcionInicial) {
+                    const textoInicial = (
+                        opcionInicial.textContent.trim()
+                    );
+
+                    buscador.value = textoInicial;
+
+                    buscador.dataset.productoId = (
+                        idInicial
+                    );
+
+                    buscador.dataset.etiquetaSeleccionada = (
+                        textoInicial
+                    );
+
+                    buscador.classList.add(
+                        "producto-seleccionado-venta"
+                    );
+
+                    if (botonLimpiar) {
+                        botonLimpiar.hidden = false;
+                    }
+                }
+
+                fetch(
+                    urlBusquedaProductos
+                    + "?id="
+                    + encodeURIComponent(idInicial)
+                )
+                    .then(function (respuesta) {
+                        if (!respuesta.ok) {
+                            throw new Error();
+                        }
+
+                        return respuesta.json();
+                    })
+                    .then(function (datos) {
+                        if (
+                            datos.resultados
+                            && datos.resultados.length
+                        ) {
+                            seleccionarProducto(
+                                fila,
+                                datos.resultados[0],
+                                false
+                            );
+                        }
+                    })
+                    .catch(function () {
+                        /*
+                         * Si falla la consulta, conservamos
+                         * la selección que ya envió Django.
+                         */
+                    });
+            }
+
+
+            function ejecutarBusqueda() {
+                const termino = (
+                    buscador.value
+                    || ""
+                ).trim();
+
+                if (termino.length < 2) {
+                    resultados.hidden = true;
+                    resultados.textContent = "";
                     return;
                 }
 
-                const campoCantidad = fila.querySelector(
-                    'input[name$="-cantidad"]'
+                if (controladorBusqueda) {
+                    controladorBusqueda.abort();
+                }
+
+                controladorBusqueda = (
+                    new AbortController()
                 );
 
-                const campoPrecio = fila.querySelector(
-                    'input[name$="-precio_unitario"]'
+                mostrarMensajeResultados(
+                    resultados,
+                    "Buscando productos...",
+                    false
                 );
 
-                const subtotalElemento = fila.querySelector(
-                    ".subtotal-detalle"
+                const parametros = new URLSearchParams({
+                    q: termino,
+                });
+
+                fetch(
+                    urlBusquedaProductos
+                    + "?"
+                    + parametros.toString(),
+                    {
+                        signal:
+                            controladorBusqueda.signal,
+                        headers: {
+                            "X-Requested-With":
+                                "XMLHttpRequest",
+                        },
+                    }
+                )
+                    .then(function (respuesta) {
+                        if (!respuesta.ok) {
+                            throw new Error(
+                                "Error de búsqueda"
+                            );
+                        }
+
+                        return respuesta.json();
+                    })
+                    .then(function (datos) {
+                        mostrarProductosEncontrados(
+                            fila,
+                            datos.resultados || []
+                        );
+                    })
+                    .catch(function (error) {
+                        if (
+                            error.name === "AbortError"
+                        ) {
+                            return;
+                        }
+
+                        mostrarMensajeResultados(
+                            resultados,
+                            (
+                                "No fue posible realizar "
+                                + "la búsqueda."
+                            ),
+                            true
+                        );
+                    });
+            }
+
+
+            buscador.addEventListener(
+                "input",
+                function () {
+
+                    const valorActual = (
+                        buscador.value
+                    );
+
+                    const etiquetaSeleccionada = (
+                        buscador.dataset
+                            .etiquetaSeleccionada
+                        || ""
+                    );
+
+                    if (
+                        etiquetaSeleccionada
+                        && valorActual !== etiquetaSeleccionada
+                    ) {
+                        const textoEscrito = valorActual;
+
+                        limpiarProducto(
+                            fila,
+                            false
+                        );
+
+                        buscador.value = textoEscrito;
+                    }
+
+                    window.clearTimeout(
+                        temporizadorBusqueda
+                    );
+
+                    if (
+                        valorActual.trim().length < 2
+                    ) {
+                        resultados.hidden = true;
+                        resultados.textContent = "";
+                        return;
+                    }
+
+                    temporizadorBusqueda = (
+                        window.setTimeout(
+                            ejecutarBusqueda,
+                            250
+                        )
+                    );
+                }
+            );
+
+
+            buscador.addEventListener(
+                "focus",
+                function () {
+                    if (
+                        !buscador.dataset.productoId
+                        && buscador.value.trim().length >= 2
+                    ) {
+                        ejecutarBusqueda();
+                    }
+                }
+            );
+
+
+            buscador.addEventListener(
+                "keydown",
+                function (evento) {
+                    if (evento.key === "Escape") {
+                        resultados.hidden = true;
+                    }
+                }
+            );
+
+
+            if (botonLimpiar) {
+                botonLimpiar.addEventListener(
+                    "click",
+                    function () {
+                        limpiarProducto(
+                            fila,
+                            true
+                        );
+
+                        resultados.hidden = true;
+
+                        buscador.focus();
+                    }
                 );
-
-                const cantidad = parseFloat(
-                    campoCantidad?.value || 0
-                );
-
-                const precio = parseFloat(
-                    campoPrecio?.value || 0
-                );
-
-                const subtotal = cantidad * precio;
-
-                subtotalElemento.textContent =
-                    `Bs ${subtotal.toFixed(2)}`;
-
-                totalGeneral += subtotal;
-            });
-
-            totalVenta.textContent =
-                `Bs ${totalGeneral.toFixed(2)}`;
+            }
         }
 
-        botonAgregar.addEventListener(
-            "click",
-            function () {
 
-                const numeroFormulario = parseInt(
-                    totalFormularios.value
-                );
+        /*
+         * =====================================================
+         * INICIALIZAR FILAS EXISTENTES
+         * =====================================================
+         */
 
-                const contenido = plantilla.innerHTML.replace(
-                    /__prefix__/g,
-                    numeroFormulario
-                );
+        if (contenedor) {
+            contenedor
+                .querySelectorAll(".fila-detalle")
+                .forEach(function (fila) {
+                    configurarAutocompleteFila(
+                        fila
+                    );
+                });
+        }
 
-                contenedor.insertAdjacentHTML(
-                    "beforeend",
-                    contenido
-                );
 
-                totalFormularios.value =
-                    numeroFormulario + 1;
+        /*
+         * =====================================================
+         * AGREGAR NUEVA FILA
+         * =====================================================
+         */
 
-                calcularTotales();
-            }
-        );
+        if (
+            botonAgregar
+            && contenedor
+            && totalFormularios
+            && plantilla
+        ) {
+            botonAgregar.addEventListener(
+                "click",
+                function () {
 
-        contenedor.addEventListener(
+                    const numeroFormulario = parseInt(
+                        totalFormularios.value,
+                        10
+                    );
+
+                    const contenido = (
+                        plantilla.innerHTML.replace(
+                            /__prefix__/g,
+                            numeroFormulario
+                        )
+                    );
+
+                    contenedor.insertAdjacentHTML(
+                        "beforeend",
+                        contenido
+                    );
+
+                    totalFormularios.value = (
+                        numeroFormulario + 1
+                    );
+
+                    const filas = (
+                        contenedor.querySelectorAll(
+                            ".fila-detalle"
+                        )
+                    );
+
+                    const nuevaFila = filas[
+                        filas.length - 1
+                    ];
+
+                    configurarAutocompleteFila(
+                        nuevaFila
+                    );
+
+                    calcularTotales();
+                }
+            );
+        }
+
+
+        /*
+         * =====================================================
+         * QUITAR FILA
+         * =====================================================
+         */
+
+        if (contenedor) {
+            contenedor.addEventListener(
+                "click",
+                function (evento) {
+
+                    if (
+                        !evento.target.classList.contains(
+                            "eliminar-detalle"
+                        )
+                    ) {
+                        return;
+                    }
+
+                    const fila = evento.target.closest(
+                        ".fila-detalle"
+                    );
+
+                    if (!fila) {
+                        return;
+                    }
+
+                    const campoEliminar = fila.querySelector(
+                        'input[name$="-DELETE"]'
+                    );
+
+                    if (campoEliminar) {
+                        campoEliminar.checked = true;
+                    }
+
+                    fila.style.display = "none";
+
+                    calcularTotales();
+                }
+            );
+        }
+
+
+        /*
+         * =====================================================
+         * RECALCULAR CANTIDAD/PRECIO
+         * =====================================================
+         */
+
+        if (contenedor) {
+            contenedor.addEventListener(
+                "input",
+                function (evento) {
+                    if (
+                        evento.target.classList.contains(
+                            "campo-cantidad"
+                        )
+                        || evento.target.classList.contains(
+                            "campo-precio-unitario"
+                        )
+                    ) {
+                        calcularTotales();
+                    }
+                }
+            );
+        }
+
+
+        /*
+         * Cerrar listas cuando se hace clic fuera.
+         */
+
+        document.addEventListener(
             "click",
             function (evento) {
 
                 if (
-                    !evento.target.classList.contains(
-                        "eliminar-detalle"
+                    evento.target.closest(
+                        ".autocomplete-producto-venta"
                     )
                 ) {
                     return;
                 }
 
-                const fila = evento.target.closest(
-                    ".fila-detalle"
-                );
-
-                const campoEliminar = fila.querySelector(
-                    'input[name$="-DELETE"]'
-                );
-
-                if (campoEliminar) {
-                    campoEliminar.checked = true;
-                }
-
-                fila.style.display = "none";
-
-                calcularTotales();
+                document
+                    .querySelectorAll(
+                        ".resultados-producto-venta"
+                    )
+                    .forEach(function (resultado) {
+                        resultado.hidden = true;
+                    });
             }
         );
 
-        contenedor.addEventListener(
-            "input",
-            calcularTotales
-        );
 
         calcularTotales();
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const selectorFormaPago = document.getElementById(
+            "id_forma_pago"
+        );
+
+        const seccionCredito = document.getElementById(
+            "seccion-condiciones-credito"
+        );
+
+        const campoFechaVenta = document.getElementById(
+            "id_fecha_venta"
+        );
+
+        const campoFechaVencimiento = document.getElementById(
+            "id_fecha_vencimiento_credito"
+        );
+
+        const campoPagoInicial = document.getElementById(
+            "id_monto_pago_inicial"
+        );
+
+        const campoMetodoInicial = document.getElementById(
+            "id_metodo_pago_inicial"
+        );
+
+        const campoReferenciaInicial = document.getElementById(
+            "id_referencia_pago_inicial"
+        );
+
+        const camposCredito = [
+            campoFechaVencimiento,
+            campoPagoInicial,
+            campoMetodoInicial,
+            campoReferenciaInicial,
+        ];
+
+        function convertirNumeroCredito(valor) {
+            const numero = parseFloat(
+                String(valor || "")
+                    .trim()
+                    .replace(",", ".")
+            );
+
+            return Number.isFinite(numero)
+                ? numero
+                : 0;
+        }
+
+        function sumarDiasFecha(
+            fechaIso,
+            cantidadDias
+        ) {
+            if (!fechaIso) {
+                return "";
+            }
+
+            const partes = fechaIso.split("-");
+
+            if (partes.length !== 3) {
+                return "";
+            }
+
+            const fecha = new Date(
+                Date.UTC(
+                    parseInt(partes[0], 10),
+                    parseInt(partes[1], 10) - 1,
+                    parseInt(partes[2], 10)
+                )
+            );
+
+            fecha.setUTCDate(
+                fecha.getUTCDate() + cantidadDias
+            );
+
+            const anio = fecha.getUTCFullYear();
+
+            const mes = String(
+                fecha.getUTCMonth() + 1
+            ).padStart(2, "0");
+
+            const dia = String(
+                fecha.getUTCDate()
+            ).padStart(2, "0");
+
+            return `${anio}-${mes}-${dia}`;
+        }
+
+        function actualizarRequisitoMetodoInicial() {
+            if (
+                !selectorFormaPago
+                || !campoPagoInicial
+                || !campoMetodoInicial
+            ) {
+                return;
+            }
+
+            const esCredito = (
+                selectorFormaPago.value === "CREDITO"
+            );
+
+            const pagoInicial = convertirNumeroCredito(
+                campoPagoInicial.value
+            );
+
+            campoMetodoInicial.required = (
+                esCredito
+                && pagoInicial > 0
+            );
+        }
+
+        function actualizarCondicionesCredito() {
+            if (
+                !selectorFormaPago
+                || !seccionCredito
+            ) {
+                return;
+            }
+
+            const esCredito = (
+                selectorFormaPago.value === "CREDITO"
+            );
+
+            seccionCredito.hidden = !esCredito;
+
+            camposCredito.forEach(function (campo) {
+                if (campo) {
+                    campo.disabled = !esCredito;
+                }
+            });
+
+            if (campoFechaVencimiento) {
+                campoFechaVencimiento.required = esCredito;
+            }
+
+            if (
+                esCredito
+                && campoFechaVencimiento
+                && !campoFechaVencimiento.value
+                && campoFechaVenta
+                && campoFechaVenta.value
+            ) {
+                campoFechaVencimiento.value = sumarDiasFecha(
+                    campoFechaVenta.value,
+                    30
+                );
+            }
+
+            if (!esCredito && campoMetodoInicial) {
+                campoMetodoInicial.required = false;
+            }
+
+            actualizarRequisitoMetodoInicial();
+        }
+
+        if (selectorFormaPago) {
+            selectorFormaPago.addEventListener(
+                "change",
+                actualizarCondicionesCredito
+            );
+        }
+
+        if (campoPagoInicial) {
+            campoPagoInicial.addEventListener(
+                "input",
+                actualizarRequisitoMetodoInicial
+            );
+
+            campoPagoInicial.addEventListener(
+                "change",
+                actualizarRequisitoMetodoInicial
+            );
+        }
+
+        if (campoFechaVenta) {
+            campoFechaVenta.addEventListener(
+                "change",
+                function () {
+                    if (
+                        selectorFormaPago
+                        && selectorFormaPago.value === "CREDITO"
+                        && campoFechaVencimiento
+                        && !campoFechaVencimiento.value
+                    ) {
+                        campoFechaVencimiento.value = sumarDiasFecha(
+                            campoFechaVenta.value,
+                            30
+                        );
+                    }
+                }
+            );
+        }
+
+        actualizarCondicionesCredito();
     });
 </script>
 

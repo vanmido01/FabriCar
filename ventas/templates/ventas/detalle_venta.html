@@ -6,12 +6,388 @@ Detalle de venta | FABRI-CAR
 
 {% block contenido %}
 
+<style>
+    .modal-anulacion-venta {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+
+        display: none;
+        align-items: center;
+        justify-content: center;
+
+        padding: 20px;
+        background-color: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(2px);
+    }
+
+    .modal-anulacion-venta.visible {
+        display: flex;
+    }
+
+    .contenido-modal-anulacion-venta {
+        width: 100%;
+        max-width: 540px;
+        overflow: hidden;
+
+        border: 1px solid #fecaca;
+        border-radius: 12px;
+        background-color: #ffffff;
+
+        box-shadow:
+            0 22px 50px rgba(15, 23, 42, 0.28);
+    }
+
+    .encabezado-modal-anulacion-venta {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+
+        padding: 20px 22px;
+        border-bottom: 1px solid #fee2e2;
+        background-color: #fff7f7;
+    }
+
+    .encabezado-modal-anulacion-venta h3 {
+        margin: 0 0 5px;
+        color: #991b1b;
+        font-size: 18px;
+    }
+
+    .encabezado-modal-anulacion-venta p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .cerrar-modal-anulacion-venta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+
+        border: 0;
+        border-radius: 50%;
+        background-color: transparent;
+        color: #64748b;
+
+        font-size: 23px;
+        cursor: pointer;
+    }
+
+    .cerrar-modal-anulacion-venta:hover {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .cuerpo-modal-anulacion-venta {
+        padding: 22px;
+    }
+
+    .advertencia-anulacion-venta {
+        margin-bottom: 18px;
+        padding: 13px 15px;
+
+        border: 1px solid #fde68a;
+        border-radius: 8px;
+        background-color: #fffbeb;
+        color: #92400e;
+
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .grupo-motivo-anulacion-venta label {
+        display: block;
+        margin-bottom: 7px;
+
+        color: #334155;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .grupo-motivo-anulacion-venta textarea {
+        width: 100%;
+        min-height: 120px;
+        resize: vertical;
+
+        padding: 11px 12px;
+
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        background-color: #ffffff;
+        color: #0f172a;
+
+        font: inherit;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .grupo-motivo-anulacion-venta textarea:focus {
+        border-color: #dc2626;
+        outline: 3px solid rgba(220, 38, 38, 0.13);
+    }
+
+    .ayuda-motivo-anulacion-venta {
+        display: block;
+        margin-top: 6px;
+
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .acciones-modal-anulacion-venta {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+
+        margin-top: 21px;
+    }
+
+    .boton-volver-anulacion-venta {
+        min-height: 40px;
+        padding: 0 17px;
+
+        border: 1px solid #94a3b8;
+        border-radius: 7px;
+        background-color: #ffffff;
+        color: #475569;
+
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .boton-confirmar-anulacion-venta {
+        min-height: 40px;
+        padding: 0 18px;
+
+        border: 1px solid #b91c1c;
+        border-radius: 7px;
+        background-color: #b91c1c;
+        color: #ffffff;
+
+        font-weight: 700;
+        cursor: pointer;
+
+        box-shadow:
+            0 3px 8px rgba(185, 28, 28, 0.18);
+    }
+
+    .boton-confirmar-anulacion-venta:hover {
+        border-color: #991b1b;
+        background-color: #991b1b;
+    }
+
+    body.modal-abierto {
+        overflow: hidden;
+    }
+
+    @media (max-width: 550px) {
+        .acciones-modal-anulacion-venta {
+            flex-direction: column-reverse;
+        }
+
+        .acciones-modal-anulacion-venta button {
+            width: 100%;
+        }
+    }
+
+        /* Auditoría de confirmación */
+
+    .bloque-auditoria-confirmacion-venta {
+        margin-top: 22px;
+        padding: 18px 20px;
+
+        border: 1px solid #bbf7d0;
+        border-left: 5px solid #15803d;
+        border-radius: 9px;
+
+        background-color: #f0fdf4;
+    }
+
+    .encabezado-auditoria-confirmacion-venta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+
+        margin-bottom: 16px;
+    }
+
+    .encabezado-auditoria-confirmacion-venta h3 {
+        margin: 0;
+        color: #166534;
+        font-size: 16px;
+    }
+
+    .etiqueta-auditoria-confirmacion-venta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 5px 10px;
+
+        border-radius: 15px;
+        background-color: #dcfce7;
+        color: #166534;
+
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .cuadricula-auditoria-confirmacion-venta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px 24px;
+    }
+
+    .dato-auditoria-confirmacion-venta {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .titulo-auditoria-confirmacion-venta {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .valor-auditoria-confirmacion-venta {
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+
+    /* Auditoría de anulación */
+
+    .bloque-auditoria-anulacion-venta {
+        margin-top: 22px;
+        padding: 18px 20px;
+
+        border: 1px solid #fecaca;
+        border-left: 5px solid #b91c1c;
+        border-radius: 9px;
+
+        background-color: #fff7f7;
+    }
+
+    .encabezado-auditoria-anulacion-venta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+
+        margin-bottom: 16px;
+    }
+
+    .encabezado-auditoria-anulacion-venta h3 {
+        margin: 0;
+        color: #991b1b;
+        font-size: 16px;
+    }
+
+    .etiqueta-auditoria-anulacion-venta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 5px 10px;
+
+        border-radius: 15px;
+        background-color: #fee2e2;
+        color: #991b1b;
+
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .cuadricula-auditoria-anulacion-venta {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px 24px;
+    }
+
+    .dato-auditoria-anulacion-venta {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .titulo-auditoria-anulacion-venta {
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .valor-auditoria-anulacion-venta {
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .motivo-auditoria-anulacion-venta {
+        grid-column: 1 / -1;
+
+        padding: 13px 15px;
+
+        border: 1px solid #fecaca;
+        border-radius: 7px;
+        background-color: #ffffff;
+    }
+
+    .motivo-auditoria-anulacion-venta p {
+        margin: 7px 0 0;
+
+        color: #334155;
+        font-size: 13px;
+        line-height: 1.6;
+        white-space: pre-line;
+    }
+
+    @media (max-width: 650px) {
+        .cuadricula-auditoria-confirmacion-venta,
+        .cuadricula-auditoria-anulacion-venta {
+            grid-template-columns: 1fr;
+        }
+
+        .motivo-auditoria-anulacion-venta {
+            grid-column: auto;
+        }
+
+        .encabezado-auditoria-confirmacion-venta,
+        .encabezado-auditoria-anulacion-venta {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
 <section class="presentacion">
 
     <div class="encabezado-listado">
 
         <div>
-            <h2>Detalle de la venta N.º {{ venta.id }}</h2>
+            <h2>
+                {% if venta.codigo_venta %}
+                    Detalle de la venta {{ venta.codigo_venta }}
+                {% else %}
+                    Detalle de la venta en borrador N.º {{ venta.id }}
+                {% endif %}
+            </h2>
 
             <p>
                 Información general y productos registrados
@@ -49,34 +425,37 @@ Detalle de venta | FABRI-CAR
             {% endif %}
             {% if credito_relacionado %}
 
+                            <a
+                                href="{% url 'creditos:detalle_credito' credito_relacionado.id %}"
+                                class="boton-enlace"
+                            >
+                                Ver crédito
+                            </a>
+
+                        {% endif %}
+
+                        {% if venta.estado == "CONFIRMADA" or venta.estado == "ANULADA" %}
+
                 <a
-                    href="{% url 'creditos:detalle_credito' credito_relacionado.id %}"
+                    href="{% url 'ventas:comprobante_venta_pdf' venta.id %}"
                     class="boton-enlace"
                 >
-                    Ver crédito
+                    Descargar comprobante PDF
                 </a>
 
             {% endif %}
             
-            {% if venta.estado != "ANULADA" %}
-
-                <form
-                    method="post"
-                    action="{% url 'ventas:anular_venta' venta.id %}"
-                    class="formulario-accion-inline"
-                    onsubmit="return confirm('¿Está seguro de anular esta venta? Si está confirmada, los productos serán devueltos al inventario.');"
-                >
-                    {% csrf_token %}
+                {% if venta.estado != "ANULADA" %}
 
                     <button
-                        type="submit"
+                        type="button"
+                        id="abrir-modal-anulacion-venta"
                         class="boton-anular-venta"
                     >
                         Anular venta
                     </button>
-                </form>
 
-            {% endif %}
+                {% endif %}
 
             <a
                 href="{% url 'ventas:listar_ventas' %}"
@@ -89,23 +468,72 @@ Detalle de venta | FABRI-CAR
 
     </div>
 
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div
+                class="{% if message.tags == 'error' %}mensaje-error{% else %}mensaje-exito{% endif %}"
+            >
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
     <fieldset class="seccion-formulario">
 
         <legend>Información de la venta</legend>
 
         <div class="cuadricula-formulario">
+            <div>
+                <strong>Código interno de venta</strong>
+
+                <p>
+                    {% if venta.codigo_venta %}
+                        {{ venta.codigo_venta }}
+                    {% else %}
+                        Pendiente de confirmación
+                    {% endif %}
+                </p>
+            </div>
 
             <div>
                 <strong>Cliente</strong>
-                <p>{{ venta.cliente.nombre }}</p>
+
+                <p>
+                    {{ venta.nombre_cliente_mostrado }}
+                </p>
             </div>
 
             <div>
-                <strong>Documento</strong>
+                <strong>Tipo de cliente</strong>
+
                 <p>
-                    {{ venta.cliente.documento|default:"No registrado" }}
+                    {{ venta.get_tipo_cliente_display }}
                 </p>
             </div>
+
+            <div>
+                <strong>NIT o C.I.</strong>
+
+                <p>
+                    {{ venta.documento_cliente_mostrado|default:"No registrado" }}
+                </p>
+            </div>
+
+            {% if venta.tipo_cliente == "OCASIONAL" %}
+
+                <div>
+                    <strong>Teléfono del cliente ocasional</strong>
+
+                    <p>
+                        {{ venta.telefono_cliente_ocasional|default:"No registrado" }}
+                    </p>
+                </div>
+
+            {% endif %}
 
             <div>
                 <strong>Fecha de venta</strong>
@@ -113,14 +541,14 @@ Detalle de venta | FABRI-CAR
             </div>
 
             <div>
-                <strong>Tipo de comprobante</strong>
+                <strong>Tipo de comprobante externo</strong>
                 <p>{{ venta.get_tipo_comprobante_display }}</p>
             </div>
 
             <div>
-                <strong>Número de comprobante</strong>
+                <strong>Número de factura o comprobante externo</strong>
                 <p>
-                    {{ venta.numero_comprobante|default:"Sin número" }}
+                    {{ venta.numero_comprobante|default:"No registrado" }}
                 </p>
             </div>
 
@@ -173,6 +601,182 @@ Detalle de venta | FABRI-CAR
             </p>
 
         </div>
+
+        {% if venta.usuario_confirmacion or venta.fecha_confirmacion %}
+
+            <div class="bloque-auditoria-confirmacion-venta">
+
+                <div class="encabezado-auditoria-confirmacion-venta">
+
+                    <h3>
+                        Información de confirmación
+                    </h3>
+
+                    <span class="etiqueta-auditoria-confirmacion-venta">
+                        Inventario descontado
+                    </span>
+
+                </div>
+
+                <div class="cuadricula-auditoria-confirmacion-venta">
+
+                    <div class="dato-auditoria-confirmacion-venta">
+
+                        <span class="titulo-auditoria-confirmacion-venta">
+                            Confirmada por
+                        </span>
+
+                        <span class="valor-auditoria-confirmacion-venta">
+
+                            {% if venta.usuario_confirmacion %}
+
+                                {{ venta.usuario_confirmacion.username }}
+
+                            {% else %}
+
+                                Usuario no registrado
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    <div class="dato-auditoria-confirmacion-venta">
+
+                        <span class="titulo-auditoria-confirmacion-venta">
+                            Fecha de confirmación
+                        </span>
+
+                        <span class="valor-auditoria-confirmacion-venta">
+
+                            {% if venta.fecha_confirmacion %}
+
+                                {{ venta.fecha_confirmacion|date:"d/m/Y H:i" }}
+
+                            {% else %}
+
+                                Fecha no registrada
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    <div class="dato-auditoria-confirmacion-venta">
+
+                        <span class="titulo-auditoria-confirmacion-venta">
+                            Código definitivo
+                        </span>
+
+                        <span class="valor-auditoria-confirmacion-venta">
+
+                            {{ venta.codigo_venta|default:"No generado" }}
+
+                        </span>
+
+                    </div>
+
+                    <div class="dato-auditoria-confirmacion-venta">
+
+                        <span class="titulo-auditoria-confirmacion-venta">
+                            Forma de pago
+                        </span>
+
+                        <span class="valor-auditoria-confirmacion-venta">
+
+                            {{ venta.get_forma_pago_display }}
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        {% if venta.estado == "ANULADA" %}
+
+            <div class="bloque-auditoria-anulacion-venta">
+
+                <div class="encabezado-auditoria-anulacion-venta">
+
+                    <h3>
+                        Información de anulación
+                    </h3>
+
+                    <span class="etiqueta-auditoria-anulacion-venta">
+                        Operación anulada
+                    </span>
+
+                </div>
+
+                <div class="cuadricula-auditoria-anulacion-venta">
+
+                    <div class="dato-auditoria-anulacion-venta">
+
+                        <span class="titulo-auditoria-anulacion-venta">
+                            Anulada por
+                        </span>
+
+                        <span class="valor-auditoria-anulacion-venta">
+
+                            {% if venta.usuario_anulacion %}
+
+                                {{ venta.usuario_anulacion.username }}
+
+                            {% else %}
+
+                                Usuario no registrado
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    <div class="dato-auditoria-anulacion-venta">
+
+                        <span class="titulo-auditoria-anulacion-venta">
+                            Fecha de anulación
+                        </span>
+
+                        <span class="valor-auditoria-anulacion-venta">
+
+                            {% if venta.fecha_anulacion %}
+
+                                {{ venta.fecha_anulacion|date:"d/m/Y H:i" }}
+
+                            {% else %}
+
+                                Fecha no registrada
+
+                            {% endif %}
+
+                        </span>
+
+                    </div>
+
+                    <div class="motivo-auditoria-anulacion-venta">
+
+                        <span class="titulo-auditoria-anulacion-venta">
+                            Motivo de anulación
+                        </span>
+
+                        <p>
+                            {{ venta.motivo_anulacion|default:"No se registró un motivo de anulación." }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
 
     </fieldset>
 
@@ -245,5 +849,234 @@ Detalle de venta | FABRI-CAR
     </fieldset>
 
 </section>
+
+</section>
+
+{% if venta.estado != "ANULADA" %}
+
+    <div
+        id="modal-anulacion-venta"
+        class="modal-anulacion-venta"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="titulo-modal-anulacion-venta"
+        aria-hidden="true"
+    >
+
+        <div class="contenido-modal-anulacion-venta">
+
+            <div class="encabezado-modal-anulacion-venta">
+
+                <div>
+                    <h3 id="titulo-modal-anulacion-venta">
+                        Anular
+                        {% if venta.codigo_venta %}
+                            {{ venta.codigo_venta }}
+                        {% else %}
+                            venta en borrador N.º {{ venta.id }}
+                        {% endif %}
+                    </h3>
+
+                    <p>
+                        Esta operación quedará registrada
+                        en el historial del sistema.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="cerrar-modal-anulacion-venta"
+                    class="cerrar-modal-anulacion-venta"
+                    aria-label="Cerrar ventana"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <form
+                method="post"
+                action="{% url 'ventas:anular_venta' venta.id %}"
+                id="formulario-anulacion-venta"
+                class="cuerpo-modal-anulacion-venta"
+            >
+                {% csrf_token %}
+
+                <div class="advertencia-anulacion-venta">
+
+                    {% if venta.estado == "CONFIRMADA" %}
+
+                        Al anular esta venta, los productos vendidos
+                        serán devueltos al inventario.
+
+                        {% if credito_relacionado %}
+
+                            El crédito relacionado también será anulado.
+                            La operación se bloqueará si ya existen pagos
+                            registrados.
+
+                        {% endif %}
+
+                    {% else %}
+
+                        Esta venta permanece en borrador y todavía
+                        no modificó el inventario. Al anularla dejará
+                        de estar disponible para edición o confirmación.
+
+                    {% endif %}
+
+                </div>
+
+                <div class="grupo-motivo-anulacion-venta">
+
+                    <label for="id_motivo_anulacion">
+                        Motivo de anulación
+                    </label>
+
+                    <textarea
+                        name="motivo_anulacion"
+                        id="id_motivo_anulacion"
+                        required
+                        minlength="5"
+                        maxlength="500"
+                        placeholder="Explique claramente por qué se anula esta venta."
+                    ></textarea>
+
+                    <small class="ayuda-motivo-anulacion-venta">
+                        Escriba al menos 5 caracteres. El motivo,
+                        usuario y fecha quedarán guardados en la venta.
+                    </small>
+
+                </div>
+
+                <div class="acciones-modal-anulacion-venta">
+
+                    <button
+                        type="button"
+                        id="cancelar-modal-anulacion-venta"
+                        class="boton-volver-anulacion-venta"
+                    >
+                        Volver
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="boton-confirmar-anulacion-venta"
+                    >
+                        Sí, anular venta
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const botonAbrir = document.getElementById(
+            "abrir-modal-anulacion-venta"
+        );
+
+        const modal = document.getElementById(
+            "modal-anulacion-venta"
+        );
+
+        const botonCerrar = document.getElementById(
+            "cerrar-modal-anulacion-venta"
+        );
+
+        const botonCancelar = document.getElementById(
+            "cancelar-modal-anulacion-venta"
+        );
+
+        const campoMotivo = document.getElementById(
+            "id_motivo_anulacion"
+        );
+
+        if (!botonAbrir || !modal) {
+            return;
+        }
+
+        function abrirModal() {
+            modal.classList.add("visible");
+            modal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.classList.add(
+                "modal-abierto"
+            );
+
+            window.setTimeout(function () {
+                if (campoMotivo) {
+                    campoMotivo.focus();
+                }
+            }, 100);
+        }
+
+        function cerrarModal() {
+            modal.classList.remove("visible");
+            modal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            document.body.classList.remove(
+                "modal-abierto"
+            );
+
+            botonAbrir.focus();
+        }
+
+        botonAbrir.addEventListener(
+            "click",
+            abrirModal
+        );
+
+        if (botonCerrar) {
+            botonCerrar.addEventListener(
+                "click",
+                cerrarModal
+            );
+        }
+
+        if (botonCancelar) {
+            botonCancelar.addEventListener(
+                "click",
+                cerrarModal
+            );
+        }
+
+        modal.addEventListener(
+            "click",
+            function (evento) {
+                if (evento.target === modal) {
+                    cerrarModal();
+                }
+            }
+        );
+
+        document.addEventListener(
+            "keydown",
+            function (evento) {
+                if (
+                    evento.key === "Escape"
+                    && modal.classList.contains(
+                        "visible"
+                    )
+                ) {
+                    cerrarModal();
+                }
+            }
+        );
+    });
+</script>
 
 {% endblock %}

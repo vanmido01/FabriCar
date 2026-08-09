@@ -18,9 +18,19 @@ urlpatterns = [
         name="registrar_venta",
     ),
     path(
+        "productos/buscar/",
+        views.buscar_productos_venta,
+        name="buscar_productos_venta",
+    ),
+    path(
         "<int:venta_id>/editar/",
         views.editar_venta,
         name="editar_venta",
+    ),
+    path(
+        "<int:venta_id>/comprobante-pdf/",
+        views.comprobante_venta_pdf,
+        name="comprobante_venta_pdf",
     ),
     path(
         "<int:venta_id>/confirmar/",

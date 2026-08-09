@@ -10,6 +10,105 @@
 
 {% block contenido %}
 
+<style>
+    .formulario-producto .fila-detalle-compra {
+        display: grid;
+        grid-template-columns:
+            minmax(220px, 2fr)
+            minmax(90px, 0.7fr)
+            minmax(135px, 1fr)
+            minmax(135px, 1fr)
+            minmax(120px, 0.9fr)
+            auto;
+        gap: 14px;
+        align-items: start;
+    }
+
+    .referencia-precio {
+        display: block;
+        min-height: 18px;
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 11px;
+        line-height: 1.35;
+    }
+
+    .referencia-precio.con-valor {
+        color: #1d4ed8;
+        font-weight: 600;
+    }
+
+    .campo-subtotal {
+        display: flex;
+        align-items: center;
+        min-height: 38px;
+        padding: 8px 11px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background-color: #f8fafc;
+        color: #0f172a;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .resumen-total-compra {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+
+    .tarjeta-total-compra {
+        min-width: 290px;
+        padding: 16px 20px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        background-color: #eff6ff;
+        text-align: right;
+    }
+
+    .tarjeta-total-compra span {
+        display: block;
+        margin-bottom: 5px;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .tarjeta-total-compra strong {
+        display: block;
+        color: #172b46;
+        font-size: 24px;
+        line-height: 1.2;
+    }
+
+    .tarjeta-total-compra small {
+        display: block;
+        margin-top: 7px;
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    @media (max-width: 1100px) {
+        .formulario-producto .fila-detalle-compra {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 650px) {
+        .formulario-producto .fila-detalle-compra {
+            grid-template-columns: 1fr;
+        }
+
+        .tarjeta-total-compra {
+            width: 100%;
+            min-width: 0;
+        }
+    }
+</style>
+
 <section class="presentacion">
 
     <div class="encabezado-formulario">
@@ -180,9 +279,37 @@
 
                             {{ detalle.costo_unitario }}
 
+                            <small class="referencia-precio valor-costo-vigente">
+                                Último costo: —
+                            </small>
+
                             {% for error in detalle.costo_unitario.errors %}
                                 <p class="error-campo">{{ error }}</p>
                             {% endfor %}
+                        </div>
+
+                        <div>
+                            <label for="{{ detalle.precio_venta.id_for_label }}">
+                                Precio de venta
+                            </label>
+
+                            {{ detalle.precio_venta }}
+
+                            <small class="referencia-precio valor-precio-vigente">
+                                Precio vigente: —
+                            </small>
+
+                            {% for error in detalle.precio_venta.errors %}
+                                <p class="error-campo">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        <div>
+                            <label>Subtotal</label>
+
+                            <div class="campo-subtotal valor-subtotal">
+                                Bs 0,00
+                            </div>
                         </div>
 
                         <div class="contenedor-eliminar-detalle">
@@ -224,6 +351,24 @@
                 Agregar otro producto
             </button>
 
+                <div class="resumen-total-compra">
+
+                    <div class="tarjeta-total-compra">
+
+                        <span>Total estimado de la compra</span>
+
+                        <strong id="total-general-compra">
+                            Bs 0,00
+                        </strong>
+
+                        <small>
+                            El total será recalculado y validado al guardar.
+                        </small>
+
+                    </div>
+
+                </div>
+
         </fieldset>
 
         <div class="acciones-formulario">
@@ -234,16 +379,42 @@
             >
                 Cancelar
             </a>
-            <button
-                type="submit"
-                class="boton-principal"
-            >
-                {% if modo_edicion %}
+
+            {% if modo_edicion %}
+
+                <button
+                    type="submit"
+                    class="boton-principal"
+                >
                     Guardar cambios
-                {% else %}
-                    Guardar compra
-                {% endif %}
-            </button>
+                </button>
+
+            {% else %}
+
+                <button
+                    type="submit"
+                    name="accion"
+                    value="borrador"
+                    class="boton-secundario"
+                >
+                    Guardar borrador
+                </button>
+
+                <button
+                    type="submit"
+                    name="accion"
+                    value="confirmar"
+                    class="boton-confirmar"
+                    onclick="return confirm(
+                        '¿Confirmar esta compra?\n\n'
+                        + 'Se actualizarán las existencias y los precios. '
+                        + 'Después no podrá modificarse.'
+                    );"
+                >
+                    Confirmar compra
+                </button>
+
+            {% endif %}
 
         </div>
 
@@ -253,7 +424,7 @@
 
 <template id="plantilla-detalle">
 
-    <div class="fila-detalle-compra">
+        <div class="fila-detalle-compra">
 
         {% for campo_oculto in formulario_detalles.empty_form.hidden_fields %}
             {{ campo_oculto }}
@@ -281,6 +452,30 @@
             </label>
 
             {{ formulario_detalles.empty_form.costo_unitario }}
+
+            <small class="referencia-precio valor-costo-vigente">
+                Último costo: —
+            </small>
+        </div>
+
+        <div>
+            <label for="{{ formulario_detalles.empty_form.precio_venta.id_for_label }}">
+                Precio de venta
+            </label>
+
+            {{ formulario_detalles.empty_form.precio_venta }}
+
+            <small class="referencia-precio valor-precio-vigente">
+                Precio vigente: —
+            </small>
+        </div>
+
+        <div>
+            <label>Subtotal</label>
+
+            <div class="campo-subtotal valor-subtotal">
+                Bs 0,00
+            </div>
         </div>
 
         <div class="contenedor-eliminar-detalle">
@@ -296,14 +491,186 @@
 
 </template>
 
+{{ precios_productos|json_script:"precios-productos" }}
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const contenedor = document.getElementById("contenedor-detalles");
-        const botonAgregar = document.getElementById("agregar-detalle");
+        const contenedor = document.getElementById(
+            "contenedor-detalles"
+        );
+
+        const botonAgregar = document.getElementById(
+            "agregar-detalle"
+        );
+
         const totalFormularios = document.getElementById(
             "id_detalles-TOTAL_FORMS"
         );
-        const plantilla = document.getElementById("plantilla-detalle");
+
+        const plantilla = document.getElementById(
+            "plantilla-detalle"
+        );
+
+        const elementoTotal = document.getElementById(
+            "total-general-compra"
+        );
+
+        const nodoPrecios = document.getElementById(
+            "precios-productos"
+        );
+
+        const preciosProductos = nodoPrecios
+            ? JSON.parse(nodoPrecios.textContent)
+            : {};
+
+        const formatoMoneda = new Intl.NumberFormat(
+            "es-BO",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }
+        );
+
+        function convertirNumero(valor) {
+            const numero = parseFloat(
+                String(valor || "")
+                    .trim()
+                    .replace(",", ".")
+            );
+
+            return Number.isFinite(numero)
+                ? numero
+                : 0;
+        }
+
+        function mostrarMoneda(valor) {
+            return `Bs ${formatoMoneda.format(valor)}`;
+        }
+
+        function filaEstaEliminada(fila) {
+            const campoEliminar = fila.querySelector(
+                'input[name$="-DELETE"]'
+            );
+
+            return Boolean(
+                campoEliminar
+                && campoEliminar.checked
+            );
+        }
+
+        function actualizarPreciosVigentes(fila) {
+            const selectorProducto = fila.querySelector(
+                ".selector-producto"
+            );
+
+            const textoCosto = fila.querySelector(
+                ".valor-costo-vigente"
+            );
+
+            const textoPrecio = fila.querySelector(
+                ".valor-precio-vigente"
+            );
+
+            if (
+                !selectorProducto
+                || !textoCosto
+                || !textoPrecio
+            ) {
+                return;
+            }
+
+            const datos = preciosProductos[
+                selectorProducto.value
+            ];
+
+            if (!datos) {
+                textoCosto.textContent = "Último costo: —";
+                textoPrecio.textContent = "Precio vigente: —";
+
+                textoCosto.classList.remove("con-valor");
+                textoPrecio.classList.remove("con-valor");
+
+                return;
+            }
+
+            textoCosto.textContent = (
+                "Último costo: "
+                + mostrarMoneda(
+                    convertirNumero(datos.costo_compra)
+                )
+            );
+
+            textoPrecio.textContent = (
+                "Precio vigente: "
+                + mostrarMoneda(
+                    convertirNumero(datos.precio_venta)
+                )
+            );
+
+            textoCosto.classList.add("con-valor");
+            textoPrecio.classList.add("con-valor");
+        }
+
+        function calcularSubtotalFila(fila) {
+            const campoCantidad = fila.querySelector(
+                ".campo-cantidad"
+            );
+
+            const campoCosto = fila.querySelector(
+                ".campo-costo-unitario"
+            );
+
+            const elementoSubtotal = fila.querySelector(
+                ".valor-subtotal"
+            );
+
+            if (
+                !campoCantidad
+                || !campoCosto
+                || !elementoSubtotal
+            ) {
+                return 0;
+            }
+
+            if (filaEstaEliminada(fila)) {
+                elementoSubtotal.textContent = mostrarMoneda(0);
+                return 0;
+            }
+
+            const cantidad = convertirNumero(
+                campoCantidad.value
+            );
+
+            const costo = convertirNumero(
+                campoCosto.value
+            );
+
+            const subtotal = cantidad * costo;
+
+            elementoSubtotal.textContent = mostrarMoneda(
+                subtotal
+            );
+
+            return subtotal;
+        }
+
+        function actualizarTotalGeneral() {
+            let total = 0;
+
+            contenedor
+                .querySelectorAll(".fila-detalle-compra")
+                .forEach(function (fila) {
+                    total += calcularSubtotalFila(fila);
+                });
+
+            elementoTotal.textContent = mostrarMoneda(total);
+        }
+
+        function actualizarFila(fila) {
+            actualizarPreciosVigentes(fila);
+            calcularSubtotalFila(fila);
+            actualizarTotalGeneral();
+        }
 
         botonAgregar.addEventListener("click", function () {
             const numeroFormulario = parseInt(
@@ -322,13 +689,69 @@
             );
 
             totalFormularios.value = numeroFormulario + 1;
+
+            const filas = contenedor.querySelectorAll(
+                ".fila-detalle-compra"
+            );
+
+            const nuevaFila = filas[filas.length - 1];
+
+            actualizarFila(nuevaFila);
         });
 
         contenedor.addEventListener("click", function (evento) {
-            if (evento.target.classList.contains("quitar-detalle")) {
-                evento.target.closest(".fila-detalle-compra").remove();
+            if (
+                evento.target.classList.contains(
+                    "quitar-detalle"
+                )
+            ) {
+                const fila = evento.target.closest(
+                    ".fila-detalle-compra"
+                );
+
+                fila.remove();
+                actualizarTotalGeneral();
             }
         });
+
+        contenedor.addEventListener("input", function (evento) {
+            if (
+                evento.target.classList.contains("campo-cantidad")
+                || evento.target.classList.contains(
+                    "campo-costo-unitario"
+                )
+            ) {
+                const fila = evento.target.closest(
+                    ".fila-detalle-compra"
+                );
+
+                actualizarFila(fila);
+            }
+        });
+
+        contenedor.addEventListener("change", function (evento) {
+            if (
+                evento.target.classList.contains(
+                    "selector-producto"
+                )
+                || evento.target.name.endsWith("-DELETE")
+            ) {
+                const fila = evento.target.closest(
+                    ".fila-detalle-compra"
+                );
+
+                actualizarFila(fila);
+            }
+        });
+
+        contenedor
+            .querySelectorAll(".fila-detalle-compra")
+            .forEach(function (fila) {
+                actualizarPreciosVigentes(fila);
+                calcularSubtotalFila(fila);
+            });
+
+        actualizarTotalGeneral();
     });
 </script>
 

@@ -1,11 +1,24 @@
 from django import forms
-from django.core.exceptions import ValidationError
+
+from proveedores.models import Proveedor
+from vehiculos.models import Vehiculo
 
 from .models import Producto
 
 
 class ProductoForm(forms.ModelForm):
-    """Formulario para registrar y modificar productos."""
+    """Formulario para registrar y modificar la ficha del producto."""
+
+    vehiculos_compatibles = forms.ModelMultipleChoiceField(
+        queryset=Vehiculo.objects.none(),
+        required=False,
+        label="Vehículos compatibles",
+        widget=forms.CheckboxSelectMultiple(
+            attrs={
+                "class": "lista-opciones-multiples",
+            }
+        ),
+    )
 
     class Meta:
         model = Producto
@@ -13,15 +26,13 @@ class ProductoForm(forms.ModelForm):
         fields = [
             "codigo",
             "nombre",
-            "descripcion",
             "tipo",
             "condicion",
             "marca",
             "procedencia",
-            "precio_compra",
-            "precio_venta",
-            "stock_actual",
-            "stock_minimo",
+            "descripcion",
+            "proveedores_habituales",
+            "vehiculos_compatibles",
             "imagen",
             "estado",
         ]
@@ -37,13 +48,6 @@ class ProductoForm(forms.ModelForm):
                 attrs={
                     "class": "campo-formulario",
                     "placeholder": "Nombre del repuesto",
-                }
-            ),
-            "descripcion": forms.Textarea(
-                attrs={
-                    "class": "campo-formulario",
-                    "rows": 4,
-                    "placeholder": "Descripción del producto",
                 }
             ),
             "tipo": forms.Select(
@@ -68,30 +72,18 @@ class ProductoForm(forms.ModelForm):
                     "placeholder": "País o lugar de procedencia",
                 }
             ),
-            "precio_compra": forms.NumberInput(
+            "descripcion": forms.Textarea(
                 attrs={
                     "class": "campo-formulario",
-                    "step": "0.01",
-                    "min": "0",
+                    "rows": 4,
+                    "placeholder": (
+                        "Características técnicas del producto"
+                    ),
                 }
             ),
-            "precio_venta": forms.NumberInput(
+            "proveedores_habituales": forms.CheckboxSelectMultiple(
                 attrs={
-                    "class": "campo-formulario",
-                    "step": "0.01",
-                    "min": "0",
-                }
-            ),
-            "stock_actual": forms.NumberInput(
-                attrs={
-                    "class": "campo-formulario",
-                    "min": "0",
-                }
-            ),
-            "stock_minimo": forms.NumberInput(
-                attrs={
-                    "class": "campo-formulario",
-                    "min": "0",
+                    "class": "lista-opciones-multiples",
                 }
             ),
             "imagen": forms.ClearableFileInput(
@@ -107,28 +99,58 @@ class ProductoForm(forms.ModelForm):
             ),
         }
 
-    def clean_codigo(self):
-        """Guarda el código sin espacios externos y en mayúsculas."""
+    def __init__(self, *args, **kwargs):
+        """Carga proveedores y vehículos activos."""
 
-        codigo = self.cleaned_data["codigo"]
-        return codigo.strip().upper()
+        super().__init__(*args, **kwargs)
 
-    def clean(self):
-        """Valida que el precio de venta no sea menor al de compra."""
+        self.fields["proveedores_habituales"].queryset = (
+            Proveedor.objects
+            .filter(estado=True)
+            .order_by("razon_social")
+        )
 
-        datos_limpios = super().clean()
+        self.fields["proveedores_habituales"].required = False
 
-        precio_compra = datos_limpios.get("precio_compra")
-        precio_venta = datos_limpios.get("precio_venta")
+        self.fields["vehiculos_compatibles"].queryset = (
+            Vehiculo.objects
+            .filter(estado=True)
+            .order_by(
+                "marca",
+                "modelo",
+                "anio_desde",
+            )
+        )
 
-        if (
-            precio_compra is not None
-            and precio_venta is not None
-            and precio_venta < precio_compra
-        ):
-            raise ValidationError(
-                "El precio de venta no puede ser menor "
-                "al precio de compra."
+        if self.instance and self.instance.pk:
+            self.fields["vehiculos_compatibles"].initial = (
+                self.instance.compatibilidades.values_list(
+                    "vehiculo_id",
+                    flat=True,
+                )
             )
 
-        return datos_limpios
+    def clean_codigo(self):
+        """Normaliza el código y evita fichas duplicadas."""
+
+        codigo = self.cleaned_data["codigo"].strip().upper()
+
+        productos_existentes = Producto.objects.filter(
+            codigo=codigo,
+        )
+
+        if self.instance and self.instance.pk:
+            productos_existentes = productos_existentes.exclude(
+                pk=self.instance.pk,
+            )
+
+        if productos_existentes.exists():
+            raise forms.ValidationError(
+                (
+                    "Ya existe una ficha de producto con este código. "
+                    "Para aumentar sus existencias deberá registrar "
+                    "una nueva compra de ese producto."
+                )
+            )
+
+        return codigo

@@ -31,16 +31,20 @@ Registrar pago | FABRI-CAR
                 <strong>Cliente</strong>
 
                 <p>
-                    {{ credito.venta.cliente.nombre }}
+                    {{ credito.venta.nombre_cliente_mostrado }}
                 </p>
             </div>
 
             <div>
                 <strong>Venta relacionada</strong>
 
-                <p>
-                    Venta N.º {{ credito.venta.id }}
-                </p>
+                    <p>
+                        {% if credito.venta.codigo_venta %}
+                            {{ credito.venta.codigo_venta }}
+                        {% else %}
+                            Venta N.º {{ credito.venta.id }}
+                        {% endif %}
+                    </p>
             </div>
 
             <div>

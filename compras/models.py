@@ -8,7 +8,6 @@ from django.utils import timezone
 from productos.models import Producto
 from proveedores.models import Proveedor
 
-
 class Compra(models.Model):
     """Representa una compra realizada a un proveedor."""
 
@@ -82,6 +81,41 @@ class Compra(models.Model):
         verbose_name="Registrado por",
     )
 
+    usuario_confirmacion = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="compras_confirmadas",
+        verbose_name="Confirmado por",
+    )
+
+    fecha_confirmacion = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Fecha de confirmación",
+    )
+
+    usuario_anulacion = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="compras_anuladas",
+        verbose_name="Anulado por",
+    )
+
+    fecha_anulacion = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Fecha de anulación",
+    )
+
+    motivo_anulacion = models.TextField(
+        blank=True,
+        verbose_name="Motivo de anulación",
+    )
+
     fecha_registro = models.DateTimeField(
         auto_now_add=True,
         verbose_name="Fecha de registro",
@@ -95,10 +129,38 @@ class Compra(models.Model):
     class Meta:
         verbose_name = "Compra"
         verbose_name_plural = "Compras"
+
         ordering = [
             "-fecha_compra",
             "-id",
         ]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "proveedor",
+                    "tipo_comprobante",
+                    "numero_comprobante",
+                ],
+                condition=~models.Q(
+                    numero_comprobante="",
+                ),
+                name="compra_comprobante_unico_proveedor_tipo",
+            ),
+        ]
+
+    def save(self, *args, **kwargs):
+        """
+        Normaliza el número de comprobante antes de guardar.
+
+        Evita diferencias por espacios o uso de minúsculas.
+        """
+
+        self.numero_comprobante = (
+            self.numero_comprobante or ""
+        ).strip().upper()
+
+        super().save(*args, **kwargs)
 
     def actualizar_total(self):
         """Calcula el total utilizando los detalles registrados."""
@@ -160,6 +222,15 @@ class DetalleCompra(models.Model):
         verbose_name="Costo unitario",
     )
 
+    precio_venta = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        validators=[
+            MinValueValidator(Decimal("0.01")),
+        ],
+        verbose_name="Precio de venta",
+    )
+
     subtotal = models.DecimalField(
         max_digits=14,
         decimal_places=2,
@@ -185,7 +256,40 @@ class DetalleCompra(models.Model):
                     "producto",
                 ],
                 name="producto_unico_por_compra",
-            )
+            ),
+
+            models.CheckConstraint(
+                condition=models.Q(
+                    cantidad__gte=1,
+                ),
+                name="detalle_compra_cantidad_minima_uno",
+            ),
+
+            models.CheckConstraint(
+                condition=models.Q(
+                    costo_unitario__gt=0,
+                ),
+                name="detalle_compra_costo_unitario_positivo",
+            ),
+
+            models.CheckConstraint(
+                condition=models.Q(
+                    precio_venta__gt=0,
+                ),
+                name="detalle_compra_precio_venta_positivo",
+            ),
+
+            models.CheckConstraint(
+                condition=models.Q(
+                    precio_venta__gte=models.F(
+                        "costo_unitario",
+                    )
+                ),
+                name=(
+                    "detalle_compra_precio_venta_"
+                    "mayor_igual_costo"
+                ),
+            ),
         ]
 
     def save(self, *args, **kwargs):

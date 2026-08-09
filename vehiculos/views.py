@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from productos.models import Producto
 
 from principal.decorators import rol_requerido
 
@@ -131,31 +133,59 @@ def listar_compatibilidades(request):
 def registrar_compatibilidad(request):
     """Registra una compatibilidad entre un producto y un vehículo."""
 
+    producto_inicial = None
+    producto_id = request.GET.get("producto")
+
+    if producto_id:
+        producto_inicial = get_object_or_404(
+            Producto,
+            id=producto_id,
+            estado=True,
+        )
+
     if request.method == "POST":
-        formulario = CompatibilidadProductoForm(request.POST)
+        formulario = CompatibilidadProductoForm(
+            request.POST,
+        )
 
         if formulario.is_valid():
             compatibilidad = formulario.save()
+            producto = compatibilidad.producto
 
             messages.success(
                 request,
                 (
-                    f'La compatibilidad entre el producto '
-                    f'"{compatibilidad.producto.nombre}" y el vehículo '
-                    f'"{compatibilidad.vehiculo}" fue registrada correctamente.'
+                    f'La compatibilidad entre "{producto.nombre}" '
+                    f'y "{compatibilidad.vehiculo}" fue registrada '
+                    "correctamente."
                 ),
             )
 
+            if "guardar_y_agregar_otra" in request.POST:
+                url_compatibilidad = reverse(
+                    "vehiculos:registrar_compatibilidad"
+                )
+
+                return redirect(
+                    f"{url_compatibilidad}?producto={producto.id}"
+                )
+
             return redirect(
-                "vehiculos:listar_compatibilidades"
+                "productos:detalle_producto",
+                producto_id=producto.id,
             )
 
     else:
-        formulario = CompatibilidadProductoForm()
+        formulario = CompatibilidadProductoForm(
+            initial={
+                "producto": producto_inicial,
+            }
+        )
 
     contexto = {
         "formulario": formulario,
         "modo_edicion": False,
+        "producto_inicial": producto_inicial,
     }
 
     return render(

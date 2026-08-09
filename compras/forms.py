@@ -75,6 +75,49 @@ class CompraForm(forms.ModelForm):
 
         return numero_comprobante.strip().upper()
 
+    def clean(self):
+        """
+        Evita registrar dos veces el mismo comprobante
+        para un proveedor.
+        """
+
+        datos = super().clean()
+
+        proveedor = datos.get("proveedor")
+        tipo_comprobante = datos.get("tipo_comprobante")
+
+        numero_comprobante = (
+            datos.get("numero_comprobante")
+            or ""
+        ).strip().upper()
+
+        if (
+            proveedor
+            and tipo_comprobante
+            and numero_comprobante
+        ):
+            compras_existentes = Compra.objects.filter(
+                proveedor=proveedor,
+                tipo_comprobante=tipo_comprobante,
+                numero_comprobante__iexact=numero_comprobante,
+            )
+
+            if self.instance and self.instance.pk:
+                compras_existentes = compras_existentes.exclude(
+                    pk=self.instance.pk,
+                )
+
+            if compras_existentes.exists():
+                self.add_error(
+                    "numero_comprobante",
+                    (
+                        "Ya existe una compra registrada para "
+                        "este proveedor con el mismo tipo y "
+                        "número de comprobante."
+                    ),
+                )
+
+        return datos
 
 class DetalleCompraForm(forms.ModelForm):
     """Formulario para agregar productos a una compra."""
@@ -86,42 +129,80 @@ class DetalleCompraForm(forms.ModelForm):
             "producto",
             "cantidad",
             "costo_unitario",
+            "precio_venta",
         ]
 
         widgets = {
             "producto": forms.Select(
                 attrs={
-                    "class": "campo-formulario",
+                    "class": "campo-formulario selector-producto",
                 }
             ),
             "cantidad": forms.NumberInput(
                 attrs={
-                    "class": "campo-formulario",
+                    "class": "campo-formulario campo-cantidad",
                     "min": "1",
                     "placeholder": "Cantidad",
                 }
             ),
             "costo_unitario": forms.NumberInput(
                 attrs={
-                    "class": "campo-formulario",
+                    "class": "campo-formulario campo-costo-unitario",
                     "min": "0.01",
                     "step": "0.01",
                     "placeholder": "Costo unitario",
                 }
             ),
+            "precio_venta": forms.NumberInput(
+                attrs={
+                    "class": "campo-formulario campo-precio-venta",
+                    "min": "0.01",
+                    "step": "0.01",
+                    "placeholder": "Precio de venta",
+                }
+            ),
         }
 
     def __init__(self, *args, **kwargs):
+        """Carga únicamente los productos activos."""
+
         super().__init__(*args, **kwargs)
 
         self.fields["producto"].queryset = (
-            Producto.objects.filter(estado=True)
-            .order_by("nombre")
+            Producto.objects
+            .filter(estado=True)
+            .order_by(
+                "nombre",
+                "codigo",
+            )
         )
 
         self.fields["producto"].empty_label = (
             "Seleccione un producto"
         )
+
+    def clean(self):
+        """Valida que el precio de venta cubra el costo de compra."""
+
+        datos = super().clean()
+
+        costo_unitario = datos.get("costo_unitario")
+        precio_venta = datos.get("precio_venta")
+
+        if (
+            costo_unitario is not None
+            and precio_venta is not None
+            and precio_venta < costo_unitario
+        ):
+            self.add_error(
+                "precio_venta",
+                (
+                    "El precio de venta no puede ser menor "
+                    "al costo unitario."
+                ),
+            )
+
+        return datos
 
 
 class BaseDetalleCompraFormSet(BaseInlineFormSet):

@@ -102,23 +102,52 @@
 
         <div class="acciones-formulario">
 
-            <a
-                href="{% url 'vehiculos:listar_compatibilidades' %}"
-                class="boton-secundario"
-            >
-                Cancelar
-            </a>
-
-            <button
-            type="submit"
-            class="boton-principal"
-        >
-            {% if modo_edicion %}
-                Guardar cambios
+            {% if producto_inicial %}
+                <a
+                    href="{% url 'productos:detalle_producto' producto_inicial.id %}"
+                    class="boton-secundario"
+                >
+                    Cancelar
+                </a>
             {% else %}
-                Guardar compatibilidad
+                <a
+                    href="{% url 'vehiculos:listar_compatibilidades' %}"
+                    class="boton-secundario"
+                >
+                    Cancelar
+                </a>
             {% endif %}
-        </button>
+
+            {% if modo_edicion %}
+
+                <button
+                    type="submit"
+                    class="boton-principal"
+                >
+                    Guardar cambios
+                </button>
+
+            {% else %}
+
+                <button
+                    type="submit"
+                    name="guardar_compatibilidad"
+                    value="1"
+                    class="boton-principal"
+                >
+                    Guardar compatibilidad
+                </button>
+
+                <button
+                    type="submit"
+                    name="guardar_y_agregar_otra"
+                    value="1"
+                    class="boton-confirmar"
+                >
+                    Guardar y agregar otra
+                </button>
+
+            {% endif %}
 
         </div>
 
